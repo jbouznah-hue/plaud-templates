@@ -433,8 +433,11 @@ ${transcript}`
 
 app.post('/api/process', requireAuth, async (req, res) => {
   try {
-    const { jobId, promptTemplate, promptContent } = req.body;
-    if (!jobId || !promptContent) return res.status(400).json({ error: 'jobId and promptContent are required' });
+    const { jobId, promptTemplate, promptContent, template } = req.body;
+    const finalPrompt = promptContent || (template && template.promptContent) || '';
+    const finalTemplateName = promptTemplate || (template && template.title) || 'Custom';
+    if (!jobId) return res.status(400).json({ error: 'jobId is required' });
+    const promptToUse = finalPrompt || 'Résume cette transcription de manière structurée avec les points clés, décisions et actions à suivre.';
 
     const job = readJob(jobId);
     if (!job) return res.status(404).json({ error: 'Job not found' });
@@ -457,7 +460,7 @@ app.post('/api/process', requireAuth, async (req, res) => {
       const sectionResults = [];
       for (let i = 0; i < sections.length; i++) {
         const sectionContent = i === 0
-          ? `${promptContent}\n\n---\n\nTranscription (partie ${i + 1}/${sections.length}):\n${sections[i]}`
+          ? `${promptToUse}\n\n---\n\nTranscription (partie ${i + 1}/${sections.length}):\n${sections[i]}`
           : `Continue l'analyse pour la partie ${i + 1}/${sections.length} de la transcription:\n${sections[i]}`;
 
         const result = await anthropic.messages.create({
@@ -474,7 +477,7 @@ app.post('/api/process', requireAuth, async (req, res) => {
         max_tokens: 8192,
         messages: [{
           role: 'user',
-          content: `${promptContent}\n\n---\n\nTranscription:\n${transcript}`
+          content: `${promptToUse}\n\n---\n\nTranscription:\n${transcript}`
         }]
       });
       resultText = result.content[0]?.text || '';
@@ -484,7 +487,7 @@ app.post('/api/process', requireAuth, async (req, res) => {
       id: uuidv4(),
       userId: req.user.id,
       jobId,
-      templateName: promptTemplate || 'Custom',
+      templateName: finalTemplateName,
       transcript,
       result: resultText,
       createdAt: new Date().toISOString()

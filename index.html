@@ -2086,7 +2086,7 @@ function setValidationMode(mode) {
 
 function renderTranscript(job) {
   const text = job.transcript || job.text || '';
-  const ambiguous = job.ambiguous || [];
+  const ambiguous = job.ambiguousTerms || [];
 
   if (ambiguous.length === 0) {
     document.getElementById('transcriptText').textContent = text;
@@ -2094,18 +2094,60 @@ function renderTranscript(job) {
     return;
   }
 
-  // Build transcript with ambiguous spans
+  // Convert word positions to character positions
+  // Split text into words, track their character positions
+  const words = [];
+  let wordIdx = 0;
+  const wordRegex = /\S+/g;
+  let match;
+  while ((match = wordRegex.exec(text)) !== null) {
+    words.push({ word: match[0], start: match.index, end: match.index + match[0].length, idx: wordIdx });
+    wordIdx++;
+  }
+
+  // Map each ambiguous term to character positions
+  const mapped = ambiguous.map((amb, i) => {
+    const pos = amb.position || 0;
+    // Find the word at this position
+    const wordEntry = words[pos];
+    if (!wordEntry) return null;
+
+    // Check if the ambiguous word spans multiple words (e.g. "Moshé Rabbeinu")
+    const ambWords = (amb.word || '').split(/\s+/);
+    let endWordIdx = pos + ambWords.length - 1;
+    if (endWordIdx >= words.length) endWordIdx = words.length - 1;
+    const endWord = words[endWordIdx];
+
+    return {
+      ...amb,
+      charStart: wordEntry.start,
+      charEnd: endWord ? endWord.end : wordEntry.end,
+      originalIndex: i
+    };
+  }).filter(Boolean);
+
+  // Sort by character position
+  mapped.sort((a, b) => a.charStart - b.charStart);
+
+  // Build HTML with highlighted spans
   let html = '';
-  let lastIdx = 0;
-  // Sort by position
-  const sorted = [...ambiguous].sort((a, b) => a.position - b.position);
-  sorted.forEach((amb, i) => {
-    const before = text.substring(lastIdx, amb.position);
-    html += escHtml(before);
-    html += '<span class="ambiguous" data-index="' + i + '" data-suggestion="' + escHtml(amb.suggestion || '') + '" data-position="' + amb.position + '" onclick="showAmbPopup(this, ' + i + ')">' + escHtml(amb.word || text.substring(amb.position, amb.position + (amb.length || amb.word.length))) + '</span>';
-    lastIdx = amb.position + (amb.length || (amb.word ? amb.word.length : 0));
+  let lastCharIdx = 0;
+
+  mapped.forEach((amb, i) => {
+    // Add text before this ambiguous term
+    if (amb.charStart > lastCharIdx) {
+      html += escHtml(text.substring(lastCharIdx, amb.charStart));
+    }
+    // Add the ambiguous span
+    const ambText = text.substring(amb.charStart, amb.charEnd);
+    html += '<span class="ambiguous" data-index="' + amb.originalIndex + '" data-suggestion="' + escHtml(amb.suggestion || '') + '" data-reason="' + escHtml(amb.reason || '') + '" data-confidence="' + escHtml(amb.confidence || '') + '" onclick="showAmbPopup(this, ' + amb.originalIndex + ')">' + escHtml(ambText) + '</span>';
+    lastCharIdx = amb.charEnd;
   });
-  html += escHtml(text.substring(lastIdx));
+
+  // Add remaining text
+  if (lastCharIdx < text.length) {
+    html += escHtml(text.substring(lastCharIdx));
+  }
 
   document.getElementById('transcriptText').innerHTML = html;
   updateAmbCounter();
@@ -2124,22 +2166,30 @@ function updateAmbCounter() {
 let activePopup = null;
 
 function showAmbPopup(span, index) {
-  // Close existing
   if (activePopup) { activePopup.remove(); activePopup = null; }
 
   const suggestion = span.dataset.suggestion || '';
+  const reason = span.dataset.reason || '';
+  const confidence = span.dataset.confidence || '';
   const originalWord = span.textContent;
+
+  const confidenceColors = { high: '#ef4444', medium: '#f59e0b', low: '#6366f1' };
+  const confidenceLabels = { high: 'Élevée', medium: 'Moyenne', low: 'Faible' };
 
   const popup = document.createElement('div');
   popup.className = 'amb-popup';
   popup.onclick = (e) => e.stopPropagation();
   popup.innerHTML = `
-    <div class="amb-original">${escHtml(t('original'))}: <strong>${escHtml(originalWord)}</strong></div>
-    <div class="amb-suggestion">${escHtml(t('corrected'))}: ${escHtml(suggestion || '—')}</div>
-    <input type="text" id="ambCustomInput" placeholder="${escHtml(suggestion || originalWord)}" value="${escHtml(suggestion)}">
-    <div class="amb-popup-btns">
-      <button class="btn btn-primary" onclick="applyCorrection(this, ${index})">${escHtml(t('correct'))}</button>
-      <button class="btn btn-secondary" onclick="ignoreCorrection(this, ${index})">${escHtml(t('ignore'))}</button>
+    <div style="margin-bottom:8px">
+      <span style="font-size:11px;padding:2px 6px;border-radius:10px;background:${confidenceColors[confidence] || '#94a3b8'}22;color:${confidenceColors[confidence] || '#94a3b8'};font-weight:600">${confidenceLabels[confidence] || confidence}</span>
+    </div>
+    <div style="margin-bottom:4px"><strong>${escHtml(t('original'))}:</strong> ${escHtml(originalWord)}</div>
+    <div style="margin-bottom:4px"><strong>${escHtml(t('corrected'))}:</strong> ${escHtml(suggestion || '—')}</div>
+    ${reason ? '<div style="margin-bottom:8px;font-size:12px;color:var(--text-secondary)"><em>' + escHtml(reason) + '</em></div>' : ''}
+    <input type="text" id="ambCustomInput" placeholder="${escHtml(suggestion || originalWord)}" value="${escHtml(suggestion)}" style="width:100%;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;margin-bottom:8px">
+    <div class="amb-popup-btns" style="display:flex;gap:6px">
+      <button class="btn btn-primary" style="flex:1;padding:6px" onclick="applyCorrection(this, ${index})">${escHtml(t('correct'))}</button>
+      <button class="btn btn-secondary" style="flex:1;padding:6px" onclick="ignoreCorrection(this, ${index})">${escHtml(t('ignore'))}</button>
     </div>
   `;
 
