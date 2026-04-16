@@ -584,6 +584,254 @@
   .btn-danger:hover { background: #dc2626; color: white; border-color: #dc2626; }
 
   .cat-popover-wrap { position: relative; display: inline-flex; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs { display: flex; gap: 0; margin-left: 16px; }
+  .nav-tab {
+    padding: 10px 24px; font-size: 14px; font-weight: 600;
+    border: none; background: transparent; cursor: pointer;
+    color: var(--text-secondary); border-bottom: 2px solid transparent;
+    transition: all .15s; font-family: var(--font);
+  }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-tab:hover { color: var(--text-primary); }
+
+  /* ── AUTH ── */
+  .auth-area { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .auth-user { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .btn-logout {
+    padding: 5px 12px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border);
+    border-radius: var(--radius-pill); background: transparent; color: var(--text-secondary);
+    cursor: pointer; font-family: var(--font); transition: all .15s;
+  }
+  .btn-logout:hover { background: var(--bg); color: var(--text-primary); }
+  .btn-history {
+    padding: 5px 14px; font-size: 12px; font-weight: 600; border: 1.5px solid var(--accent);
+    border-radius: var(--radius-pill); background: var(--accent-light); color: var(--accent);
+    cursor: pointer; font-family: var(--font); transition: all .15s;
+  }
+  .btn-history:hover { background: var(--accent); color: white; }
+
+  .auth-modal {
+    max-width: 400px; width: 90%; background: var(--surface);
+    border-radius: 16px; padding: 32px;
+    box-shadow: var(--shadow-lg); animation: slideUp .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .auth-modal h2 { font-size: 22px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+  .auth-modal .form-field { margin-bottom: 16px; }
+  .auth-modal .form-field input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 14px; font-family: var(--font);
+    background: var(--bg); color: var(--text-primary); transition: border-color .15s;
+  }
+  .auth-modal .form-field input:focus { outline: none; border-color: var(--accent); }
+  .auth-modal .form-field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+  .auth-error { color: #dc2626; font-size: 13px; margin-bottom: 12px; text-align: center; display: none; }
+  .auth-toggle { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-secondary); }
+  .auth-toggle a { color: var(--accent); cursor: pointer; font-weight: 600; text-decoration: none; }
+  .auth-toggle a:hover { text-decoration: underline; }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 60px 40px; text-align: center; cursor: pointer;
+    transition: all .2s; max-width: 600px; margin: 40px auto;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent); background: var(--accent-light);
+  }
+  .upload-icon { font-size: 48px; margin-bottom: 16px; }
+  .upload-file-info { margin-top: 16px; font-size: 14px; color: var(--text-secondary); }
+  .upload-file-info strong { color: var(--text-primary); }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    width: 100%; height: 8px; background: var(--border);
+    border-radius: 4px; overflow: hidden; margin: 16px 0;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), #a855f7);
+    border-radius: 4px; transition: width .3s; width: 0%;
+  }
+
+  /* ── PROCESSING ── */
+  .processing-view { text-align: center; padding: 60px 20px; }
+  .processing-spinner {
+    width: 48px; height: 48px; border: 4px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 1s linear infinite; margin: 0 auto 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── VALIDATION ── */
+  .validation-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+  .toggle-btn {
+    padding: 8px 18px; border-radius: var(--radius-pill); border: 1.5px solid var(--border);
+    background: var(--surface); cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all .15s; font-family: var(--font);
+  }
+  .toggle-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  .transcript-text {
+    font-size: 14px; line-height: 1.8; padding: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); max-height: 500px; overflow-y: auto;
+    white-space: pre-wrap;
+  }
+  .ambiguous {
+    background: #fef3c7; border-bottom: 2px solid #f59e0b;
+    cursor: pointer; padding: 1px 3px; border-radius: 3px;
+    position: relative; display: inline;
+  }
+  .ambiguous:hover { background: #fde68a; }
+
+  .amb-popup {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--shadow-md);
+    z-index: 300; width: 260px; white-space: normal; font-size: 13px;
+  }
+  .amb-popup .amb-original { color: var(--text-muted); margin-bottom: 6px; }
+  .amb-popup .amb-suggestion { color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  .amb-popup input {
+    width: 100%; padding: 6px 10px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 13px; font-family: var(--font);
+    margin-bottom: 8px;
+  }
+  .amb-popup input:focus { outline: none; border-color: var(--accent); }
+  .amb-popup-btns { display: flex; gap: 6px; }
+  .amb-popup-btns .btn { padding: 5px 12px; font-size: 12px; }
+
+  .amb-counter {
+    font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .amb-counter strong { color: var(--accent); font-size: 16px; }
+
+  /* Correction log */
+  .correction-log { margin-top: 16px; }
+  .correction-item {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    margin-bottom: 6px; font-size: 13px; line-height: 1.5;
+  }
+  .correction-item del { color: #dc2626; }
+  .correction-item strong { color: #10b981; }
+  .correction-item em { color: var(--text-muted); font-size: 12px; }
+
+  /* ── RESULT ── */
+  .result-view { max-width: 900px; margin: 20px auto; }
+  .result-header { margin-bottom: 16px; }
+  .result-header h3 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .result-meta { font-size: 13px; color: var(--text-muted); }
+  .result-content {
+    padding: 24px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); font-size: 14px; line-height: 1.7;
+    white-space: pre-wrap; max-height: 600px; overflow-y: auto;
+  }
+  .result-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+  /* ── WIZARD STEPS ── */
+  .wizard-steps {
+    display: flex; justify-content: center; gap: 4px; margin: 24px 0;
+    padding: 0 20px; flex-wrap: wrap;
+  }
+  .wizard-step {
+    display: flex; align-items: center; gap: 6px; font-size: 12px;
+    color: var(--text-muted); font-weight: 500;
+  }
+  .wizard-step.active { color: var(--accent); }
+  .wizard-step.done { color: #10b981; }
+  .wizard-step-dot {
+    width: 28px; height: 28px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 12px;
+    font-weight: 700; border: 2px solid var(--border);
+    color: var(--text-muted); flex-shrink: 0;
+  }
+  .wizard-step.active .wizard-step-dot { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .wizard-step.done .wizard-step-dot { border-color: #10b981; color: white; background: #10b981; }
+  .wizard-step-line { width: 32px; height: 2px; background: var(--border); flex-shrink: 0; }
+  .wizard-step.done + .wizard-step-line,
+  .wizard-step-line.done { background: #10b981; }
+
+  /* ── HISTORY PANEL ── */
+  .history-panel {
+    position: fixed; right: 0; top: 0; bottom: 0; width: 380px;
+    background: var(--surface); box-shadow: -4px 0 20px rgba(0,0,0,.1);
+    z-index: 200; transform: translateX(100%); transition: transform .3s;
+    display: flex; flex-direction: column;
+  }
+  .history-panel.open { transform: translateX(0); }
+  .history-panel-header {
+    padding: 20px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .history-panel-header h3 { font-size: 16px; font-weight: 700; }
+  .history-list { flex: 1; overflow-y: auto; padding: 12px; }
+  .history-item {
+    padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    margin-bottom: 8px; cursor: pointer; transition: all .15s;
+  }
+  .history-item:hover { border-color: var(--accent); background: var(--accent-light); }
+  .history-item-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .history-item-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .history-item-preview { font-size: 12px; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .history-item-delete {
+    float: right; background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 14px; padding: 2px 4px; transition: color .15s;
+  }
+  .history-item-delete:hover { color: #dc2626; }
+  .history-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; }
+  .history-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.2);
+    z-index: 199;
+  }
+  .history-overlay.open { display: block; }
+
+  /* ── TEMPLATE SELECTION MODE ── */
+  .card.selectable { cursor: pointer; }
+  .card.selectable:hover { border-color: var(--accent); }
+  .card.selectable.selected {
+    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,.2);
+    background: var(--accent-light);
+  }
+  .selected-template-preview {
+    margin-top: 16px; padding: 16px; border: 1px solid var(--border);
+    border-radius: var(--radius); background: var(--surface);
+  }
+  .selected-template-preview h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .selected-template-preview .prompt-block { max-height: 150px; font-size: 11px; }
+
+  /* ── TRANSCRIPTION SECTION ── */
+  #transcriptionSection { display: none; max-width: 1400px; margin: 0 auto; padding: 28px 32px 60px; }
+  #transcriptionSection.visible { display: block; }
+  .wizard-content > div { display: none; }
+  .wizard-content > div.active { display: block; }
+
+  .new-transcription-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px; border-radius: var(--radius-pill);
+    border: 1.5px solid var(--accent); background: var(--accent-light);
+    color: var(--accent); font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: var(--font); transition: all .15s;
+    margin-bottom: 20px;
+  }
+  .new-transcription-btn:hover { background: var(--accent); color: white; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .nav-tabs { margin-left: 0; }
+    .nav-tab { padding: 8px 14px; font-size: 13px; }
+    .auth-area { gap: 6px; }
+    .auth-user { display: none; }
+    .header-inner { gap: 10px; }
+    #transcriptionSection { padding: 20px 16px 40px; }
+    .upload-zone { padding: 40px 20px; }
+    .history-panel { width: 100%; }
+    .wizard-steps { gap: 2px; }
+    .wizard-step span { display: none; }
+    .wizard-step-line { width: 16px; }
+    .amb-popup { width: 220px; }
+  }
 </style>
 </head>
 <body>
@@ -593,12 +841,19 @@
   <div class="header-inner">
     <div class="header-brand">
       <div class="header-logo">P</div>
-      <h1 class="header-title">PLAUD Templates</h1>
-      <span class="header-count" id="totalBadge"></span>
+      <h1 class="header-title">PLAUD</h1>
     </div>
-    <div class="search-wrap">
+    <div class="nav-tabs">
+      <button class="nav-tab active" id="tabTemplates" onclick="switchTab('templates')">Templates</button>
+      <button class="nav-tab" id="tabTranscription" onclick="switchTab('transcription')">Transcription</button>
+    </div>
+    <div class="search-wrap" id="searchWrap">
       <span class="search-icon">🔍</span>
       <input type="search" class="search-input" id="searchInput" placeholder="Rechercher un template…" autocomplete="off">
+    </div>
+    <span class="header-count" id="totalBadge"></span>
+    <div class="auth-area" id="authArea">
+      <!-- Populated by JS -->
     </div>
     <div class="lang-switcher">
       <button class="flag-btn active" id="flagFr" onclick="switchLang('fr')" title="Français">🇫🇷</button>
@@ -607,29 +862,201 @@
   </div>
 </header>
 
-<!-- TOOLBAR -->
-<div class="toolbar">
-  <div class="toolbar-inner">
-    <div class="category-pills" id="categoryPills"></div>
-    <div class="toolbar-right">
-      <span class="sort-label" id="sortLabel">Trier&nbsp;:</span>
-      <select class="sort-select" id="sortSelect">
-        <option value="popular" id="sortOptPopular">Plus populaire</option>
-        <option value="az">A → Z</option>
-        <option value="za">Z → A</option>
-      </select>
-      <button class="add-template-btn" id="addTemplateBtn" onclick="openTemplateForm()">+ Ajouter un template</button>
+<!-- TEMPLATES SECTION -->
+<div id="templatesSection">
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-inner">
+      <div class="category-pills" id="categoryPills"></div>
+      <div class="toolbar-right">
+        <span class="sort-label" id="sortLabel">Trier&nbsp;:</span>
+        <select class="sort-select" id="sortSelect">
+          <option value="popular" id="sortOptPopular">Plus populaire</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+        </select>
+        <button class="add-template-btn" id="addTemplateBtn" onclick="openTemplateForm()">+ Ajouter un template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="stats-bar">
+      <span id="statsText"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<!-- TRANSCRIPTION SECTION -->
+<section id="transcriptionSection">
+  <button class="new-transcription-btn" id="newTranscriptionBtn" onclick="resetWizard()">+ Nouvelle transcription</button>
+
+  <!-- Wizard Steps Indicator -->
+  <div class="wizard-steps" id="wizardSteps">
+    <div class="wizard-step active" data-step="1">
+      <div class="wizard-step-dot">1</div>
+      <span id="wsLabel1">Upload</span>
+    </div>
+    <div class="wizard-step-line"></div>
+    <div class="wizard-step" data-step="2">
+      <div class="wizard-step-dot">2</div>
+      <span id="wsLabel2">Transcription</span>
+    </div>
+    <div class="wizard-step-line"></div>
+    <div class="wizard-step" data-step="3">
+      <div class="wizard-step-dot">3</div>
+      <span id="wsLabel3">Validation</span>
+    </div>
+    <div class="wizard-step-line"></div>
+    <div class="wizard-step" data-step="4">
+      <div class="wizard-step-dot">4</div>
+      <span id="wsLabel4">Template</span>
+    </div>
+    <div class="wizard-step-line"></div>
+    <div class="wizard-step" data-step="5">
+      <div class="wizard-step-dot">5</div>
+      <span id="wsLabel5">Résultat</span>
+    </div>
+  </div>
+
+  <!-- Wizard Content -->
+  <div class="wizard-content" id="wizardContent">
+    <!-- Step 1: Upload -->
+    <div id="step1" class="active">
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">🎙️</div>
+        <h3 id="uploadTitle">Déposez votre fichier audio ou vidéo</h3>
+        <p style="color:var(--text-secondary); margin: 8px 0 20px" id="uploadFormats">MP3, WAV, M4A, MP4, MKV, AVI, MOV, WEBM, OGG, FLAC, AAC — jusqu'à 5h</p>
+        <input type="file" id="fileInput" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.mkv,.avi,.mov,.webm,.ogg,.flac,.aac" hidden>
+        <button class="btn btn-primary" id="uploadBtn" onclick="document.getElementById('fileInput').click()">Choisir un fichier</button>
+        <div class="upload-file-info" id="uploadFileInfo" style="display:none"></div>
+        <div class="progress-bar" id="uploadProgress" style="display:none; max-width:400px; margin:16px auto 0">
+          <div class="progress-fill" id="uploadProgressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Processing -->
+    <div id="step2">
+      <div class="processing-view">
+        <div class="processing-spinner"></div>
+        <h3 id="processingTitle">Transcription en cours...</h3>
+        <div class="progress-bar" style="max-width:400px; margin:16px auto">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p style="color:var(--text-secondary)" id="progressText">Extraction audio...</p>
+      </div>
+    </div>
+
+    <!-- Step 3: Validation -->
+    <div id="step3">
+      <div class="validation-toggle" id="validationToggle">
+        <button class="toggle-btn active" id="toggleInline" onclick="setValidationMode('inline')">✏️ Correction manuelle</button>
+        <button class="toggle-btn" id="toggleAuto" onclick="setValidationMode('auto')">🤖 Auto-correction</button>
+      </div>
+
+      <!-- Inline mode -->
+      <div id="validationInline">
+        <div class="amb-counter" id="ambCounter"></div>
+        <div class="transcript-text" id="transcriptText"></div>
+        <div style="text-align:center; margin-top:20px">
+          <button class="btn btn-primary" id="validateBtn" onclick="validateTranscript()">Valider la transcription</button>
+        </div>
+      </div>
+
+      <!-- Auto mode -->
+      <div id="validationAuto" style="display:none">
+        <div style="text-align:center; padding:20px">
+          <button class="btn btn-primary" id="launchAutoBtn" onclick="launchAutoCorrection()">Lancer la correction automatique</button>
+          <div id="autoLoading" style="display:none; margin-top:20px">
+            <div class="processing-spinner"></div>
+          </div>
+          <div id="autoCorrectionResult" style="display:none; text-align:left; margin-top:20px">
+            <div class="transcript-text" id="autoCorrectedText"></div>
+            <h4 style="margin-top:16px; font-size:14px; font-weight:600" id="correctionLogTitle">Journal des corrections</h4>
+            <div class="correction-log" id="correctionLog"></div>
+            <div style="text-align:center; margin-top:20px">
+              <button class="btn btn-primary" id="acceptCorrectionsBtn" onclick="acceptAutoCorrections()">Accepter les corrections</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Choose Template -->
+    <div id="step4">
+      <h3 style="margin-bottom:16px" id="chooseTemplateTitle">Choisissez un template</h3>
+      <div class="search-wrap" style="max-width:400px; margin-bottom:16px">
+        <span class="search-icon">🔍</span>
+        <input type="search" class="search-input" id="templateSearchInput" placeholder="Rechercher un template…" autocomplete="off">
+      </div>
+      <div class="category-pills" id="templateCategoryPills" style="margin-bottom:16px"></div>
+      <div class="grid" id="templateGrid"></div>
+      <div class="selected-template-preview" id="selectedTemplatePreview" style="display:none">
+        <h4 id="selectedTemplateName"></h4>
+        <div class="prompt-block" id="selectedTemplatePrompt"></div>
+      </div>
+      <div style="text-align:center; margin-top:20px">
+        <button class="btn btn-primary" id="launchProcessingBtn" onclick="launchProcessing()" disabled>Lancer le traitement</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Result -->
+    <div id="step5">
+      <div class="result-view">
+        <div class="result-header">
+          <h3 id="resultTitle">Résultat</h3>
+          <div class="result-meta" id="resultMeta"></div>
+        </div>
+        <div class="result-content" id="resultContent"></div>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="copyResult()">📋 Copier</button>
+          <button class="btn btn-secondary" onclick="exportPDF()">📄 PDF</button>
+          <button class="btn btn-secondary" onclick="exportMD()">📝 Markdown</button>
+          <button class="btn btn-secondary" onclick="sendEmail()">📧 Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORY PANEL -->
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+<div class="history-panel" id="historyPanel">
+  <div class="history-panel-header">
+    <h3 id="historyTitle">📋 Historique</h3>
+    <button class="close-btn" onclick="toggleHistory()" aria-label="Fermer">×</button>
+  </div>
+  <div class="history-list" id="historyList"></div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-backdrop" id="authBackdrop">
+  <div class="auth-modal">
+    <h2 id="authModalTitle">Connexion</h2>
+    <div class="auth-error" id="authError"></div>
+    <form id="authForm" onsubmit="return false">
+      <div class="form-field" id="authNameField" style="display:none">
+        <label id="authNameLabel">Nom</label>
+        <input type="text" id="authName" autocomplete="name">
+      </div>
+      <div class="form-field">
+        <label id="authEmailLabel">Email</label>
+        <input type="email" id="authEmail" required autocomplete="email">
+      </div>
+      <div class="form-field">
+        <label id="authPasswordLabel">Mot de passe</label>
+        <input type="password" id="authPassword" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" style="width:100%; padding:11px" id="authSubmitBtn" onclick="submitAuth()">Se connecter</button>
+    </form>
+    <div class="auth-toggle" id="authToggle">
+      Pas de compte ? <a onclick="toggleAuthMode()">S'inscrire</a>
     </div>
   </div>
 </div>
-
-<!-- MAIN -->
-<main class="main">
-  <div class="stats-bar">
-    <span id="statsText"></span>
-  </div>
-  <div class="grid" id="grid"></div>
-</main>
 
 <!-- MODAL -->
 <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -673,7 +1100,46 @@ const i18n = {
     confirmDelete: 'Supprimer ce template ?', custom: 'Perso',
     catName: 'Nom de la cat\u00e9gorie', catColor: 'Couleur',
     addCatTitle: 'Nouvelle cat\u00e9gorie', requiredField: 'Ce champ est requis',
-    newTemplate: 'Nouveau template', editTemplate: 'Modifier le template'
+    newTemplate: 'Nouveau template', editTemplate: 'Modifier le template',
+    tabTemplates: 'Templates', tabTranscription: 'Transcription',
+    uploadTitle: 'D\u00e9posez votre fichier audio ou vid\u00e9o',
+    uploadFormats: 'MP3, WAV, M4A, MP4, MKV, AVI, MOV, WEBM \u2014 jusqu\u0027\u00e0 5h',
+    uploadBtn: 'Choisir un fichier', uploading: 'Upload en cours...',
+    extractingAudio: 'Extraction de l\u0027audio...',
+    splitting: 'D\u00e9coupage du fichier...',
+    transcribing: 'Transcription en cours...',
+    detectingAmbiguous: 'D\u00e9tection des termes ambigus...',
+    transcriptionDone: 'Transcription termin\u00e9e',
+    manualCorrection: '\u270f\ufe0f Correction manuelle',
+    autoCorrection: '\ud83e\udd16 Auto-correction',
+    ambiguousRemaining: 'termes ambigus restants',
+    validateTranscript: 'Valider la transcription',
+    launchAutoCorrect: 'Lancer la correction automatique',
+    acceptCorrections: 'Accepter les corrections',
+    chooseTemplate: 'Choisissez un template',
+    selectedTemplate: 'Template s\u00e9lectionn\u00e9',
+    launchProcessing: 'Lancer le traitement',
+    processing: 'Traitement en cours...',
+    result: 'R\u00e9sultat',
+    copyResult: '\ud83d\udccb Copier', exportPdf: '\ud83d\udcc4 PDF',
+    exportMd: '\ud83d\udcdd Markdown', sendByEmail: '\ud83d\udce7 Email',
+    history: '\ud83d\udccb Historique',
+    noHistory: 'Aucun r\u00e9sultat pour l\u0027instant',
+    login: 'Connexion', register: 'Inscription',
+    email: 'Email', password: 'Mot de passe', name: 'Nom',
+    loginBtn: 'Se connecter', registerBtn: 'S\u0027inscrire',
+    noAccount: 'Pas de compte ?', hasAccount: 'D\u00e9j\u00e0 un compte ?',
+    logout: 'D\u00e9connexion',
+    loginRequired: 'Connectez-vous pour utiliser la transcription',
+    step1: 'Upload', step2: 'Transcription', step3: 'Validation',
+    step4: 'Template', step5: 'R\u00e9sultat',
+    newTranscription: '+ Nouvelle transcription',
+    errorOccurred: 'Une erreur est survenue', retry: 'R\u00e9essayer',
+    emailPrompt: 'Adresse email du destinataire :',
+    emailSent: 'Email envoy\u00e9 !',
+    correctionLog: 'Journal des corrections',
+    original: 'Original', corrected: 'Corrig\u00e9',
+    reason: 'Raison', ignore: 'Ignorer', correct: 'Corriger'
   },
   en: {
     searchPlaceholder: 'Search a template\u2026',
@@ -694,7 +1160,46 @@ const i18n = {
     confirmDelete: 'Delete this template?', custom: 'Custom',
     catName: 'Category name', catColor: 'Color',
     addCatTitle: 'New category', requiredField: 'This field is required',
-    newTemplate: 'New template', editTemplate: 'Edit template'
+    newTemplate: 'New template', editTemplate: 'Edit template',
+    tabTemplates: 'Templates', tabTranscription: 'Transcription',
+    uploadTitle: 'Drop your audio or video file',
+    uploadFormats: 'MP3, WAV, M4A, MP4, MKV, AVI, MOV, WEBM \u2014 up to 5h',
+    uploadBtn: 'Choose a file', uploading: 'Uploading...',
+    extractingAudio: 'Extracting audio...',
+    splitting: 'Splitting file...',
+    transcribing: 'Transcribing...',
+    detectingAmbiguous: 'Detecting ambiguous terms...',
+    transcriptionDone: 'Transcription complete',
+    manualCorrection: '\u270f\ufe0f Manual correction',
+    autoCorrection: '\ud83e\udd16 Auto-correction',
+    ambiguousRemaining: 'ambiguous terms remaining',
+    validateTranscript: 'Validate transcription',
+    launchAutoCorrect: 'Launch auto-correction',
+    acceptCorrections: 'Accept corrections',
+    chooseTemplate: 'Choose a template',
+    selectedTemplate: 'Selected template',
+    launchProcessing: 'Start processing',
+    processing: 'Processing...',
+    result: 'Result',
+    copyResult: '\ud83d\udccb Copy', exportPdf: '\ud83d\udcc4 PDF',
+    exportMd: '\ud83d\udcdd Markdown', sendByEmail: '\ud83d\udce7 Email',
+    history: '\ud83d\udccb History',
+    noHistory: 'No results yet',
+    login: 'Login', register: 'Register',
+    email: 'Email', password: 'Password', name: 'Name',
+    loginBtn: 'Sign in', registerBtn: 'Sign up',
+    noAccount: 'No account?', hasAccount: 'Already have an account?',
+    logout: 'Sign out',
+    loginRequired: 'Sign in to use transcription',
+    step1: 'Upload', step2: 'Transcription', step3: 'Validation',
+    step4: 'Template', step5: 'Result',
+    newTranscription: '+ New transcription',
+    errorOccurred: 'An error occurred', retry: 'Retry',
+    emailPrompt: 'Recipient email address:',
+    emailSent: 'Email sent!',
+    correctionLog: 'Correction log',
+    original: 'Original', corrected: 'Corrected',
+    reason: 'Reason', ignore: 'Ignore', correct: 'Correct'
   }
 };
 
@@ -1205,9 +1710,780 @@ closeModal = function() {
   document.getElementById('closeBtn2').textContent = t('close');
 };
 
-// Init
+// ═══════════════════════════════════════════════════════════════════
+// AUTH + TRANSCRIPTION MODULE
+// ═══════════════════════════════════════════════════════════════════
+
+let authToken = localStorage.getItem('plaud_token');
+let currentUser = null;
+let authMode = 'login'; // 'login' or 'register'
+let currentTab = 'templates';
+
+// Transcription state
+let currentJobId = null;
+let currentJobData = null;
+let currentWizardStep = 1;
+let validationMode = 'inline';
+let selectedTemplateIdx = null;
+let currentResultId = null;
+let pollingInterval = null;
+let templateSearchQuery = '';
+let templateActiveCategory = 'Toutes';
+let historyItems = [];
+
+// ── API helper ──
+function apiHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+  return h;
+}
+
+function apiHeadersNoJson() {
+  const h = {};
+  if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+  return h;
+}
+
+// ── AUTH ──
+async function checkAuth() {
+  if (!authToken) { currentUser = null; renderAuthArea(); return; }
+  try {
+    const res = await fetch('/api/auth/me', { headers: apiHeaders() });
+    if (res.ok) {
+      currentUser = await res.json();
+    } else {
+      authToken = null; currentUser = null;
+      localStorage.removeItem('plaud_token');
+    }
+  } catch(e) {
+    console.error('Auth check failed:', e);
+  }
+  renderAuthArea();
+}
+
+function renderAuthArea() {
+  const area = document.getElementById('authArea');
+  if (currentUser) {
+    area.innerHTML = `
+      <button class="btn-history" onclick="toggleHistory()">${escHtml(t('history'))}</button>
+      <span class="auth-user">${escHtml(currentUser.name || currentUser.email)}</span>
+      <button class="btn-logout" onclick="doLogout()">${escHtml(t('logout'))}</button>
+    `;
+  } else {
+    area.innerHTML = '';
+  }
+}
+
+function openAuthModal() {
+  authMode = 'login';
+  renderAuthModal();
+  document.getElementById('authBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAuthModal() {
+  document.getElementById('authBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('authError').style.display = 'none';
+}
+
+function renderAuthModal() {
+  const isLogin = authMode === 'login';
+  document.getElementById('authModalTitle').textContent = isLogin ? t('login') : t('register');
+  document.getElementById('authNameField').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('authNameLabel').textContent = t('name');
+  document.getElementById('authEmailLabel').textContent = t('email');
+  document.getElementById('authPasswordLabel').textContent = t('password');
+  document.getElementById('authSubmitBtn').textContent = isLogin ? t('loginBtn') : t('registerBtn');
+  document.getElementById('authToggle').innerHTML = isLogin
+    ? escHtml(t('noAccount')) + ' <a onclick="toggleAuthMode()">' + escHtml(t('register')) + '</a>'
+    : escHtml(t('hasAccount')) + ' <a onclick="toggleAuthMode()">' + escHtml(t('login')) + '</a>';
+  document.getElementById('authError').style.display = 'none';
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  renderAuthModal();
+}
+
+async function submitAuth() {
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+  const errEl = document.getElementById('authError');
+
+  if (!email || !password) { errEl.textContent = 'Email et mot de passe requis'; errEl.style.display = 'block'; return; }
+  if (authMode === 'register' && !name) { errEl.textContent = t('requiredField'); errEl.style.display = 'block'; return; }
+
+  const url = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+  const body = authMode === 'login' ? { email, password } : { name, email, password };
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.message || data.error || t('errorOccurred'); errEl.style.display = 'block'; return; }
+    authToken = data.token;
+    localStorage.setItem('plaud_token', authToken);
+    currentUser = data.user || { name, email };
+    closeAuthModal();
+    renderAuthArea();
+    showTranscriptionUI();
+  } catch(e) {
+    errEl.textContent = t('errorOccurred');
+    errEl.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  authToken = null; currentUser = null;
+  localStorage.removeItem('plaud_token');
+  renderAuthArea();
+  if (currentTab === 'transcription') {
+    switchTab('templates');
+  }
+}
+
+// ── TAB SWITCHING ──
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabTemplates').className = 'nav-tab' + (tab === 'templates' ? ' active' : '');
+  document.getElementById('tabTranscription').className = 'nav-tab' + (tab === 'transcription' ? ' active' : '');
+
+  if (tab === 'templates') {
+    document.getElementById('templatesSection').style.display = '';
+    document.getElementById('transcriptionSection').classList.remove('visible');
+    document.getElementById('searchWrap').style.display = '';
+    document.getElementById('totalBadge').style.display = '';
+  } else {
+    // transcription tab
+    if (!authToken || !currentUser) {
+      openAuthModal();
+      return;
+    }
+    document.getElementById('templatesSection').style.display = 'none';
+    document.getElementById('searchWrap').style.display = 'none';
+    document.getElementById('totalBadge').style.display = 'none';
+    showTranscriptionUI();
+  }
+  updateTabLabels();
+}
+
+function showTranscriptionUI() {
+  document.getElementById('transcriptionSection').classList.add('visible');
+}
+
+function updateTabLabels() {
+  document.getElementById('tabTemplates').textContent = t('tabTemplates');
+  document.getElementById('tabTranscription').textContent = t('tabTranscription');
+}
+
+// ── AUTH MODAL EVENTS ──
+document.getElementById('authBackdrop').onclick = function(e) {
+  if (e.target === this) closeAuthModal();
+};
+
+// ── WIZARD ──
+function setWizardStep(step) {
+  currentWizardStep = step;
+  // Update step indicators
+  document.querySelectorAll('#wizardSteps .wizard-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done');
+    if (s === step) el.classList.add('active');
+    else if (s < step) el.classList.add('done');
+  });
+  // Update step lines
+  const lines = document.querySelectorAll('#wizardSteps .wizard-step-line');
+  lines.forEach((line, i) => {
+    line.classList.toggle('done', i < step - 1);
+  });
+  // Show/hide content
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step' + i);
+    if (el) el.classList.toggle('active', i === step);
+  }
+  updateWizardLabels();
+}
+
+function updateWizardLabels() {
+  document.getElementById('wsLabel1').textContent = t('step1');
+  document.getElementById('wsLabel2').textContent = t('step2');
+  document.getElementById('wsLabel3').textContent = t('step3');
+  document.getElementById('wsLabel4').textContent = t('step4');
+  document.getElementById('wsLabel5').textContent = t('step5');
+  document.getElementById('newTranscriptionBtn').textContent = t('newTranscription');
+  document.getElementById('uploadTitle').textContent = t('uploadTitle');
+  document.getElementById('uploadFormats').textContent = t('uploadFormats');
+  document.getElementById('uploadBtn').textContent = t('uploadBtn');
+  document.getElementById('toggleInline').textContent = t('manualCorrection');
+  document.getElementById('toggleAuto').textContent = t('autoCorrection');
+  document.getElementById('validateBtn').textContent = t('validateTranscript');
+  document.getElementById('launchAutoBtn').textContent = t('launchAutoCorrect');
+  document.getElementById('acceptCorrectionsBtn').textContent = t('acceptCorrections');
+  document.getElementById('chooseTemplateTitle').textContent = t('chooseTemplate');
+  document.getElementById('launchProcessingBtn').textContent = t('launchProcessing');
+  document.getElementById('resultTitle').textContent = t('result');
+  document.getElementById('correctionLogTitle').textContent = t('correctionLog');
+}
+
+function resetWizard() {
+  currentJobId = null;
+  currentJobData = null;
+  selectedTemplateIdx = null;
+  currentResultId = null;
+  if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
+  document.getElementById('uploadFileInfo').style.display = 'none';
+  document.getElementById('uploadProgress').style.display = 'none';
+  document.getElementById('uploadProgressFill').style.width = '0%';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('launchProcessingBtn').disabled = true;
+  document.getElementById('selectedTemplatePreview').style.display = 'none';
+  setWizardStep(1);
+}
+
+// ── STEP 1: UPLOAD ──
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+
+uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => { uploadZone.classList.remove('dragover'); });
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+});
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+  return (bytes / 1073741824).toFixed(2) + ' GB';
+}
+
+async function handleFile(file) {
+  const info = document.getElementById('uploadFileInfo');
+  info.innerHTML = '<strong>' + escHtml(file.name) + '</strong> (' + formatFileSize(file.size) + ')';
+  info.style.display = 'block';
+
+  const progressBar = document.getElementById('uploadProgress');
+  const progressFill = document.getElementById('uploadProgressFill');
+  progressBar.style.display = 'block';
+  progressFill.style.width = '0%';
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/transcribe');
+    if (authToken) xhr.setRequestHeader('Authorization', 'Bearer ' + authToken);
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        progressFill.style.width = Math.round((e.loaded / e.total) * 100) + '%';
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const data = JSON.parse(xhr.responseText);
+        currentJobId = data.id || data.jobId;
+        currentJobData = data;
+        setWizardStep(2);
+        startPolling();
+      } else {
+        let msg = t('errorOccurred');
+        try { msg = JSON.parse(xhr.responseText).message || msg; } catch(e) {}
+        info.innerHTML = '<span style="color:#dc2626">' + escHtml(msg) + '</span> <button class="btn btn-secondary" onclick="resetWizard()" style="margin-left:10px">' + escHtml(t('retry')) + '</button>';
+        progressBar.style.display = 'none';
+      }
+    };
+
+    xhr.onerror = () => {
+      info.innerHTML = '<span style="color:#dc2626">' + escHtml(t('errorOccurred')) + '</span>';
+      progressBar.style.display = 'none';
+    };
+
+    xhr.send(formData);
+  } catch(e) {
+    info.innerHTML = '<span style="color:#dc2626">' + escHtml(t('errorOccurred')) + '</span>';
+    progressBar.style.display = 'none';
+  }
+}
+
+// ── STEP 2: POLLING ──
+function startPolling() {
+  if (pollingInterval) clearInterval(pollingInterval);
+  pollingInterval = setInterval(pollJob, 3000);
+  pollJob(); // immediate first poll
+}
+
+async function pollJob() {
+  if (!currentJobId) return;
+  try {
+    const res = await fetch('/api/transcribe/' + currentJobId, { headers: apiHeaders() });
+    if (!res.ok) return;
+    const job = await res.json();
+    currentJobData = job;
+
+    const fill = document.getElementById('progressFill');
+    const text = document.getElementById('progressText');
+    const title = document.getElementById('processingTitle');
+
+    switch(job.status) {
+      case 'extracting_audio':
+        fill.style.width = '15%'; text.textContent = t('extractingAudio'); title.textContent = t('transcribing');
+        break;
+      case 'splitting':
+        fill.style.width = '30%'; text.textContent = t('splitting'); title.textContent = t('transcribing');
+        break;
+      case 'transcribing':
+        const pct = job.chunks_done && job.chunks_total ? Math.round(30 + (job.chunks_done / job.chunks_total) * 45) : 50;
+        fill.style.width = pct + '%';
+        text.textContent = t('transcribing') + (job.chunks_done ? ' (' + job.chunks_done + '/' + job.chunks_total + ' chunks)' : '');
+        title.textContent = t('transcribing');
+        break;
+      case 'detecting_ambiguous':
+        fill.style.width = '85%'; text.textContent = t('detectingAmbiguous'); title.textContent = t('transcribing');
+        break;
+      case 'ready_for_validation':
+        fill.style.width = '100%'; text.textContent = t('transcriptionDone');
+        clearInterval(pollingInterval); pollingInterval = null;
+        showValidationStep(job);
+        break;
+      case 'error':
+        clearInterval(pollingInterval); pollingInterval = null;
+        text.innerHTML = '<span style="color:#dc2626">' + escHtml(job.error || t('errorOccurred')) + '</span>';
+        title.textContent = t('errorOccurred');
+        text.innerHTML += ' <button class="btn btn-secondary" onclick="resetWizard()" style="margin-top:10px">' + escHtml(t('retry')) + '</button>';
+        break;
+    }
+  } catch(e) {
+    console.error('Poll error:', e);
+  }
+}
+
+// ── STEP 3: VALIDATION ──
+function showValidationStep(job) {
+  setWizardStep(3);
+  renderTranscript(job);
+}
+
+function setValidationMode(mode) {
+  validationMode = mode;
+  document.getElementById('toggleInline').classList.toggle('active', mode === 'inline');
+  document.getElementById('toggleAuto').classList.toggle('active', mode === 'auto');
+  document.getElementById('validationInline').style.display = mode === 'inline' ? '' : 'none';
+  document.getElementById('validationAuto').style.display = mode === 'auto' ? '' : 'none';
+}
+
+function renderTranscript(job) {
+  const text = job.transcript || job.text || '';
+  const ambiguous = job.ambiguous || [];
+
+  if (ambiguous.length === 0) {
+    document.getElementById('transcriptText').textContent = text;
+    document.getElementById('ambCounter').innerHTML = '';
+    return;
+  }
+
+  // Build transcript with ambiguous spans
+  let html = '';
+  let lastIdx = 0;
+  // Sort by position
+  const sorted = [...ambiguous].sort((a, b) => a.position - b.position);
+  sorted.forEach((amb, i) => {
+    const before = text.substring(lastIdx, amb.position);
+    html += escHtml(before);
+    html += '<span class="ambiguous" data-index="' + i + '" data-suggestion="' + escHtml(amb.suggestion || '') + '" data-position="' + amb.position + '" onclick="showAmbPopup(this, ' + i + ')">' + escHtml(amb.word || text.substring(amb.position, amb.position + (amb.length || amb.word.length))) + '</span>';
+    lastIdx = amb.position + (amb.length || (amb.word ? amb.word.length : 0));
+  });
+  html += escHtml(text.substring(lastIdx));
+
+  document.getElementById('transcriptText').innerHTML = html;
+  updateAmbCounter();
+}
+
+function updateAmbCounter() {
+  const remaining = document.querySelectorAll('#transcriptText .ambiguous').length;
+  const counter = document.getElementById('ambCounter');
+  if (remaining > 0) {
+    counter.innerHTML = '<strong>' + remaining + '</strong> ' + t('ambiguousRemaining');
+  } else {
+    counter.innerHTML = '';
+  }
+}
+
+let activePopup = null;
+
+function showAmbPopup(span, index) {
+  // Close existing
+  if (activePopup) { activePopup.remove(); activePopup = null; }
+
+  const suggestion = span.dataset.suggestion || '';
+  const originalWord = span.textContent;
+
+  const popup = document.createElement('div');
+  popup.className = 'amb-popup';
+  popup.onclick = (e) => e.stopPropagation();
+  popup.innerHTML = `
+    <div class="amb-original">${escHtml(t('original'))}: <strong>${escHtml(originalWord)}</strong></div>
+    <div class="amb-suggestion">${escHtml(t('corrected'))}: ${escHtml(suggestion || '—')}</div>
+    <input type="text" id="ambCustomInput" placeholder="${escHtml(suggestion || originalWord)}" value="${escHtml(suggestion)}">
+    <div class="amb-popup-btns">
+      <button class="btn btn-primary" onclick="applyCorrection(this, ${index})">${escHtml(t('correct'))}</button>
+      <button class="btn btn-secondary" onclick="ignoreCorrection(this, ${index})">${escHtml(t('ignore'))}</button>
+    </div>
+  `;
+
+  span.style.position = 'relative';
+  span.appendChild(popup);
+  activePopup = popup;
+  popup.querySelector('input').focus();
+}
+
+function applyCorrection(btn, index) {
+  const popup = btn.closest('.amb-popup');
+  const span = popup.parentElement;
+  const customVal = popup.querySelector('#ambCustomInput').value.trim();
+  const newText = customVal || span.dataset.suggestion || span.textContent;
+  const textNode = document.createTextNode(newText);
+  span.parentNode.replaceChild(textNode, span);
+  activePopup = null;
+  updateAmbCounter();
+}
+
+function ignoreCorrection(btn, index) {
+  const popup = btn.closest('.amb-popup');
+  const span = popup.parentElement;
+  const textNode = document.createTextNode(span.textContent.replace(popup.textContent, '').trim() || span.childNodes[0].textContent);
+  // Just remove ambiguous styling
+  const text = span.firstChild.textContent || span.textContent.split('\n')[0];
+  const clean = document.createTextNode(text);
+  span.parentNode.replaceChild(clean, span);
+  activePopup = null;
+  updateAmbCounter();
+}
+
+// Close popup on outside click
+document.addEventListener('click', (e) => {
+  if (activePopup && !e.target.closest('.amb-popup') && !e.target.closest('.ambiguous')) {
+    activePopup.remove();
+    activePopup = null;
+  }
+});
+
+async function validateTranscript() {
+  const text = document.getElementById('transcriptText').innerText || document.getElementById('transcriptText').textContent;
+  try {
+    const res = await fetch('/api/transcribe/' + currentJobId + '/validate', {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify({ mode: 'manual', transcript: text })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      currentJobData = { ...currentJobData, ...data, validatedTranscript: text };
+      goToStep4();
+    }
+  } catch(e) {
+    console.error('Validation error:', e);
+  }
+}
+
+async function launchAutoCorrection() {
+  document.getElementById('launchAutoBtn').style.display = 'none';
+  document.getElementById('autoLoading').style.display = '';
+  document.getElementById('autoCorrectionResult').style.display = 'none';
+
+  try {
+    const res = await fetch('/api/transcribe/' + currentJobId + '/validate', {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify({ mode: 'auto' })
+    });
+    const data = await res.json();
+    document.getElementById('autoLoading').style.display = 'none';
+    document.getElementById('autoCorrectionResult').style.display = '';
+
+    // Show corrected text
+    document.getElementById('autoCorrectedText').textContent = data.transcript || data.correctedTranscript || '';
+
+    // Show correction log
+    const logEl = document.getElementById('correctionLog');
+    const corrections = data.corrections || [];
+    if (corrections.length > 0) {
+      logEl.innerHTML = corrections.map(c =>
+        '<div class="correction-item"><del>' + escHtml(c.original) + '</del> \u2192 <strong>' + escHtml(c.corrected) + '</strong> <em>(' + escHtml(c.reason || '') + ')</em></div>'
+      ).join('');
+    } else {
+      logEl.innerHTML = '<p style="color:var(--text-muted); font-size:13px">Aucune correction appliqu\u00e9e</p>';
+    }
+
+    currentJobData = { ...currentJobData, ...data };
+  } catch(e) {
+    document.getElementById('autoLoading').style.display = 'none';
+    document.getElementById('launchAutoBtn').style.display = '';
+    console.error('Auto correction error:', e);
+  }
+}
+
+function acceptAutoCorrections() {
+  const text = document.getElementById('autoCorrectedText').textContent;
+  currentJobData.validatedTranscript = text;
+  goToStep4();
+}
+
+// ── STEP 4: TEMPLATE SELECTION ──
+function goToStep4() {
+  setWizardStep(4);
+  selectedTemplateIdx = null;
+  templateSearchQuery = '';
+  templateActiveCategory = 'Toutes';
+  document.getElementById('templateSearchInput').value = '';
+  renderTemplatePills();
+  renderTemplateGrid();
+}
+
+document.getElementById('templateSearchInput').oninput = (e) => {
+  templateSearchQuery = e.target.value.trim();
+  renderTemplateGrid();
+};
+
+function renderTemplatePills() {
+  const container = document.getElementById('templateCategoryPills');
+  container.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    if (cat === 'Mes Templates') return; // skip in selection
+    const n = cat === 'Toutes' ? TEMPLATES.length : TEMPLATES.filter(tp => tp.category === cat).length;
+    if (n === 0 && cat !== 'Toutes') return;
+    const displayName = cat === 'Toutes' ? t('allCat') : cat;
+    const pill = document.createElement('button');
+    pill.className = 'pill' + (cat === templateActiveCategory ? ' active' : '');
+    pill.textContent = displayName;
+    pill.onclick = () => { templateActiveCategory = cat; renderTemplatePills(); renderTemplateGrid(); };
+    container.appendChild(pill);
+  });
+}
+
+function renderTemplateGrid() {
+  const grid = document.getElementById('templateGrid');
+  let list = [...TEMPLATES];
+
+  if (templateActiveCategory !== 'Toutes') {
+    list = list.filter(tp => tp.category === templateActiveCategory);
+  }
+
+  if (templateSearchQuery) {
+    const q = templateSearchQuery.toLowerCase();
+    list = list.filter(tp =>
+      (tp.title || '').toLowerCase().includes(q) ||
+      (tp.description || '').toLowerCase().includes(q) ||
+      (tp.title_fr || '').toLowerCase().includes(q) ||
+      (tp.description_fr || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Only show templates with prompts
+  list = list.filter(tp => tp.promptContent && tp.promptContent.trim());
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">\ud83d\udd0d</div><div class="empty-text">' + escHtml(t('noResults')) + '</div></div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(tp => {
+    const idx = TEMPLATES.indexOf(tp);
+    const color = CATEGORY_COLORS[tp.category] || '#6366f1';
+    const colorLight = color + '18';
+    const isSelected = selectedTemplateIdx === idx;
+
+    return '<div class="card selectable' + (isSelected ? ' selected' : '') + '" onclick="selectTemplate(' + idx + ')">' +
+      '<div class="card-header"><span class="cat-badge" style="background:' + colorLight + ';color:' + color + '">' + escHtml(tp.category) + '</span></div>' +
+      '<div class="card-title">' + escHtml(tf(tp, 'title')) + '</div>' +
+      '<div class="card-desc">' + escHtml(tf(tp, 'description')) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function selectTemplate(idx) {
+  selectedTemplateIdx = idx;
+  const tp = TEMPLATES[idx];
+  document.getElementById('selectedTemplatePreview').style.display = '';
+  document.getElementById('selectedTemplateName').textContent = t('selectedTemplate') + ': ' + tf(tp, 'title');
+  document.getElementById('selectedTemplatePrompt').textContent = tf(tp, 'promptContent');
+  document.getElementById('launchProcessingBtn').disabled = false;
+  renderTemplateGrid(); // re-render to show selection
+}
+
+async function launchProcessing() {
+  if (selectedTemplateIdx === null) return;
+  const tp = TEMPLATES[selectedTemplateIdx];
+  const btn = document.getElementById('launchProcessingBtn');
+  btn.disabled = true;
+  btn.textContent = t('processing');
+
+  try {
+    const res = await fetch('/api/process', {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify({
+        jobId: currentJobId,
+        template: {
+          title: tp.title,
+          promptContent: tp.promptContent,
+          category: tp.category
+        }
+      })
+    });
+    const data = await res.json();
+    currentResultId = data.id || data.resultId || currentJobId;
+    showResult(data, tp);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = t('launchProcessing');
+    console.error('Processing error:', e);
+  }
+}
+
+// ── STEP 5: RESULT ──
+function showResult(data, tp) {
+  setWizardStep(5);
+  document.getElementById('resultTitle').textContent = t('result');
+  document.getElementById('resultMeta').textContent =
+    (tp ? 'Template: ' + (tf(tp, 'title')) : '') +
+    (data.duration ? ' | ' + data.duration : '') +
+    ' | ' + new Date().toLocaleDateString();
+  document.getElementById('resultContent').textContent = data.result || data.content || data.text || '';
+}
+
+function copyResult() {
+  const text = document.getElementById('resultContent').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btns = document.querySelectorAll('.result-actions .btn-primary');
+    if (btns[0]) { btns[0].textContent = t('copied'); setTimeout(() => { btns[0].textContent = t('copyResult'); }, 2000); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function exportPDF() {
+  if (currentResultId) window.open('/api/history/' + currentResultId + '/pdf');
+}
+
+function exportMD() {
+  if (currentResultId) window.open('/api/history/' + currentResultId + '/md');
+}
+
+function sendEmail() {
+  const email = prompt(t('emailPrompt'));
+  if (!email) return;
+  fetch('/api/history/' + currentResultId + '/email', {
+    method: 'POST',
+    headers: apiHeaders(),
+    body: JSON.stringify({ email })
+  }).then(res => {
+    if (res.ok) alert(t('emailSent'));
+  }).catch(e => console.error('Email error:', e));
+}
+
+// ── HISTORY ──
+function toggleHistory() {
+  const panel = document.getElementById('historyPanel');
+  const overlay = document.getElementById('historyOverlay');
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open');
+  overlay.classList.toggle('open');
+  if (!isOpen) loadHistory();
+}
+
+async function loadHistory() {
+  try {
+    const res = await fetch('/api/history', { headers: apiHeaders() });
+    if (res.ok) {
+      historyItems = await res.json();
+      renderHistory();
+    }
+  } catch(e) {
+    console.error('History load error:', e);
+  }
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!historyItems || historyItems.length === 0) {
+    list.innerHTML = '<div class="history-empty">' + escHtml(t('noHistory')) + '</div>';
+    return;
+  }
+  list.innerHTML = historyItems.map(item => {
+    const preview = (item.result || item.content || '').substring(0, 100);
+    const date = item.created_at ? new Date(item.created_at).toLocaleDateString() : '';
+    return '<div class="history-item" onclick="viewHistoryItem(\'' + item.id + '\')">' +
+      '<button class="history-item-delete" onclick="event.stopPropagation(); deleteHistoryItem(\'' + item.id + '\')" title="Supprimer">\u00d7</button>' +
+      '<div class="history-item-title">' + escHtml(item.template_name || item.templateTitle || 'Transcription') + '</div>' +
+      '<div class="history-item-date">' + escHtml(date) + '</div>' +
+      '<div class="history-item-preview">' + escHtml(preview) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function viewHistoryItem(id) {
+  toggleHistory(); // close panel
+  currentResultId = id;
+  // Switch to transcription tab if needed
+  if (currentTab !== 'transcription') {
+    document.getElementById('templatesSection').style.display = 'none';
+    document.getElementById('searchWrap').style.display = 'none';
+    document.getElementById('totalBadge').style.display = 'none';
+    document.getElementById('tabTemplates').className = 'nav-tab';
+    document.getElementById('tabTranscription').className = 'nav-tab active';
+    currentTab = 'transcription';
+    showTranscriptionUI();
+  }
+  try {
+    const res = await fetch('/api/history/' + id, { headers: apiHeaders() });
+    if (res.ok) {
+      const data = await res.json();
+      showResult(data, { title: data.template_name || data.templateTitle || 'Transcription', title_fr: '' });
+    }
+  } catch(e) {
+    console.error('History view error:', e);
+  }
+}
+
+async function deleteHistoryItem(id) {
+  try {
+    await fetch('/api/history/' + id, { method: 'DELETE', headers: apiHeaders() });
+    historyItems = historyItems.filter(h => h.id !== id);
+    renderHistory();
+  } catch(e) {
+    console.error('History delete error:', e);
+  }
+}
+
+// ── UPDATE renderAll to include new labels ──
+const _origRenderAll = renderAll;
+renderAll = function() {
+  _origRenderAll();
+  updateTabLabels();
+  renderAuthArea();
+  if (currentWizardStep) updateWizardLabels();
+};
+
+// Init auth + tabs
 document.getElementById('flagFr').className = 'flag-btn' + (lang === 'fr' ? ' active' : '');
 document.getElementById('flagEn').className = 'flag-btn' + (lang === 'en' ? ' active' : '');
+checkAuth();
 loadCustomData();
 </script>
 </body>
