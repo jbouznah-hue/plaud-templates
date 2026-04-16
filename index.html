@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAUD Templates</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --accent: #6366f1;
+    --accent-light: #eef2ff;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+    --shadow-lg: 0 20px 60px rgba(0,0,0,.15), 0 8px 20px rgba(0,0,0,.08);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-pill: 999px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  }
+
+  html { font-family: var(--font); font-size: 16px; color: var(--text-primary); background: var(--bg); }
+  body { min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .header-logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .header-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+  .header-count {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    max-width: 440px;
+    position: relative;
+  }
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 16px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 38px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    transition: border-color .15s, box-shadow .15s;
+    outline: none;
+  }
+  .search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    background: var(--surface);
+  }
+  .search-input::placeholder { color: var(--text-muted); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    position: sticky;
+    top: 85px;
+    z-index: 99;
+  }
+  .toolbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .category-pills {
+    flex: 1;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 12px 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .category-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: var(--font);
+  }
+  .pill:hover { background: var(--bg); color: var(--text-primary); }
+  .pill.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: rgba(99,102,241,.2);
+    font-weight: 600;
+  }
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 16px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--border);
+    margin-left: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .sort-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .sort-select {
+    padding: 5px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: var(--font);
+    color: var(--text-primary);
+    background: var(--surface);
+    cursor: pointer;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .sort-select:focus { border-color: var(--accent); }
+
+  /* ── MAIN ── */
+  .main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .stats-count { font-weight: 600; color: var(--text-secondary); }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .main { padding: 20px 16px 40px; }
+    .header { padding: 16px 20px; }
+    .toolbar { padding: 0 16px; }
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform .18s, box-shadow .18s, border-color .18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(99,102,241,.25);
+  }
+  .card.my-template {
+    border-left: 3px solid #ec4899;
+  }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .cat-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+  }
+  .my-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 10px;
+    font-weight: 600;
+    background: #fdf2f8;
+    color: #ec4899;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    letter-spacing: -0.2px;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+  .card-usage {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .usage-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #94a3b8;
+    flex-shrink: 0;
+  }
+  .card-author {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+  }
+  .has-prompt-indicator {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    opacity: 0.7;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-text { font-size: 16px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
+  .empty-sub { font-size: 14px; }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn .15s ease;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp .2s cubic-bezier(.34,1.56,.64,1);
+    overflow: hidden;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(24px) scale(.97); opacity: 0; }
+    to   { transform: translateY(0) scale(1);    opacity: 1; }
+  }
+
+  .modal-header {
+    padding: 24px 28px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .modal-header-content { flex: 1; min-width: 0; }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .modal-usage {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .modal-author {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .modal-sep { color: var(--text-muted); font-size: 10px; }
+  .close-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s, color .15s;
+    font-family: var(--font);
+    line-height: 1;
+  }
+  .close-btn:hover { background: var(--bg); color: var(--text-primary); }
+
+  .modal-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 28px 0;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .modal-body::-webkit-scrollbar { width: 5px; }
+  .modal-body::-webkit-scrollbar-track { background: transparent; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .modal-desc-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .prompt-block {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-primary);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+  .prompt-block::-webkit-scrollbar { width: 4px; }
+  .prompt-block::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .no-prompt {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modal-footer {
+    padding: 16px 28px 24px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .btn {
+    padding: 9px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all .15s;
+    font-family: var(--font);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #4f46e5; border-color: #4f46e5; }
+  .btn-primary:active { transform: scale(.98); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text-secondary);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover { background: var(--bg); color: var(--text-primary); }
+  .btn-copy.copied {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #86efac;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">P</div>
+      <h1 class="header-title">PLAUD Templates</h1>
+      <span class="header-count" id="totalBadge"></span>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="search" class="search-input" id="searchInput" placeholder="Rechercher un template…" autocomplete="off">
+    </div>
+  </div>
+</header>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="category-pills" id="categoryPills"></div>
+    <div class="toolbar-right">
+      <span class="sort-label">Trier&nbsp;:</span>
+      <select class="sort-select" id="sortSelect">
+        <option value="popular">Plus populaire</option>
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="stats-bar">
+    <span id="statsText"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-header-content">
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <div class="modal-meta" id="modalMeta"></div>
+      </div>
+      <button class="close-btn" id="closeBtn" title="Fermer" aria-label="Fermer">×</button>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-copy" id="copyBtn" style="display:none">Copier le prompt</button>
+      <button class="btn btn-secondary" id="closeBtn2">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEMPLATES = [{"title":"Meeting Secretary","category":"Meeting","usageCount":871496,"author":"Matt","description":"Summarize transcripts into action items and key notes for easier task and discussion tracking.","promptContent":"OUTLINE\nThe primary goal is to convert a virtual meeting transcript into structured meeting notes for personal use, enabling efficient review and follow-up.\nThe role involves acting as an experienced executive assistant to produce clear, concise, and actionable meeting notes, identifying high-level themes, and tracking commitments.\nThe process requires analyzing the transcript to understand main topics, extracting key discussion points and decisions, and identifying all action items with assigned parties and due dates.\nMeeting notes should be organized into three sections: an Executive Summary, Key Action Items/Commitments for the user, and a Detailed Breakdown by topic.\nThe output must maintain a professional and structured tone, using bullet points and bold text for headers to enhance readability.\nThe final output format includes placeholders for Meeting Title/Subject, Date, Attendees, Executive Summary, Key Action Items/Commitments for the user, and a Detailed Breakdown by Topic.\nThe target audience is a busy professional who needs succinct and well-organized meeting notes for effective information management and responsibility tracking.\nInstructions for use involve replacing placeholders like [User's Name], [Meeting Title/Subject], and [Insert Date] with information from the transcript.","isMyTemplate":false},{"title":"detailed summary","category":"Meeting","usageCount":551555,"author":"Richard of WEA","description":"Organizes notes into topic summaries, task tables, and quotes for clear team follow-up.","promptContent":"OUTLINE\nMeeting summaries require a title, time, date, participant names, and an overall meeting summary.\nSummaries must detail topics in the order discussed, with each topic having a header and bullet-point summary.\nTopic summaries should include participants, key points with quoted individuals, decisions, identified problems, challenges, feedback, and planned actions.\nAll notes must be proofread for accuracy and completeness.\nMissing details should not be filled in.\nUnclear source quotes must be marked with [???].\nAction items must include a title, task description, responsible party, deadlines, and notes.\nEnsure all topics from the transcript are included in the summary.","isMyTemplate":false},{"title":"full transcript (for external use)","category":"General","usageCount":249393,"author":"Michele Morgese (Dott. Michele Morgese)","description":"Full transcription of audio with voice distinction. Chronological text without cuts or summaries.","promptContent":"OUTLINE\nFaithfully and fully transcribe everything that is said in the recording, without summarizing, interpreting, or modifying the content.\nMaintain the exact chronological order of the interventions and specify the change of speaker when possible (e.g., \"Doctor:\", \"Patient:\").\nDo not add comments, titles, explanations, summaries, or conclusions.\nThe text must be a complete textual transcription, usable for external analysis or archiving.\nFormat clearly and legibly, possibly using line breaks to separate the different interventions.","isMyTemplate":false},{"title":"Clear, clean, and highly detailed.","category":"General","usageCount":243086,"author":"Shane","description":"Turn call recordings into summaries. It extracts tasks and contacts with tags for easier review.","promptContent":"OUTLINE\nConversation is recorded for task review, requiring accurate transcription and summarization of actionable insights and follow-up needs.\nSummary goals include identifying tasks, action items, or promises; highlighting names, contact details, and addresses; extracting scheduling information or service requests; and tagging critical keywords.\nKeywords are tagged using specific bracketed notations: \"ASAP\" and \"urgent\" as [URGENT], \"quote\" or \"estimate\" as [QUOTE], \"follow up\" or \"get back\" as [FOLLOW-UP], \"call back\" or \"reach out\" as [CALLBACK], \"schedule\" or \"reschedule\" as [SCHEDULING], \"done\", \"completed\", or \"finished\" as [COMPLETED], and \"problem\" or \"issue\" as [ISSUE].\nThe conversation summary section is intended for a one-paragraph overview of the call's purpose.\nAction Items/Tasks are to be listed with a description and any present tagged keywords.\nFollow-Ups Required should detail who to follow up with and by when, including the [FOLLOW-UP] tag.\nKey Details Extracted will categorize information such as Names, Phone Numbers, Unit Numbers, and Addresses.\nFlagged Keywords & Tags examples demonstrate the application of tags like [URGENT], [QUOTE], and [CALLBACK] to specific phrases from the conversation.","isMyTemplate":false},{"title":"University Lectures","category":"Education","usageCount":221033,"author":"Silvia","description":"From notes or transcripts, create a structured text with examples. Concludes with an outline and points to clarify.","promptContent":"OUTLINE\nThe lecture content must be transformed into a complete, clear, and well-structured text for effective and in-depth study, similar to a university textbook chapter.\nThe text must be organized into paragraphs and subsections with clear headings, explaining each topic precisely, accessibly, and with a didactic and scientific tone.\nIt is necessary to faithfully retain all scientific terms and concepts used by the lecturer, without paraphrasing that could alter their meaning.\nImportant concepts, even if only briefly mentioned, must be integrated and el","isMyTemplate":false},{"title":"Meeting Minutes+","category":"Meeting","usageCount":157194,"author":"六爷","description":"Organize meetings into clear notes.","promptContent":"","isMyTemplate":false},{"title":"Strategic Meeting Summary & Speaker Profiling (Minutes-Ready Version)","category":"Meeting","usageCount":102011,"author":"Massimo Mensi","description":"Descrip","promptContent":"","isMyTemplate":false},{"title":"Template for Transcribing and Organizing University Lecture Recordings","category":"Education","usageCount":84850,"author":"GERLANDO RUSSO INTROITO","description":"Organizes lectures into logical chapters, preserving every example and detail for a complete study.","promptContent":"OUTLINE\nThe goal is to fully transcribe a university lecture, preserving every detail and word count, and reorganize the content into a logical structure.\nFaithfulness to content and word count requires maintaining the original amount of information, without omitting details, examples, data, or significant explanations, even if changes are made to improve readability.\nAccuracy of details implies not omitting specific information such as examples, data, or citations mentioned during the lecture.\nThe logical structure involves dividing the text into chapters and subchapters, following the order of topics covered, with clear and descriptive titles for each chapter and subchapter.\nClarity and readability are achieved by organizing information into well-structured paragraphs and using bullet or numbered lists for key points, if necessary.\nSmooth transitions ensure continuity of discourse by connecting sections with appropriate transitions.\nThe introduction and conclusion should provide initial context on the lecture topic and summarize the main points at the end.\nThe level of detail requires maintaining every detail, including examples, data, and explanations, even those that seem marginal.","isMyTemplate":false},{"title":"Medical Consultation","category":"Medical","usageCount":67980,"author":"rvfalcao","description":"Organizes consultation information into medical records with history and conduct for clinical registration.","promptContent":"OUTLINE\nThe goal is to extract and organize relevant information from doctor-patient consultation recordings to generate a complete and structured medical record.\nThe extraction of relevant medical information includes a complete anamnesis, signs and symptoms, test results, physical examination, diagnostic hypotheses, conduct, guidance, medications, and allergies.\nIt is necessary to distinguish between objective and subjective information, excluding informal conversations and irrelevant comments.\nThe structured organization of the medical record should follow clear sections such as Anamnesis, Signs and Symptoms, Current Illness History, Past Medical History, Tests, Physical Examination, Diagnostic Hypotheses, Conduct and Guidance, and Medications and Allergies.\nInformation should be presented clearly and concisely using bullet points or numbered lists, prioritizing chronological order.\nThe style and tone should be clear, objective, concise, formal, and professional, with priority given to accuracy and clarity.\nAdditional elements to be included are a summary of conclusions and recommendations, a list of prescribed medications with dosages, and relevant information for future consultations.","isMyTemplate":false},{"title":"Seminar, Lecture: Detailed Summary and Transcript","category":"Education","usageCount":55391,"author":"Michael K. GASSER","description":"Organizes lectures logically. Captures all details and examples without additions.","promptContent":"OUTLINE\nThe goal is the complete and verbatim transcription of a lecture or seminar, retaining all details, examples, data, quotes, and explanations.\nNo personal additions, interpretations, or evaluations may be added.\nThe content should be organized according to criteria of completeness, accuracy, logical structure, clarity, and readability, as well as an introduction and a conclusion.\nAll mentioned details, even seemingly minor ones, as well as all examples, data, and explanations must be retained.\nNo information may be added that was not covered in the lecture/seminar.\nNo specific information, data, examples, or quotes may be omitted.\nThe summary should be as detailed as possible and rely exclusively on what was said.\nThe text should be divided into chapters and subchapters, following","isMyTemplate":false},{"title":"Interview transcription","category":"Interview","usageCount":55029,"author":"TheDouje","description":"Refine interview text by fixing errors and removing fillers. It identifies three key services.","promptContent":"OUTLINE\nThe primary goal is to transcribe a voice recording of an interview, correcting errors and improving readability while preserving the original dialogue and tone.\nSpecific tasks include correcting grammar, spelling, and punctuation; removing filler words like \"yeah,\" \"um,\" and \"ah\"; and structuring the text into distinct paragraphs.\nThe transcription must retain as much verbatim dialogue as possible, without adding personal thoughts or altering the wording.\nThe output should be formatted as paragraphs, reflecting the conversational nature of the interview, and should not include bullet points or lists.\nFollowing the transcription, the top three most important services performed by the company for the interviewee need to be identified.","isMyTemplate":false},{"title":"Therapy session","category":"Medical","usageCount":43341,"author":"Demischa Wielkens","description":"Turn therapy notes into structured reports to track emotions, themes, and patterns for reflection.","promptContent":"OUTLINE\nThe primary purpose is to transcribe and summarize therapeutic conversations or monologues into a structured report, focusing on emotional processes, recurring patterns, relevant themes, and therapeutic content, while omitting irrelevant or repetitive information.\nSession Context & Purpose requires identifying the session type (individual, relationship, family), the reason for the session or presenting issue, and the client's stated goal or question.\nKey Themes & Emotional Tone involves detailing the main topics discussed, emotions expressed or observed, and noting any moments of tension, breakthrough, or regression.\nPersonal Content & Significant Events captures shared personal stories, memories, relationships, or conflicts, significant phrases or metaphors, and whether core themes like attachment, trauma, loss, identity, boundaries, or self-image were addressed.\nPatterns, Beliefs & Coping Mechanisms focuses on identifying recurring behavioral or thought patterns, expressed limiting or empowering beliefs, and the client's typical coping mechanisms for stress, pain, or conflict.\nInsights, Reflections & Breakthroughs documents emerging insights, moments of self-awareness, clarity, or emotional processing, and any new realizations or perspectives expressed by the client.\nTherapeutic Interventions & Approach details the techniques, questions, or exercises","isMyTemplate":false},{"title":"Telephone Conversation","category":"Call","usageCount":43018,"author":"Valerii R","description":"Breaks the call down into topics, highlighting key takeaways and participant opinions.","promptContent":"OUTLINE\nPurpose — to structure telephone and voice conversations with multiple participants by topics, if they are clearly traceable, or to provide a general brief summary of the essence without fabrication.\nThe conversation may be conducted between {{speaker1_name}}, {{speaker2_name}}, {{speaker3_name}} and other participants, both in a business and general context.\nFor each topic, use the structure: \"Topic X\", \"Description\" (a brief explanation of the essence or indication of the general nature of the discussion), \"Conclusions\" (clear decisions/agreements or indication of their absence), and \"Additional notes\" (opinions, ideas, nuances with participant names if possible).\nIf there are no clear topics, provide a block \"General overview of the conversation\" describing the content of the conversation, its structure, and the issues discussed.\nDivision into topics is done only with a clear shift in the focus of the conversation, without inventing information and with the indication \"[inaudible]\" for unclear speech.\nParticipants are designated by names if available, or as Interlocutor 1, 2, etc.","isMyTemplate":false},{"title":"Speaker presentation","category":"Speech","usageCount":42231,"author":"Rob Jackson FRSA","description":"Convert event notes into summaries. Features themes, quotes, and audience action items.","promptContent":"OUTLINE\nThe purpose is to generate a clear and professional summary of a speaker's talk at a professional event, such as a keynote speech or workshop.\nThe summary should begin with the title of the speech, the speaker's name, and the venue, location, event, or context of the talk.\nThe summary needs to offer a brief overview of the key themes presented by the speaker.\nFollowing the themes, the summary should detail the key points of the presentation, including any significant information.\nKey quotes from the presentation are to be included in the summary.\nThe summary will conclude with actionable points that the audience should implement based on the speaker's presentation.","isMyTemplate":false},{"title":"Keynote summary","category":"Speech","usageCount":36876,"author":"Sydney Brouwer","description":"Create a reference work for keynotes with core messages, quotes, and three concrete action points.","promptContent":"OUTLINE\nThe goal is to create a valuable summary of the keynote that serves as a reference for participants.\nThe overarching theme of the keynote should be succinctly summarized, including the main message, the title of the keynote, and key terms from the speaker.\nThe summary should be structured according to the speaker's outline, with a description of the meaning and importance of each part, supplemented by concise examples, anecdotes, or stories that illustrate the core message.\nApproximately five powerful and inspiring quotes that reflect the essence of the message should be included.\nA maximum of three concrete action points resulting from the keynote should be mentioned, so participants know exactly what they can apply immediately.\nThe summary should use the same terms, jargon, and tone as the keynote to seamlessly align with the presentation and remain recognizable to the participants.","isMyTemplate":false},{"title":"Lawyer Model","category":"Consulting","usageCount":36526,"author":"gustavo_dps","description":"For legal teams. Generates minutes with tasks, deadlines, and responsibilities in a clear and structured way.","promptContent":"OUTLINE\nThe goal is to generate a comprehensive summary of legal meetings, detailing topics discussed, follow-ups, deadlines, responsible parties, and points of attention, transforming recordings into minutes and management tools.\nThe summary should be presented by a professional legal assistant, with logical organization, clarity, and precise legal terminology.\nThe tone should be formal, direct, and objective, using appropriate legal technical language, but avoiding excessive legalese.\nThe target audience is partners and members of the legal team, for internal record and monitoring of activities and decisions.\nThe output format should be Markdown, with hierarchical titles and subtitles (## for main sections, ### for specific topics), and follow-ups organized in lists, without emojis.\nThe topics discussed should be organized by numbered topics or bullets, with dates and responsible parties indicated whenever possible.\nRecurring meetings involve clients, partners, and the legal team, addressing procedural strategies, case progress, contractual definitions, risk analysis, and legal guidance.\nInternal administrative demands of the office, case law, recent decisions, and progress of consulting projects are also discussed topics.","isMyTemplate":false},{"title":"Summary","category":"Interview","usageCount":26287,"author":"Sascha Wesselsky","description":"Create team minutes. Clearly summarizes all content with a conclusion.","promptContent":"OUTLINE\nThe goal is to create a detailed and clear summary of a conversation for daily meetings.\nThe summary must be easily understandable for non-participants and must not omit or shorten any discussed points.\nThe writing style should be easy to understand, yet businesslike, to make reading pleasant.\nAt the end of the summary, the most important points should be listed in bullet points.","isMyTemplate":false},{"title":"Project Meeting","category":"Construction","usageCount":25554,"author":"Thomas Helmschrott","description":"Erstellt Fachprotokolle aus Notizen. Ideal für Bauleiter und Verwaltungen.","promptContent":"OUTLINE\nThe goal is to create a structured, professional meeting protocol from a transcription of a meeting between a project manager, a property management company, and an expert or adjuster.\nThe protocol must bear the heading \"Meeting Protocol\".\nLocation, date, and object designation must be specified, for example: Location: Dillingen, Parkstraße 11a; Date: 08.05.2025; Object: Apartment building, Parkstraße 11a, Dillingen.\nAll participants must be listed with full names and functions, such as Mr. Helmschrott, Project Manager Tronex GmbH; Ms. Muster, Property Management XY; Mr. Beispiel, Expert / Adjuster Allianz.\nDiscussed points and measures must be clearly structured by building, floor, and apartment, with uniform formatting such as: Building 11a, Ground Floor, Apartment 1.4: – Dismantling of the wall side in the bathroom (west wall, approx. 2.34m × 2.89m = 6.76m²); – Mold treatment according to WTA guidelines; – Surface disinfection with suitable agents.\nMeasures for other units such as Building 11a, 1st floor, Apartment 2.1: – Creation of an inspection opening in the shower area to determine the cause must also be listed.\nCommon areas such as the basement or stairwell must also be listed if discussed.\nAdditional determinations or agreements, such as the submission of an updated offer by Tronex GmbH by 10.05.2025, must be documented separately.\nThe closing sentence states that the protocol was created to document the appointment and serves as the basis for further processing of the remediation measures.\nWhen creating the protocol, it must be formulated neutrally, factually, and professionally, using technically correct terms.\nMeasurements must be given in the format \"X.XXm × Y.YYm = Z.ZZm²\".\nNo speculations may be included, only facts from the transcription, and colloquial expressions are to be avoided.","isMyTemplate":false},{"title":"Sales Conversation / Customer Intake","category":"Sales","usageCount":21524,"author":"Sungy","description":"Record client needs and agreements. Create overviews of products, conditions, and follow-up actions.","promptContent":"OUTLINE\nThe goal is to create a sales note from the conversation, including the customer's needs, a possible solution, discussed products, and follow-up actions.\nThe title of the note is \"customer conversation - [company name] - [date]\".\nThe note must state the customer's needs.\nThe note must mention the discussed products/services.\nThe note must include the technical requirements.\nThe note must include any objections or points of attention.\nThe note must record the follow-up agreements.","isMyTemplate":false},{"title":"Summary & Tasks","category":"General","usageCount":16248,"author":"牧大介","description":"Summarize the content and list the next tasks to be done.","promptContent":"","isMyTemplate":false},{"title":"Discussing with Experts","category":"Consulting","usageCount":15487,"author":"Marty Kearns","description":"Transform transcripts into structured notes. Capture verbatim quotes, decisions, and action items.","promptContent":"OUTLINE\nThe primary purpose is to process meetings among experts by extracting unique phrases and insights from participants' wisdom, language, and experiences.\nThe role involves acting as an expert interviewer and consultant to elicit distinctive language and ideas from participants.\nA professional, neutral tone should be used, allowing the richness of specific language and ideas to be preserved, with longer notes preferred for fidelity.\nThe process involves receiving transcriptions from multi-person meetings with diverse content, including informal conversations, strategic discussions, expert presentations, decisions, and action planning.\nThe objective is to develop detailed, professionally structured meeting notes that capture the conversation's full arc, emphasizing the preservation of flow, clarity, substance, and original phrasing of high-value contributions.\nThe output should be suitable for organizational use, court reporting, archival, or further editorial refinement.\nVerbatim quotes are to be captured and highlighted, especially expert phrasing, unique conceptual language, and statements demonstrating insight, influencing direction, or provoking discussion.\nMeeting notes should be closed with an analysis of the transcription.\nContent should be structured clearly using intuitive section headers","isMyTemplate":false},{"title":"Meeting Record","category":"Real Estate","usageCount":13849,"author":"pan louis","description":"Assist managers in transforming fragmented discussions into structured minutes containing decisions and action plans, strictly ensuring information accuracy without omitting key data.","promptContent":"OUTLINE\nThe core responsibility is to act as a professional CEO secretary, focusing on organizing and generating high-quality meeting minutes, ensuring that meeting objectives and action plans are clear, and comprehensively and accurately recording meeting content.\nThe workflow begins by guiding users to provide basic information about the meeting discussion, then organizes the information according to a specific framework, including meeting topic, date and time, participants, key items, main discussions, decisions and action plans, as well as next steps.\nDuring the organization process, it is necessary to ensure the accuracy of the information, not to expand on the information provided by the user, only to make minor adjustments to obvious grammatical errors, and to output the meeting minutes in a clear structure and complete description.","isMyTemplate":false},{"title":"Meeting Minutes","category":"Real Estate","usageCount":13321,"author":"martin","description":"Site minutes with topics, tasks, and deadlines for technical monitoring and project organization.","promptContent":"OUTLINE\nThe main purpose is to generate chronological meeting minutes for technical coordination in construction projects, detailing participants, topics discussed, pending points, and conclusions.\nThe minutes should begin with the names, positions, and companies of the attendees.\nAn initial welcome paragraph should be included.\nTopics discussed should be grouped by items and maintain a chronological order of discussion.\nDetails of what was discussed by the participants under each main heading should be expanded.\nAt the end, two sections should be included: one with pending points in checklist format and another with conclusions and next steps, including deadlines and responsible parties.","isMyTemplate":false},{"title":"Key Points, Decisions, Tasks, Deadlines & Actions","category":"Meeting","usageCount":12095,"author":"六爷","description":"Summarizes meeting transcripts into key points, decisions, and a task table with deadlines.","promptContent":"OUTLINE\nThe primary purpose is to extract content from a transcription and generate a meeting summary based on specified formats and requirements.\nThe summary should focus on objective facts, decisions, times, data, and action items.\nKey points from the meeting are to be listed in chronological order.\nImportant decisions made during the meeting are to be listed in chronological order.\nTasks discussed in the meeting are to be presented in a table with columns for Task, Responsible Party, Deadline, and Notes.\nKey deadlines mentioned in the meeting are to be listed with the format: - Time: Task to be completed.\nMajor follow-up actions from the meeting are to be listed.","isMyTemplate":true},{"title":"Phone Memo","category":"General","usageCount":10579,"author":"kenta shibata","description":"Summarizes recorded phone conversations and organizes requirements and future actions. Perfect format for sharing on internal tools.","promptContent":"OUTLINE\nThe main purpose of the telephone memo is to summarize the content in concise and clear sentences so that busy staff can grasp it quickly.\nThe summary is intended to be pasted into an internal sharing tool, so no icons such as emojis should be used, and it should be concise and clear within about 400 characters (exceeding is acceptable for comprehensive coverage).\nThe layout of the summary should follow the format: [Caller], [Topic], [Content] (specific details up to about 400 characters, use bullet points if there are multiple items), [Future Actions] (agreements with the other party).","isMyTemplate":false},{"title":"From Chaos to Clarity – Tagged Daily Recap","category":"Functional","usageCount":10408,"author":"shrutirmohan","description":"Structure transcripts into labeled summaries, action items, and strategic categories.","promptContent":"OUTLINE\nThe primary function is to organize meeting transcripts by dividing them into sections, assigning descriptive headings, and categorizing each section as Operational or Strategic.\nEach section requires a concise summary of the discussion and a separate bulleted list of any mentioned action items.\nThe process involves removing extraneous content such as filler words, small talk, and irrelevant tangents to ensure the output is chronological, clear, and concise.\nAn example demonstrates organizing a \"To-Do List Dictation\" as Operational, summarizing tasks like emailing Margo about a raise and bonus, speaking to Scott about a candidate, and calling a vendor about missing items, with corresponding action items.\nAnother example shows a \"P&L Meeting\" categorized as Strategic, summarizing the review of July contract labor overages and outlining August's focus on reducing t","isMyTemplate":false},{"title":"Interview transcription - complete Q&A","category":"Interview","usageCount":10142,"author":"Patricia Earnhardt Tyndall","description":"Converts recordings to verbatim Q&A. Fixes errors and removes fillers for a clean paragraph text.","promptContent":"OUTLINE\nThe primary goal is to transcribe a voice recording of a conversational interview into a Q&A format.\nThe transcription should correct spelling and punctuation errors.\nThe output must present questions and their corresponding responses without summarization.\nThe original tone and specific dialogue must be preserved.\nFiller words such as \"yeah,\" \"um,\" and \"ah\" should be removed.\nThe transcribed text should be broken into distinct paragraphs to reflect the conversational flow.\nNo personal thoughts or wording changes should be inserted into the transcription.\nThe transcription should preserve as much verbatim dialogue as possible.\nFormalities should be excluded, with the output consisting solely of the corrected transcription.\nThe final format should be in paragrap","isMyTemplate":false},{"title":"Detailed Meeting Minutes Preparation","category":"Construction","usageCount":9954,"author":"박민균","description":"Summarizes discussions and decisions by agenda. Creates a list of action items with assigned owners and deadlines.","promptContent":"OUTLINE\nThe goal is to analyze the provided meeting transcript and prepare professional and systematic meeting minutes that include the key points, major decisions, and specific action items.\nEnter basic information such as meeting name, date and time, location, participants, minutes recorder, and agenda, and proceed with initial setup.\nPresent the meeting objectives/purpose, key decisions, and summary of main discussion points in a top-down manner first.\nFor each agenda item, summarize main presentations/explanations, key Q&A, participant opinions, main evidence/data, decisions, and action items (content, responsible person, deadline) in detail.\nCompile all action items discussed in the meeting in a table format including number, action item, responsible person, deadline, and progress status.\nAdd information on the next meeting schedule and attachments at the end of the minutes.\nPrepare","isMyTemplate":false},{"title":"Client Phone Call Summary/Analysis","category":"Call","usageCount":9482,"author":"rob.corney","description":"Organize legal call records into summaries. Lists topics and tasks to assist case documentation.","promptContent":"OUTLINE\nThe primary function is to analyze and summarize legal phone call audio recordings and transcripts between attorneys and clients, focusing on operational clarity and client satisfaction.\nThe output format requires a structured response with clearly labeled sections: Call Overview, Topics Discussed, Tasks to Be Completed, Follow-Up Requirements, and Tone & Empathy Analysis.\nThe Call Overview should include the date and time, a 3-5 sentence summary of the call's purpose, participant roles, key topics, and any relevant contextual information.\nTopics Discussed should be broken down into subsections with bold headers, summarizing the discussion, attorney/client insights, and any supporting data, facts, or timelines.\nTasks to Be Completed must list action items for both attorney and client, specifying the responsible party, due date, and a clear description, using a format like \"[Attorney] – Draft demand letter – Due by July 10, 2025\".\nFollow-Up Requirements involve identifying subjects or documents needing further clarification, noting scheduled meetings, and flagging pending reviews or third-party input.\nTone & Empathy Analysis requires evaluating","isMyTemplate":false},{"title":"Client Review","category":"Financial","usageCount":9111,"author":"DC","description":"Create professional client meeting case notes. Organizes key points and tasks for staff and records.","promptContent":"OUTLINE\nThe primary purpose is to generate case notes summarizing a financial advisor's client review meeting, including discussion points, key takeaways, and action items.\nThe summary should incorporate speaker names, using last names if available, and the meeting date.\nContent beneficial for the firm's insurance and investment compliance team must be included.\nThe client's full name should be used in the summary's title if provided.\nThe output should be presented in a professional, secretary-like manner, with recommendations separated into bullet points.\nThe tone should mimic dictated notes from the advisor after the meeting.\nThe summary is intended for all practice staff, providing a high-level understanding of the meeting within a few minutes.\nThe final output should be in a simple, multiple-paragraph format.","isMyTemplate":false},{"title":"Transcription","category":"General","usageCount":9087,"author":"東北計画","description":"Arranges transcriptions into easy-to-read sentences.","promptContent":"","isMyTemplate":false},{"title":"Business meeting","category":"Sales","usageCount":8029,"author":"Reunion IA comexi","description":"Transform client meetings into reports with topics, participants, and pending actions.","promptContent":"OUTLINE\nThe goal is to generate a professional, concise, and structured business report from data collected during a client visit.\nThe report should include fields such as title, client, opportunity, date, and type of visit.\nOther essential fields for the report are the purpose of the visit, client participants, topics discussed, and pending actions.\nFinal remarks should also be included in the business report.","isMyTemplate":false},{"title":"Interview+6D","category":"Interview","usageCount":7453,"author":"六爷","description":"Generate structured interview reports.","promptContent":"","isMyTemplate":false},{"title":"client meeting","category":"Sales","usageCount":7364,"author":"Vincent Lemonde","description":"Génère des synthèses de réunions. Liste les participants, besoins métiers et actions à suivre.","promptContent":"OUTLINE\nThe goal is to generate a professional, structured, and directly actionable report from an audio recording of a meeting between Omundu and an industrial client.\nThe task consists of analyzing the audio to produce a complete and clear summary.\nThe summary must include a list of participants with their information (first name, last name, role, company).\nAn objective, fluent, and concise summary of the exchange must be provided, highlighting the dynamics of the meeting.\nThe needs expressed by the client (business areas, challenges, expectations, constraints) and the solutions proposed by Omundu must be summarized.\nDecisions made and follow-up actions, including the responsible person and deadline, must be listed.\nThe tone should be professional, neutral, and synthetic, remaining factual without interpretation or judgment.\nMissing or barely audible information must be clearly indicated.\nThe presentation should be spaced out for quick reading.","isMyTemplate":false},{"title":"Investment Advisory","category":"Financial","usageCount":4934,"author":"lucasosporto","description":"For advisors. Summarizes meetings into structured notes with goals and actions for the whole team.","promptContent":"OUTLINE\nThe goal is to generate a summary of meetings with clients and prospects for financial planning, detailing discussions, key points, investment profile, and action items.\nThe summary should include participant names, meeting date (based on the recording), new financial goals and investment strategies discussed, focusing on information relevant to the compliance team.\nThe output should be formatted as a professional meeting summary, with clear and objective paragraphs, highlighting recommendations and adjustments in list format.\nThe tone should be that of a direct post-meeting narration, detailing important discussions and decisions so that the entire advisory team can understand the progress of the client's financial plan.","isMyTemplate":false},{"title":"Sales Discovery Call","category":"Sales","usageCount":4580,"author":"Tray McConchie","description":"Extracts contact data, summarizes needs, and researches company health to assess opportunities.","promptContent":"OUTLINE\nThe primary purpose is to generate detailed notes from voice recordings of sales calls for an Enterprise Sales Professional specializing in nationwide scale manufacturing, service, repair, calibration, and concrete construction.\nContact information must be organized at the top, including attendee names (with corrected spellings), phone numbers, email addresses, website addresses, physical addresses, date, and time.\nThe summary section requires a concise overview of the call, details of the company discussed by speakers, identified needs and supporting notes, and a list of call-to-action items with assigned individuals and deadlines.\nPre-call research involves profiling individuals by gathering their first and last names, company, social media profiles (LinkedIn, Facebook, Instagram, Twitter/X, YouTube, TikTok), and summarizing any helpful online information, including speech patterns and trustworthiness.\nCompany research includes identifying the caller's listed company, specific local sites, corporate headquarters, and analyzing digital articles, annual reports, company health reports, annual sales, profitability, losses, DUN & Bradstreet reports, BBB scores, and summarizing the company's business operations.\nThe opportunity assessment involves leveraging individual and company research to identify potential business for the Enterprise Sales Professional in areas such as scales, instrumentation, concrete foundations, truck scales, rail scales, bench scales, floor scales, rental scales, axle scales, shipping scales, belt scales, roller top conveyor scales, cattle scales, forklift scales, crane scales, load cells, repairs, replacements, purchasing, and calibrations.","isMyTemplate":false},{"title":"Financial Client Meeting Summary Template","category":"Financial","usageCount":3143,"author":"helen","description":"Organize financial meeting notes into reports covering goals, risks, and agreed actions.","promptContent":"OUTLINE\nName: Client name to be added.\nDate and time: Meeting date and time to be added.\nFactfind (include client investment experience and vulnerabilities): Extract client's background, focusing on their stated investment experience and any mentioned personal or financial vulnerabilities.\nMain Discussion: Summarize core topics, key points, and significant exchanges from the main part of the conversation.\nFuture Plans (soft facts & clients own words): Capture client's stated goals, hopes, and aspirations, using their own words and phrasing whenever possible.\nActions agreed (include date of next meeting): List all concrete, agreed-upon action items, explicitly including the date of the next meeting.\nAgreed risk profile going forward (include capacity for loss details and investment time frame): Detail the mutually agreed-upon risk profile, including specific capacity for financial loss and intended investment time frame.","isMyTemplate":false},{"title":"General Meeting of the Condominium Owners' Association","category":"Real Estate","usageCount":2796,"author":"Feynman","description":"Summarizes votes and budgets. Informs co-owners of decisions and work clearly.","promptContent":"OUTLINE\nThe aim is to generate a concise and structured report of a general meeting of condominium owners, including decisions, topics discussed, votes, works, financial information, and follow-up actions.\nThe report should be presented by a professional meeting assistant, such as a session secretary, in a clear, organized, and easy-to-consult manner.\nThe tone of the summary should be professional, concise, and accessible, avoiding unnecessary legal or technical jargon for quick understanding by all owners.\nThe summary is intended for all owners, whether they attended the meeting or not, serving as a reference for tracking decisions and managing the condominium.\nThe required output format is Markdown, using level 2 headings (##) for major sections, level 3 headings (###) for subsections, and bulleted or numbered lists for details, without the use of emojis.","isMyTemplate":false},{"title":"Financial Advisor Meeting","category":"Financial","usageCount":2710,"author":"Herman Venegas","description":"Converts transcripts into structured notes. It organizes client goals, updates, and action items.","promptContent":"OUTLINE\nMeeting Agenda & Objectives: Outline topics and client's primary goals for the meeting.\nClient Updates: Document life changes such as family, job, or health, and any new financial priorities or concerns.\nFinancial Overview: Review income, expenses, assets, liabilities, and recent financial statements.\nDiscussion Points: Address short- and long-term goals, investment strategy, risk tolerance, and planning for tax, insurance, estate, or retirement.\nAction Items: List tasks for both the advisor and the client, including deadlines and follow-up plans.\nNext Steps & Follow-Up: Schedule the next meeting and identify necessary documents or information.\nAdvisor Notes & Observations: Record key insights, concerns, and recommendations.","isMyTemplate":false},{"title":"Template for Business Meetings / Real Estate Projects","category":"Real Estate","usageCount":2038,"author":"Bruno Sagas Lopes","description":"Organizes real estate meetings into summaries with decisions, tasks, and strategic critical points.","promptContent":"OUTLINE\nThe goal is to summarize discussed topics, decisions made, pending issues assigned with names, and relevant strategic insights in business meetings or real estate projects.\nThe summary should highlight critical points, objections, and practical suggestions.\nUse bullet points with executive clarity to present the information.","isMyTemplate":false},{"title":"Stock Market Discussion","category":"Financial","usageCount":2000,"author":"Margnilien","description":"Summarizes market trends, stock outlooks, and key price levels to assist with trading reviews.","promptContent":"OUTLINE\nThe \"Market Insights and Stock Trading Levels Tracker\" template is designed to capture and structure financial market discussions, focusing on extracting actionable information like market trends, stock specifics, price levels, and trading strategies for efficient review and decision-making.\nFor optimal recording, use a quiet environment, have speakers clearly state market trends, stock details, price levels, and strategies with associated timeframes, and keep the duration between 5 to 30 minutes.\nRecommended transcription settings include specifying th","isMyTemplate":false},{"title":"Meeting Assistant","category":"Meeting","usageCount":1599,"author":"号子","description":"Organize meeting transcripts into investment summaries and extract core logic.","promptContent":"","isMyTemplate":false},{"title":"Real Estate Agent Private Showing with Action Items, Talk Time, and 3rd Perspective Rating System","category":"Real Estate","usageCount":1432,"author":"Christopher Phares","description":"Extract client likes and needs from showings. Includes talk time and follow-up actions for agents.","promptContent":"OUTLINE\nThe context is a live audio recording of a home showing with a buyer client, aiming to capture client impressions, feelings, and agent follow-up opportunities.\nThe objective is to analyze the conversation and extract specific details including the property address, client likes and dislikes, notable features, participant questions and comments, emotional tone, changes in search criteria, rapport-building insights, and speaking time ratios.\nThe desired style is clean and insight-focused, akin to a sharp assistant documenting important moments and personalities.\nThe tone should be warm, neutral, and observant, focusing on facts and subtleties without over-interpretation.\nThe audience for this summary is the real estate agent, to aid in remembering the visit, serving client preferences, and fostering personal connections.\nThe response should be for","isMyTemplate":false},{"title":"Adaptive Summary","category":"General","usageCount":null,"author":"Plaud","description":"Great for meetings, interviews, lectures. Get a clear summary that adapts to your content.","promptContent":"Prompt\nAutopilot\n\nThe Smart Adaptive Template offers a way to summarize content intelligently and adaptively:\n\nAdaptive Structure : Selects the most suitable summary structure based on the content.\nAll-Scene Adaptation : Suitable for various scenarios, including meetings, interviews, lectures, etc.\nTip: If you need a specific format for certain scenarios, such as medical (e.g., SOAP Template), it is recommended to choose a specialized template.","isMyTemplate":true},{"title":"Reasoning Summary","category":"General","usageCount":null,"author":"Plaud","description":"Made for transcribed notes. Paste text to get a quick, clear summary that adapts to content.","promptContent":"Prompt\nReasoning Autopilot\n\nThe InterFlow template utilizes the most popular inference models to automatically deduce and generate suitable summary structures based on transcribed content:\n\nIntelligent Inference: Automatically selects the optimal inference framework based on task characteristics.\nDynamic Optimization: Adjusts inference paths in real-time to balance efficiency and accuracy.\nTip: If you need a specific format for certain scenarios, such as medical (e.g., SOAP Template), it is recommended to choose a specialized template.","isMyTemplate":true},{"title":"Meeting Note","category":"Meeting","usageCount":null,"author":"Plaud","description":"For teams. Input meeting info and topics to get structured notes, conclusions, and actions.","promptContent":"Prompt\nMeeting Note\nKeywords of Meeting Note\n⏰ Meeting Information\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nAttendees: Peter, John, Smith\n📝 Meeting Notes\nTopic 1\nSubtopic 1\nSummary description of Subtopic 1\n\nConclusion\n\nFirst conclusion of Subtopic 1.\nSecond conclusion of Subtopic 1.\nSubtopic 2\nSummary description of Subtopic 2\n\nConclusion\n\nFirst conclusion of Subtopic 2.\nSecond conclusion of Subtopic 2.\n📅 Next Arrangements\n Action items","isMyTemplate":false},{"title":"Call Note","category":"Call","usageCount":null,"author":"Plaud","description":"For sales or support calls. Enter details to get a structured summary and next steps.","promptContent":"Prompt\nCALL Info\nKeywords of CALL\n📞 Call Information\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nAttendees: Peter, John, Smith\n📝 Summary\n\nSummary of key information for this conversation.\n\n1. Topic1\nSummary description of Topic 1.\n\nDetailed description of Topic 1, including all the details.\n\nSummary description of Topic 2.\n\nDetailed description of Topic 2, including all the details.\n\n📅 Next Arrangements\n Action items","isMyTemplate":false},{"title":"Consultation Q&A","category":"Meeting","usageCount":null,"author":"Plaud","description":"For consulting meetings to record background, Q&A, and action items with owners and deadlines.","promptContent":"Prompt\nConsulting Meeting\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nAttendees: Peter, John, Smith\n\nBackground\n\nBackground Information Summary for Consultation Meeting\n\nQ&A\n1. Description of question 1\nAnswer to the question\n2. Description of question 2\nThe part1 of answer to the question\nThe part2 of answer to the question\nAction Items\n To-dos, including action items, deadlines and person in charge","isMyTemplate":false},{"title":"Discussion Summary","category":"Meeting","usageCount":null,"author":"Plaud","description":"For team discussions. Enter topics and notes; get conclusions, next steps, and key points.","promptContent":"Prompt\nDiscussion Meeting\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nAttendees: Peter, John, Smith\n\n1. Topic1\nConclusion\n\nThe conclusion about topic1 reached after discussion during the meeting.\n\nNext Steps\n The action items formulated based on the conclusion reached through discussion.\nDiscussion Points\nThe viewpoints expressed during the discussion.\nThe facts, examples, arguments, or questions presented in support of the viewpoint.","isMyTemplate":true},{"title":"Meeting Report","category":"Meeting","usageCount":null,"author":"Plaud","description":"For teams running meetings. Enter details to get a report with summary and next steps with owners.","promptContent":"Prompt\nReport Meeting\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nAttendees: Peter, John, Smith\n\n1. Topic1\n\nThe overall summary/conclusion consisting of key points from sub-topics\n\n1.1 Sub-topic1\nProgress\nThe progress discussed during the meeting, including updates on projects and tasks.\nProblem & Risk\nThe problem & risk discussioned during the meeting, including problem description, potential risk and resources needed.\nNext Step\n The detailed task description. - [person in charge] deadline\n1.2 Sub-topic2\nProgress: The progress discussed during the meeting, including updates on projects and tasks.\nProblem & Risk: The problem&risk discussioned during the meeting, including problem description, potential risk and resources needed.\nNext Step: The detailed task description. - [person in charge] deadline\n1.3 Sub-topic3\n\nThe progress discussed during the meeting, including updates on projects and tasks.","isMyTemplate":false},{"title":"Task Assignment","category":"Meeting","usageCount":null,"author":"Plaud","description":"For team meetings. Input date, place, people, tasks; get a clear list with owners and due dates.","promptContent":"Prompt\nTask Assignment\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nAttendees: Peter, Jo","isMyTemplate":false},{"title":"Class Note","category":"Speech","usageCount":null,"author":"Plaud","description":"Helps students log class info, keywords, key points. Outputs clear notes with examples and tasks.","promptContent":"Prompt\nClass Title\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Classroom 807\nCourse Name: Mathmatic\n\nKeywords\n\nxxx, xxx\n\nKey Learnings\nKnowledge point 1: summary of knowledge\nKnowledge point 2: summary of knowledge\nExplanations\n1. Knowledge point 1\nKeypoints\nKeypoint a within the knowledge point 1.\nKeypoint b within the knowledge point 1.\nExplanation\nDetailed explanation of the knowledge point 1, including the description, analysis, and derivation process.\nExamples provided\n\nDetailed description of the examples.\n\nFirst step analysis or derivation of explaining the example.\nSecond step analysis or derivation of explaining the example.\nAssignments\n Assignments for the class.","isMyTemplate":false},{"title":"Lecture Summary","category":"Speech","usageCount":null,"author":"Plaud","description":"For students, enter lecture details. Get a summary with key points, chapters, and quotes.","promptContent":"Prompt\nLecture Title\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nSpeaker: Jerry\n\nTheme\n\nTheme aims to provide a comprehensive understanding to quickly browse through the entire content of the lecture.\n\nTakeaways\nKeypoint 1 summarized from the lecture.\nKeypoint 2 summarized from the lecture.\nKeypoint 3 summarized from the lecture.\nHighlights\n\n\"Notable quotes or famous sayings mentioned in the lecture.\"——Speaker xx\n\nChapters & Topics\nChapter 1\n\nDetailed information of Chapter 1\n\nKeypoint 1\nKeypoint 2\nChapter 2\n\nDetailed information of Chapter 2\n\nKeypoint 1\nKeypoint 2\nSuggestions\nAdvice given by the speaker.","isMyTemplate":false},{"title":"Training Summary","category":"Speech","usageCount":null,"author":"Plaud","description":"For trainers and attendees to capture sessions. Outputs key points, notes, edge cases, and tasks.","promptContent":"Prompt\nTraining\n\nDate & Time: 2024-04-28 14:30:17\nLocation: Meeting room 807\nTraining Name: How to write a good prompt?\n\nKey Words\n\nkey word of this training\n\nWork Guide\nModule 1\nKey Points\nKey point 1 of Module 1\nKey point 2 of Module 1\nConsiderations\nPrecautions for this training segment to ensure effective practice.\nSpecial Circumstances\nHow to manage exceptions in certain circumstances.\nTo-do lists\n Tasks to do after training - [person assigned] deadline","isMyTemplate":false},{"title":"Dictation Note","category":"Speech","usageCount":null,"author":"Plaud","description":"Capture spoken thoughts into tidy notes. Get a summary, themes, checklist, and merged related notes.","promptContent":"Prompt\n\nDictation Note is an intelligent structuring assistant that transforms raw, free-form spoken notes into organized, actionable documents. It functions as a smart inbox for your thoughts, first understanding the purpose behind your dictation and then applying the perfect format to capture it clearly. It is designed for capturing and structuring personal thoughts, tasks, and ideas on the fly.\n\nGuiding Philosophy: Intent-First Structuring\n\nThe template's core philosophy is to provide the right structure for the right th","isMyTemplate":false},{"title":"Call Discussion","category":"Call","usageCount":null,"author":"Plaud","description":"For calls and meetings. Enter key points; get structured topics, conclusions, reasons, and to-dos.","promptContent":"Prompt\nDiscussion CALL\n\nTime: 2024-04-28 14:30:17\nConversation with: Smith\n\n1. Discussion Topic 1\nDescription: Detailed description of Topic 1\nConclusion: Conclusions and action items (to-dos) for Topic 1.\nReasons:\nReason 1 supporting the conclusion.\nReason 2 supporting the conclusion.\n2. Discussion Topic 2\nDescription: Detailed description of Topic 2\nConclusions:\nConclusion 1\nConclusion 2\nReasons:\nReason 1 supporting the conclusion.\nReason 2 supporting the conclusion.","isMyTemplate":true},{"title":"Phone Q&A","category":"Call","usageCount":null,"author":"Plaud","description":"For anyone debriefing a phone consultation. Input call notes; get Q&A pairs plus a clear to-do list.","promptContent":"Prompt\nAsking / Consulting CALL\n\nTime: 2024-04-28 14:30:17\nConversation with: Jesper\n\n1. Brief description of question 1\nA: Answer to the question 1\n2. Brief description of question 2\nA: Answer to the question 2\nTo-do:\n action item 1\n action item 2","isMyTemplate":false},{"title":"Task by Call","category":"Call","usageCount":null,"author":"Plaud","description":"For anyone organizing tasks from calls. Enter time, contact, notes; get to-dos with deadlines.","promptContent":"Prompt\nAssignment CALL\n\nTime: 2024-04-28 14:30:17\nConversation with: Polin\n\n1. Task 1\nDescription: Brief description of the background and the task at hand.\nTo-do lists:\n Detailed task description. - deadline","isMyTemplate":false},{"title":"Research Interview","category":"Interview","usageCount":null,"author":"Plaud","description":"Designed for research interviews. Enter context and Q&A to get key points and a structured log.","promptContent":"Prompt\nInterviewer Notes\n\nTime: 2024-07-03 17:00:23\nLocation: Meeting room 12\nInterviewee: Smith\n\nFor Introduction\n\nOverview of the interview context and background of the interviewee.\n\nEssence\nEssence 1 of the interview\nEssence 2 of the interview\nEssence 3 of the interview\nInterview Process\nInterviewer Question 1\nResponse from the interviewee\nResponse from the interviewee\nInterviewer Question 2\nResponse from the interviewee\nResponse from the interviewee","isMyTemplate":false},{"title":"Job Interview","category":"Interview","usageCount":null,"author":"Plaud","description":"For hiring teams. Record interviews as strengths, concerns, Q&A, and tasks.","promptContent":"Prompt\nJob Interview\n\nTime: 2024-04-28 14:30:17\nPosition: Product Manager\nInterviewee: Brian\n\nCandidate Synopsis\nExperience：\nOverview of career at Company A.\n—— The reason for leaving Company A.\nOverview of career at Company B.\n—— The reason for leaving Company B.\nWork Expectations：\nExpectation 1\nExpectation 1\nAvailability (if mentioned):\nSalary Expectations (if mentioned):\nPotential Strengths\nInterviewer’s Observation\nCandidate’s Claim\nPLAUD AI’s Insight\nPotential Concerns\nInterviewer’s Observation\nCandidate’s Disadvantages\nPLAUD AI’s Risk Assessment\nExploration\nExperience 1: Discussion of a significant experience.\nQ：Related question.\n\nA: Response\n\nQ：Related question.\n\nA: Response\n\nQ&A\nInterviewer: Typical interview question?\nA：Candidate's answer.\nCandidate: Typical candidate question?\nA: Interviewer's response.\nTo-do List\n First actionable item.\n Second actionable item.","isMyTemplate":false},{"title":"Panel Discussion","category":"Interview","usageCount":null,"author":"Plaud","description":"For interviewers and teams: enter panel details; get TLDR, takeaways, speaker insights, and Q&A.","promptContent":"Prompt\nPanel Discussion\n\nTime: 2024-07-03 17:00:23\nLocation: Meeting room 12\nInterviewee: Smith、John\n\nTLDR\n\nConcise summary of the key points from the discussion\n\nIntroduction\nSmith: Brief introduction and expertise\nJohn: Brief introduction and expertise\nTakeaways\nPrimary takeaway\nSecondary takeaway\nInsights\nSmith:\nInsight 1 shared\nInsight 2 shared\nJohn:\nInsight 1 shared\nInsight 2 shared\nChapter\nQ：question addressed to the panel\n\nSmith: Answer of Smith\nJohn: Answer of John\n\nQ：question addressed to the panel\n\nSmith: Answer of Smith\nJohn: Answer of John","isMyTemplate":false},{"title":"SOAP","category":"Medical","usageCount":null,"author":"Plaud","description":"For clinicians documenting visits. Input history, symptoms, exams. Output clear SOAP with plan.","promptContent":"Prompt\nSOAP\n\nTime: 2024-04-28 14:30:17\nPatient: Brian\nDiagnosis: Common cold\n\nDiagnostic History:\nMedical History: Summarize relevant past diagnoses and conditions\nMedication History:\nSubjective:\nDescribe the patient’s reported symptoms or concerns\nSymptoms: Briefly detail specific symptoms mentioned\nObjective:\nNote key physical exam findings or test results\nInclude relevant diagnostic observations\nAssessment:\nAssessment: Summarize the current diagnosis based on findings\nDifferential Diagnosis: [None at the moment]\nPlan:\nPrescription: State prescribed medications or treatments\nNext Steps/Investigations:\nOutline recommended follow-ups or tests\nFurther Treatment Plan:\nDescribe any long-term treatment strategies","isMyTemplate":false},{"title":"Psychotherapy Note","category":"Medical","usageCount":null,"author":"Plaud","description":"For therapy session documentation. Capture concerns, history, and plan in a structured note.","promptContent":"Prompt\nPsychotherapy Session Note\n\nPatient Name: Brian\nDate of Session: 2024-10-10 14:30:17\nTherapist: Robert\n\nChief Complaint\n\nThe primary psychological or emotional issue the patient is experiencing.\n\nHistory of Present Illness\n\nA description of the onset, development, and related symptoms of the current issue.\n\nTreatment History\n\nTypes and outcomes of past treatments the patient has received.\n\nMental Status Examination\n\nAn assessment of the patient's current psychological state, including appearance, behavior, and mood.\n\nTherapeutic Interventions\n\nSpecific techniques and strategies used during therapy sessions to address the patient's issues, such as cognitive-behavioral therapy (CBT), mindfulness, or psychoeducation.\n\nPlan\n\nRecommendations and plans for future treatment.\n\nNext Appointment: The date and time of the next scheduled appointment\nTherapist Signature: The therapist's signature","isMyTemplate":false},{"title":"BANT","category":"Sales","usageCount":null,"author":"Plaud","description":"For sales reps. Record budget, authority, need and timeline from meetings to get a clear BANT summary.","promptContent":"Prompt\nBANT\n\nDate and Time: 2024-04-28 14:30:17\nLocation: Meeting Room 801\nParticipants: Norman, Brian\n\nBudget\n\nFinancial resources of the user\n\nAuthority\n\nFactors influencing the decision-making process, considerations, and key stakeholders\n\nNeed\n\nDetailed description of user needs\n\nTimeline\n\nDetailed schedule listing important dates and milestones","isMyTemplate":false},{"title":"Client Needs","category":"Consulting","usageCount":null,"author":"Plaud","description":"For client meetings, capture context and goals. Input notes; get a brief with tasks and suggestions.","promptContent":"Prompt\n\nDate and Time: 2024-04-28 14:30:17\nLocation: Meeting Room 1\nClient: Sophia\n\nOverview\n\nThe client is the Operations Director of a retail company, seeking strategies to boost store sales performance.\n\nBackground\n\nThe company has 50 stores nationwide, primarily selling clothing and accessories. In recent years, online sales have grown rapidly, but physical store performance has declined.\n\nPain Points\n\nThe reduction in store foot traffic is impacting overall sales, and poor inventory management is leading to an accumulation of unsold products, affecting cash flow. Additionally, rapid product changes and unpredictable market trends complicate inventory planning.\n\nExpectations\n\nThe client hopes to improve inventory turnover by optimizing the inventory management system and to enhance sales performance by improving customer experience and increasing foot traffic. They also wish to use data analysis to better predict market trends, optimizing product mix and promotional strategies.\n\nOther Information Summary\n\nThe company plans to launch a new membership points system next year and is considering partnerships with local brands.\n\nTo do\n Evaluate and select appropriate inventory management software.\n Design and implement new customer experience enhancement activities.\n Collect and analyze sales data to optimize strategies.\n\nAI Suggestions\nThe major pain point identified by AI is poor inventory management. Here are some possible solutions for your reference:\n\nInventory Management System: Implement advanced inventory management software for real-time tracking and analysis.\nCustomer Experience Enhancement: Attract more customers through in-store events and personalized services.\nData Analysis: Use sales data analysis to optimize product mix and promotional strategies.","isMyTemplate":true},{"title":"Teaching Note","category":"Education","usageCount":null,"author":"Plaud","description":"For teachers to log classes: overview, unfinished topics, Q&A. Clear notes for review, next class.","promptContent":"Prompt\nTeaching Notes\n\nTime: 2024-04-28 14:30:17\nLocation: Classroom 804\nClass: Math\n\nOverview\n\nThis session covered the basics of algebra and geometric concepts.\n\nUnfinished Content\n\nProperties and classification of triangles.\n\nCovered content\nBasics of Algebra\nExplained the fundamental concepts of algebraic expressions.\nDiscussed how to solve linear equations.\n\nAI Suggestions\nStudent engagement was high in this section, with vivid examples and clear explanations. It is recommended to add more practice exercises for reinforcement.\n\nGeometric Concepts\nIntroduced basic geometric shapes and their properties.\nExplained the classification and measurement of angles.\n\nAI Suggestions\nStudents understood geometric shapes well, but there was some confusion about angle measurement. It is recommended to use more visual aids.\n\nStudent Questions\nWhat is a coefficient in an algebraic expression?\nA: A coefficient is the number in front of a variable, indicating its multiple.\nHow do you measure an acute angle?\nA: You can use a protractor to measure the degrees of an acute angle.","isMyTemplate":false},{"title":"Punch List","category":"Construction","usageCount":null,"author":"Plaud","description":"For inspectors and site leads. Input notes to get tasks with owners and due dates. Highlights gaps.","promptContent":"Prompt\nPunch List\n\nTime: 2024-04-28 14:30:17\nLocation: Building 8\nInspector: Tom\n\nOverview\n\nThe following key issues were identified during the acceptance inspection: groundwater leakage in the northeast corner requires a drainage system solution; a batch of concrete does not meet strength standards, affecting foundation work; walls are uneven and need adjustment; weld joints have cracks and require reinforcement.\n\nPunch list\n\nGeneral Requirements\nNo related issues\n\nSite Work\n\nTask Name\tResponsible\tPriority\tDescription\tComments\tDue Date\nAddress Groundwater Leakage\tExcavation Team\tHigh\tImplement a drainage system to address groundwater leakage found in the northeast corner during excavation.\t70% of excavation completed; potential delay in construction progress.\t2024-09-19\n\nConcrete\n\nTask Name\tResponsible\tPriority\tDescription\tComments\tDue Date\nReplace Non-Standard Concrete\tQuality Control Team\tUrgent\tReplace the batch of concrete that does not meet strength standards, affecting the foundation section.\tCoordinate with supplier for new materials.\t2024-09-15\nResume Concrete Pouring\tConcrete Workers\tHigh\tResume pouring of the next layer of concrete once new materials are confirmed to meet standards.\tFirst layer completed; awaiting new materials.\t2024-09-16\n...\t\t\t\t\t\n\nAI Suggestion\nBased on your acceptance process, AI has identified some points for your attention. It's great to see that all tasks have assigned responsible parties and all problems have clear descriptions. However, please consider inspecting for potential issues in plumbing and electrical systems, as these areas were not covered in the current inspection report.","isMyTemplate":false},{"title":"Power Dynamics","category":"Functional","usageCount":null,"author":"Plaud","description":"Teams and facilitators. Use a transcript to map influence from speaking turns and idea adoption.","promptContent":"Prompt\nPower Dynamics\n\nPower Dynamics analyzes conversational dynamics to reveal the underlying power structure and influence network within a group.\n\nFocus on Subtleties: It identifies influence not through job titles, but by analyzing subtle cues like speaking turns, interruptions, and the adoption of ideas.\nBehavior over Identity: It prioritizes how individuals act in a conversation over their stated roles, believing interaction reveals the true flow of influence.\nDynamic Mapping: Instead of creating a static organizational chart, it aims to produce a dynamic \"power topography map\" that shows how influence shifts and concentrates during an interaction.","isMyTemplate":false},{"title":"Intent Analysis","category":"Functional","usageCount":null,"author":"Plaud","description":"Find the likely intent in any conversation or text. Outputs a brief with quotes and response advice.","promptContent":"Prompt\nDetailed Section-by-Section Description\n\nThis prompt is structured into three distinct parts—the Mandate, the Lenses, and the Brief—to guide the analysis from a high-level philosophy down to a precise, actionable output.\n\n【The Analyst's Mandate】\nThis section establishes the AI's core persona and purpose. It's not just a machine; it's a specialist in \"communicative intelligence\" acting like a seasoned diplomat. This part sets the foundational principles: to look past literal words for the underlying goal (the \"job to be done\"), to ensure the final insight is practical and actionable, and to maintain an objective, non-judgmental perspective.\n\n【Diagnostic Lenses】\nThis is the analytical engine of the prompt. It provides the AI with a specific toolkit for examining the text. Instead of just reading the words, the AI is instructed to look through four distinct \"lenses\":\n\nEmotional Cadence: Pinpointing where the conversation's emotional energy is highest.\nThe Texture of Silence: Interpreting pauses and hesitations as meaningful data.\nThe Weight of Words: Analyzing over-explanation or minimization as signs of insecurity or avoidance.\nContextual Awareness: A crucial guardrail that accounts for cultural or formal settings where indirectness is normal.\n\n【The Intelligence Brief: Output Format】\nThis section defines the structure of the final deliverable, ensuring it's a concise and strategic tool. The output is framed as a professional \"brief\" containing three key components:\n\nPrimary Intent Hypothesis: This is the core conclusion—the single most likely intent. It includes a confidence level (High, Medium, Low) to transparently manage ambiguity.\nDiagnostic Footprints: This is the evidence. It forces the AI to ground its hypothesis in specific, observable behaviors and quotes from the text, making the analysis verifiable.\nStrategic Response Vector: This is the actionable takeaway. Instead of a simple suggested reply, it recommends a strategic approach for how to best navigate the conversation based on the inferred intent.","isMyTemplate":false},{"title":"Rewriter - Simple, Clear, and Concise.","category":"General","usageCount":null,"author":"Adamjasonmoore","description":"Refine text for clarity and brevity.","promptContent":"","isMyTemplate":false},{"title":"Deeply detailed Speech details, quotes and concepts","category":"Speech","usageCount":null,"author":"Walter G Jr","description":"Detailed speech summaries and quotes.","promptContent":"","isMyTemplate":false},{"title":"Sermon","category":"General","usageCount":null,"author":"Lee","description":"Summarize sermons for personal study.","promptContent":"","isMyTemplate":false},{"title":"Manager/Employee One-on-One Session","category":"General","usageCount":null,"author":"Nicholas Fisk","description":"Convert 1-on-1 transcripts into notes.","promptContent":"","isMyTemplate":false},{"title":"Customer Consultation Center Input Prompt","category":"General","usageCount":null,"author":"kgmplaud_minutes_0020","description":"通話記録を整理し、属性や要約を作成します。","promptContent":"","isMyTemplate":false},{"title":"Witness Interview Transcript","category":"Interview","usageCount":null,"author":"KuhlmanOffice","description":"Generate professional witness records.","promptContent":"","isMyTemplate":false},{"title":"Healthcare Consultation","category":"General","usageCount":null,"author":"Plaud","description":"Structure social work consult notes.","promptContent":"","isMyTemplate":false},{"title":"Soap +","category":"General","usageCount":null,"author":"David Johnston","description":"Vet SOAP notes and client summaries.","promptContent":"","isMyTemplate":false},{"title":"Clinical History","category":"Medical","usageCount":null,"author":"Juan Manuel Fraga Sastrias","description":"Structures medical consultation notes.","promptContent":"","isMyTemplate":false},{"title":"Rewrite - Inspire, persuade and move people to take action. (UVP, CTA)","category":"General","usageCount":null,"author":"Adamjasonmoore","description":"Polish text to drive reader action.","promptContent":"","isMyTemplate":false},{"title":"Intent","category":"Sales","usageCount":null,"author":"dave.j.johnson24","description":"Reveal hidden intent in sales calls.","promptContent":"","isMyTemplate":false},{"title":"Sales Call coaching","category":"Call","usageCount":null,"author":"yesvaldes","description":"Coach agents by reviewing sales calls","promptContent":"","isMyTemplate":false},{"title":"Psychoanalyst","category":"General","usageCount":null,"author":"Lyahn","description":"Understand inner patterns in speech.","promptContent":"","isMyTemplate":false},{"title":"Expert Management Consultant","category":"General","usageCount":null,"author":"Osman","description":"Strategic summaries for executives.","promptContent":"","isMyTemplate":false},{"title":"Summarize meeting","category":"General","usageCount":null,"author":"dm","description":"Evaluate meetings efficiently.","promptContent":"","isMyTemplate":false},{"title":"Behavior Analyst","category":"Speech","usageCount":null,"author":"Chase Hughes","description":"Analyze speech to map behavioral needs.","promptContent":"","isMyTemplate":false},{"title":"College Class Notes","category":"General","usageCount":null,"author":"Rob Ballou","description":"Organize lecture notes for better study.","promptContent":"","isMyTemplate":false},{"title":"Study and Training Material","category":"General","usageCount":null,"author":"Felipe Cortez","description":"Creates training guides via transcription.","promptContent":"","isMyTemplate":false},{"title":"Interactive Class","category":"General","usageCount":null,"author":"rvfalcao","description":"Generates class summaries for review.","promptContent":"","isMyTemplate":false},{"title":"Class Notes","category":"General","usageCount":null,"author":"Guido Nass","description":"Create academic notes from classes.","promptContent":"","isMyTemplate":false},{"title":"Site Walk","category":"General","usageCount":null,"author":"iA","description":"Document site walks and action items.","promptContent":"","isMyTemplate":false},{"title":"Design Meeting","category":"Meeting","usageCount":null,"author":"kimura_ayumu","description":"Streamlines the recording and settings for design meetings.","promptContent":"","isMyTemplate":false},{"title":"TO DO LIST","category":"Construction","usageCount":null,"author":"c.dratwa","description":"Construction task lists in tables","promptContent":"","isMyTemplate":false},{"title":"Co-Star AutoPilot","category":"General","usageCount":null,"author":"Robert Cordero","description":"Turn voice memos into field reports.","promptContent":"","isMyTemplate":false},{"title":"Inspection Report Notes","category":"General","usageCount":null,"author":"Michael Nibarger","description":"Draft TREC 7-6 home inspection notes.","promptContent":"","isMyTemplate":false},{"title":"Project Team Meetings with Multiple Participants","category":"Meeting","usageCount":null,"author":"Nicholas Fisk","description":"Create clear team meeting summaries.","promptContent":"","isMyTemplate":false},{"title":"IT Meeting","category":"Meeting","usageCount":null,"author":"Dmitry Zamotkin","description":"Organize IT meeting notes and tasks.","promptContent":"","isMyTemplate":false},{"title":"IT Knowledge Transfer Session","category":"General","usageCount":null,"author":"OllyOvation","description":"Document IT session transcripts.","promptContent":"","isMyTemplate":false},{"title":"IT Topics","category":"General","usageCount":null,"author":"DIETMAR LAHM","description":"Summarize IT meetings for clients.","promptContent":"","isMyTemplate":false},{"title":"Software Requirements Gathering","category":"General","usageCount":null,"author":"Abigail Cipriano","description":"Capture software requirements.","promptContent":"","isMyTemplate":false},{"title":"Meeting Minutes Template (for SIer)","category":"Meeting","usageCount":null,"author":"株式会社日本SI研究所","description":"Create minutes with organized decisions and ToDos","promptContent":"","isMyTemplate":false},{"title":"Tech Meeting - AutoGen Radial Mindmap","category":"Meeting","usageCount":null,"author":"Bill McCracken","description":"Get tech summaries and visual maps.","promptContent":"","isMyTemplate":false},{"title":"Service Operations Summary","category":"General","usageCount":null,"author":"scoota","description":"Summarize service ops and incidents.","promptContent":"","isMyTemplate":false},{"title":"Court Reporter","category":"General","usageCount":null,"author":"Bill McCracken","description":"Get exact word-for-word transcripts.","promptContent":"","isMyTemplate":false},{"title":"Meeting Secretary (Legal)","category":"Meeting","usageCount":null,"author":"Tony","description":"Organize legal transcripts into notes.","promptContent":"","isMyTemplate":false},{"title":"Client Consultation","category":"Legal","usageCount":null,"author":"Alicia Jurney","description":"Organize case facts for legal plans.","promptContent":"","isMyTemplate":false},{"title":"Court Reporter With Min Markers","category":"General","usageCount":null,"author":"Bill McCracken","description":"Produce exact, timed transcripts.","promptContent":"","isMyTemplate":false},{"title":"Smart Transcript Reasoner","category":"General","usageCount":null,"author":"Jeremiah Harvey","description":"Map logic and tasks from transcripts.","promptContent":"","isMyTemplate":false},{"title":"Case Meeting (Criminal defense)","category":"Meeting","usageCount":null,"author":"smxtfwsjgq","description":"Summarize criminal case meetings and actions.","promptContent":"","isMyTemplate":false},{"title":"Attorney–Client Meeting & Call Summary","category":"Meeting","usageCount":null,"author":"jwilson","description":"Summarize legal meetings and calls.","promptContent":"","isMyTemplate":false},{"title":"Buyer or Seller Real Estate consultation appointments","category":"Real Estate","usageCount":null,"author":"claireackermanrealtor","description":"Summarize real estate client meetings","promptContent":"","isMyTemplate":false},{"title":"Real Estate Property Acquisition","category":"Real Estate","usageCount":null,"author":"martin","description":"Summarizes properties for the team.","promptContent":"","isMyTemplate":false},{"title":"Listing Consultation – Internal Notes + Client Recap","category":"General","usageCount":null,"author":"dom","description":"Generate CRM notes and client recaps.","promptContent":"","isMyTemplate":false},{"title":"AI Transcription Template for the Insurance Industry","category":"General","usageCount":null,"author":"jameschen1016","description":"Insurance-specific transcription, automatically organizing professional terminology and practical scripts.","promptContent":"","isMyTemplate":false},{"title":"Financial Advisor Call Summary","category":"Call","usageCount":null,"author":"Dirk Harris","description":"Get clear notes from financial calls.","promptContent":"","isMyTemplate":false},{"title":"Quantitative Data","category":"General","usageCount":null,"author":"Plaud","description":"Turn text into a table of key numbers.","promptContent":"","isMyTemplate":false},{"title":"Meeting Highlights","category":"Meeting","usageCount":null,"author":"Plaud","description":"Turn meetings into lasting insights","promptContent":"","isMyTemplate":false},{"title":"Speakers psychological analysis","category":"General","usageCount":null,"author":"kippersluis.leon","description":"Analyze speakers and group dynamics.","promptContent":"","isMyTemplate":false},{"title":"DayLog","category":"General","usageCount":null,"author":"Hugo Az","description":"Organizes the day's audio into reports.","promptContent":"","isMyTemplate":false},{"title":"Lecture","category":"General","usageCount":null,"author":"Plaud","description":"Organize lectures into clear notes","promptContent":"","isMyTemplate":false},{"title":"Interview Note","category":"Interview","usageCount":null,"author":"Plaud","description":"Interview notes with clear next steps.","promptContent":"","isMyTemplate":false},{"title":"Voice Note","category":"General","usageCount":null,"author":"Plaud","description":"Turn voice notes into daily summaries.","promptContent":"","isMyTemplate":false},{"title":"Key Points","category":"General","usageCount":null,"author":"Plaud","description":"Topic-based key points for quick scan","promptContent":"","isMyTemplate":false},{"title":"Rewrite - Sounds human, reads fluidly, engages emotionally,","category":"General","usageCount":null,"author":"Adamjasonmoore","description":"Refine text for a natural, human feel.","promptContent":"","isMyTemplate":false},{"title":"Transcription Formatting","category":"Meeting","usageCount":null,"author":"y!s","description":"Organizes transcripts into easy-to-read meeting minutes.","promptContent":"","isMyTemplate":false},{"title":"Summary, Explanation and Conclusion","category":"General","usageCount":null,"author":"Adamjasonmoore","description":"Summarize and explain texts clearly.","promptContent":"","isMyTemplate":false},{"title":"Detailed Lecture Notes","category":"General","usageCount":null,"author":"leosungwonlee","description":"Turn transcripts into study notes.","promptContent":"","isMyTemplate":false},{"title":"Personal Conversations","category":"General","usageCount":null,"author":"Demischa Wielkens","description":"Turn personal talks into reports.","promptContent":"","isMyTemplate":false},{"title":"Plaud GPT Summary","category":"General","usageCount":null,"author":"Victor Alves","description":"Creates detailed and expanded summaries.","promptContent":"","isMyTemplate":false},{"title":"Cours Torah - Français Hebreu","category":"General","usageCount":null,"author":"","description":"\"\"\"Transcris intégralement cet audio en texte. C'est un cours de Torah en français avec des termes hébreux.\n\nInstructions :\n- Transcris tout ce qui est dit, mot pour mot, fidèlement\n- Conserve les termes hébreux en translittération française (ex: Chabbat, Torah, Hachem, mitsvot, paracha, guemara, rachi, tsniout, etc.)\n- Si tu entends de l'hébreu authentique prononcé, retranscris-le en caractères hébreux si possible, sinon en translittération\n- Respecte la ponctuation naturelle de la parole (virgules, points, tirets pour les pauses)\n- Ne résume pas, ne reformule pas — transcris fidèlement\n- Commence directement par la transcription, sans aucun préambule\"\"\"","promptContent":"","isMyTemplate":true},{"title":"To-do List","category":"General","usageCount":null,"author":"Plaud","description":"Make chats a clean, deduped to-do list","promptContent":"","isMyTemplate":true},{"title":"Transcript to Full Narrative Record","category":"General","usageCount":null,"author":"cbhifia+plaud","description":"Turn transcripts into meeting stories","promptContent":"","isMyTemplate":true}];
+
+const CATEGORY_COLORS = {"General":"#6366f1","Meeting":"#f59e0b","Speech":"#10b981","Call":"#3b82f6","Interview":"#8b5cf6","Medical":"#ef4444","Sales":"#f97316","Consulting":"#14b8a6","Education":"#6366f1","Construction":"#78716c","IT & Engineering":"#0ea5e9","Legal":"#64748b","Real Estate":"#84cc16","Financial":"#eab308","Functional":"#a855f7","Mes Templates":"#ec4899"};
+
+const CATEGORIES = ['Toutes', 'Mes Templates', 'General', 'Meeting', 'Speech', 'Call', 'Interview', 'Medical', 'Sales', 'Consulting', 'Education', 'Construction', 'IT & Engineering', 'Legal', 'Real Estate', 'Financial', 'Functional'];
+
+let activeCategory = 'Toutes';
+let searchQuery = '';
+let sortMode = 'popular';
+
+function getCatColor(cat, isMyTemplate) {
+  if (isMyTemplate && activeCategory === 'Mes Templates') return CATEGORY_COLORS['Mes Templates'];
+  return CATEGORY_COLORS[cat] || '#6366f1';
+}
+
+function formatCount(n) {
+  if (!n) return '';
+  if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M';
+  if (n >= 1000) return Math.round(n/1000) + 'k';
+  return n.toString();
+}
+
+function escHtml(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function filteredTemplates() {
+  let list = [...TEMPLATES];
+
+  if (activeCategory === 'Mes Templates') {
+    list = list.filter(t => t.isMyTemplate);
+  } else if (activeCategory !== 'Toutes') {
+    list = list.filter(t => t.category === activeCategory);
+  }
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(t =>
+      (t.title || '').toLowerCase().includes(q) ||
+      (t.description || '').toLowerCase().includes(q) ||
+      (t.author || '').toLowerCase().includes(q) ||
+      (t.category || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (sortMode === 'az') {
+    list.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+  } else if (sortMode === 'za') {
+    list.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+  } else {
+    // popular: by usageCount desc, then my templates first
+    list.sort((a, b) => {
+      const ac = a.usageCount || 0, bc = b.usageCount || 0;
+      return bc - ac;
+    });
+  }
+
+  return list;
+}
+
+function renderPills() {
+  const container = document.getElementById('categoryPills');
+  container.innerHTML = '';
+  const counts = {};
+  TEMPLATES.forEach(t => {
+    const cat = t.isMyTemplate ? 'Mes Templates' : t.category;
+    counts[cat] = (counts[cat] || 0) + 1;
+    counts['Toutes'] = (counts['Toutes'] || 0) + 1;
+    if (t.isMyTemplate) counts['Mes Templates'] = (counts['Mes Templates'] || 0) + 1;
+  });
+
+  CATEGORIES.forEach(cat => {
+    const n = cat === 'Toutes' ? TEMPLATES.length : (cat === 'Mes Templates' ? TEMPLATES.filter(t => t.isMyTemplate).length : TEMPLATES.filter(t => t.category === cat).length);
+    if (n === 0) return;
+    const pill = document.createElement('button');
+    pill.className = 'pill' + (cat === activeCategory ? ' active' : '');
+    pill.textContent = cat + (n ? ' ' + n : '');
+    pill.onclick = () => { activeCategory = cat; renderPills(); renderGrid(); };
+    container.appendChild(pill);
+  });
+
+  document.getElementById('totalBadge').textContent = TEMPLATES.length + ' templates';
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const list = filteredTemplates();
+
+  document.getElementById('statsText').innerHTML =
+    '<span class="stats-count">' + list.length + '</span> template' + (list.length > 1 ? 's' : '') +
+    ' affich' + (list.length > 1 ? 'és' : 'é') +
+    ' sur <span class="stats-count">' + TEMPLATES.length + '</span>';
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Aucun template trouvé</div><div class="empty-sub">Essayez un autre mot-clé ou catégorie</div></div>';
+    return;
+  }
+
+  grid.innerHTML = list.map((t, i) => {
+    const color = CATEGORY_COLORS[t.isMyTemplate ? 'Mes Templates' : t.category] || '#6366f1';
+    const colorLight = color + '18';
+    const usageStr = formatCount(t.usageCount);
+    const hasPrompt = !!(t.promptContent && t.promptContent.trim());
+
+    return `<div class="card${t.isMyTemplate ? ' my-template' : ''}" onclick="openModal(${TEMPLATES.indexOf(t)})">
+      ${hasPrompt ? '<div class="has-prompt-indicator" title="Prompt disponible"></div>' : ''}
+      <div class="card-header">
+        <span class="cat-badge" style="background:${colorLight};color:${color}">${escHtml(t.isMyTemplate && activeCategory === 'Mes Templates' ? 'Mes Templates' : t.category)}</span>
+        ${t.isMyTemplate ? '<span class="my-badge">⭐ Mon template</span>' : ''}
+      </div>
+      <div class="card-title">${escHtml(t.title)}</div>
+      <div class="card-desc">${escHtml(t.description || '')}</div>
+      <div class="card-footer">
+        <div class="card-usage">
+          ${usageStr ? '<div class="usage-dot"></div>' + escHtml(usageStr) + ' utilisations' : '<span style="color:var(--text-muted);font-size:11px">—</span>'}
+        </div>
+        <div class="card-author">${escHtml(t.author || (t.isMyTemplate ? 'Moi' : 'Plaud'))}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(idx) {
+  const t = TEMPLATES[idx];
+  if (!t) return;
+
+  const color = CATEGORY_COLORS[t.isMyTemplate ? 'Mes Templates' : t.category] || '#6366f1';
+  const colorLight = color + '18';
+
+  document.getElementById('modalTitle').textContent = t.title;
+
+  const meta = document.getElementById('modalMeta');
+  meta.innerHTML = `
+    <span class="cat-badge" style="background:${colorLight};color:${color}">${escHtml(t.category)}</span>
+    ${t.isMyTemplate ? '<span class="my-badge">⭐ Mon template</span>' : ''}
+    ${t.usageCount ? '<span class="modal-sep">·</span><span class="modal-usage">📊 ' + escHtml(formatCount(t.usageCount)) + ' utilisations</span>' : ''}
+    ${t.author ? '<span class="modal-sep">·</span><span class="modal-author">par ' + escHtml(t.author) + '</span>' : ''}
+  `;
+
+  const body = document.getElementById('modalBody');
+  const desc = (t.description || '').trim();
+  const prompt = (t.promptContent || '').trim();
+
+  let html = '';
+  if (desc) {
+    html += `<div>
+      <div class="section-label">Description</div>
+      <p class="modal-desc-text">${escHtml(desc).replace(/\n/g, '<br>')}</p>
+    </div>`;
+  }
+
+  html += `<div>
+    <div class="section-label">Prompt / Instructions</div>
+    ${prompt
+      ? `<div class="prompt-block">${escHtml(prompt)}</div>`
+      : `<div class="no-prompt">💡 Prompt non disponible — template communautaire</div>`
+    }
+  </div>`;
+
+  body.innerHTML = html;
+
+  const copyBtn = document.getElementById('copyBtn');
+  if (prompt) {
+    copyBtn.style.display = '';
+    copyBtn.textContent = 'Copier le prompt';
+    copyBtn.className = 'btn btn-primary btn-copy';
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(prompt).then(() => {
+        copyBtn.textContent = '✓ Copié !';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copier le prompt';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = prompt;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        copyBtn.textContent = '✓ Copié !';
+        setTimeout(() => { copyBtn.textContent = 'Copier le prompt'; }, 2000);
+      });
+    };
+  } else {
+    copyBtn.style.display = 'none';
+  }
+
+  document.getElementById('modalBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Event listeners
+document.getElementById('closeBtn').onclick = closeModal;
+document.getElementById('closeBtn2').onclick = closeModal;
+document.getElementById('modalBackdrop').onclick = (e) => {
+  if (e.target === document.getElementById('modalBackdrop')) closeModal();
+};
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+document.getElementById('searchInput').oninput = (e) => {
+  searchQuery = e.target.value.trim();
+  renderGrid();
+};
+
+document.getElementById('sortSelect').onchange = (e) => {
+  sortMode = e.target.value;
+  renderGrid();
+};
+
+// Init
+renderPills();
+renderGrid();
+</script>
+</body>
+</html>
