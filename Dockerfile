@@ -1,3 +1,8 @@
-FROM nginx:alpine
-COPY index.html /usr/share/nginx/html/index.html
-EXPOSE 80
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json .
+RUN npm install --production
+COPY . .
+VOLUME /data
+EXPOSE 3000
+CMD ["npm", "start"]
