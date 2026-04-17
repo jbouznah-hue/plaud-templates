@@ -726,8 +726,15 @@
   .result-content {
     padding: 24px; background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); font-size: 14px; line-height: 1.7;
-    white-space: pre-wrap; max-height: 600px; overflow-y: auto;
+    max-height: 600px; overflow-y: auto;
   }
+  .result-content h2 { font-size: 18px; font-weight: 700; margin: 16px 0 8px; color: var(--text-primary); }
+  .result-content h3 { font-size: 16px; font-weight: 600; margin: 14px 0 6px; color: var(--text-primary); }
+  .result-content h4 { font-size: 14px; font-weight: 600; margin: 12px 0 4px; color: var(--text-primary); }
+  .result-content ul { margin: 8px 0; padding-left: 24px; }
+  .result-content li { margin: 4px 0; }
+  .result-content strong { font-weight: 600; }
+  .result-content p { margin: 8px 0; }
   .result-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 
   /* ── WIZARD STEPS ── */
@@ -929,8 +936,35 @@
         <div class="upload-icon">🎙️</div>
         <h3 id="uploadTitle">Déposez votre fichier audio ou vidéo</h3>
         <p style="color:var(--text-secondary); margin: 8px 0 20px" id="uploadFormats">MP3, WAV, M4A, MP4, MKV, AVI, MOV, WEBM, OGG, FLAC, AAC — jusqu'à 5h</p>
-        <input type="file" id="fileInput" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.mkv,.avi,.mov,.webm,.ogg,.flac,.aac" hidden>
-        <button class="btn btn-primary" id="uploadBtn" onclick="document.getElementById('fileInput').click()">Choisir un fichier</button>
+        <div class="validation-toggle" style="justify-content:center;margin-bottom:16px">
+          <button class="toggle-btn active" id="uploadFileTab" onclick="setUploadMode('file')">📁 Fichier</button>
+          <button class="toggle-btn" id="uploadUrlTab" onclick="setUploadMode('url')">🔗 Lien / YouTube</button>
+        </div>
+        <div id="uploadFileMode">
+          <input type="file" id="fileInput" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.mkv,.avi,.mov,.webm,.ogg,.flac,.aac" hidden>
+          <button class="btn btn-primary" id="uploadBtn" onclick="document.getElementById('fileInput').click()">Choisir un fichier</button>
+        </div>
+        <div id="uploadUrlMode" style="display:none">
+          <input type="url" id="urlInput" placeholder="https://www.youtube.com/watch?v=... ou lien audio direct" class="search-input" style="max-width:500px;margin:0 auto 16px;display:block;padding-left:16px">
+          <button class="btn btn-primary" onclick="handleUrl()" id="urlSubmitBtn">Télécharger et transcrire</button>
+        </div>
+        <div class="form-field" style="max-width:300px;margin:16px auto 0">
+          <label id="audioLangLabel">Langue de l'audio</label>
+          <select id="audioLang" class="sort-select" style="width:100%">
+            <option value="">Détection automatique</option>
+            <option value="fr">Français</option>
+            <option value="he">Hébreu</option>
+            <option value="en">Anglais</option>
+            <option value="es">Espagnol</option>
+            <option value="ar">Arabe</option>
+            <option value="de">Allemand</option>
+            <option value="it">Italien</option>
+            <option value="pt">Portugais</option>
+            <option value="ru">Russe</option>
+            <option value="zh">Chinois</option>
+            <option value="ja">Japonais</option>
+          </select>
+        </div>
         <div class="upload-file-info" id="uploadFileInfo" style="display:none"></div>
         <div class="progress-bar" id="uploadProgress" style="display:none; max-width:400px; margin:16px auto 0">
           <div class="progress-fill" id="uploadProgressFill"></div>
@@ -1139,7 +1173,12 @@ const i18n = {
     emailSent: 'Email envoy\u00e9 !',
     correctionLog: 'Journal des corrections',
     original: 'Original', corrected: 'Corrig\u00e9',
-    reason: 'Raison', ignore: 'Ignorer', correct: 'Corriger'
+    reason: 'Raison', ignore: 'Ignorer', correct: 'Corriger',
+    fileTab: '📁 Fichier', urlTab: '🔗 Lien / YouTube',
+    urlPlaceholder: 'https://www.youtube.com/watch?v=... ou lien audio direct',
+    downloadAndTranscribe: 'Télécharger et transcrire',
+    downloading: 'Téléchargement en cours...',
+    audioLanguage: "Langue de l'audio", autoDetect: 'Détection automatique'
   },
   en: {
     searchPlaceholder: 'Search a template\u2026',
@@ -1199,7 +1238,12 @@ const i18n = {
     emailSent: 'Email sent!',
     correctionLog: 'Correction log',
     original: 'Original', corrected: 'Corrected',
-    reason: 'Reason', ignore: 'Ignore', correct: 'Correct'
+    reason: 'Reason', ignore: 'Ignore', correct: 'Correct',
+    fileTab: '📁 File', urlTab: '🔗 Link / YouTube',
+    urlPlaceholder: 'https://www.youtube.com/watch?v=... or direct audio link',
+    downloadAndTranscribe: 'Download and transcribe',
+    downloading: 'Downloading...',
+    audioLanguage: 'Audio language', autoDetect: 'Auto-detect'
   }
 };
 
@@ -1960,6 +2004,45 @@ fileInput.addEventListener('change', () => {
   if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
 });
 
+let uploadMode = 'file';
+
+function setUploadMode(mode) {
+  uploadMode = mode;
+  document.getElementById('uploadFileTab').classList.toggle('active', mode === 'file');
+  document.getElementById('uploadUrlTab').classList.toggle('active', mode === 'url');
+  document.getElementById('uploadFileMode').style.display = mode === 'file' ? '' : 'none';
+  document.getElementById('uploadUrlMode').style.display = mode === 'url' ? '' : 'none';
+}
+
+async function handleUrl() {
+  const url = document.getElementById('urlInput').value.trim();
+  if (!url) return;
+  const btn = document.getElementById('urlSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = t('downloading');
+
+  try {
+    const lang = document.getElementById('audioLang').value;
+    const res = await fetch('/api/transcribe/url', {
+      method: 'POST',
+      headers: { ...apiHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, language: lang })
+    });
+    const data = await res.json();
+    if (data.jobId) {
+      currentJobId = data.jobId;
+      setWizardStep(2);
+      startPolling();
+    } else {
+      throw new Error(data.error || 'Failed');
+    }
+  } catch(e) {
+    alert(t('errorOccurred') + ': ' + e.message);
+    btn.disabled = false;
+    btn.textContent = t('downloadAndTranscribe');
+  }
+}
+
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
@@ -1979,6 +2062,7 @@ async function handleFile(file) {
 
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('language', document.getElementById('audioLang').value);
 
   try {
     const xhr = new XMLHttpRequest();
@@ -2038,6 +2122,9 @@ async function pollJob() {
     const title = document.getElementById('processingTitle');
 
     switch(job.status) {
+      case 'downloading':
+        fill.style.width = (job.progress || 5) + '%'; text.textContent = t('downloading'); title.textContent = t('downloading');
+        break;
       case 'extracting_audio':
         fill.style.width = '15%'; text.textContent = t('extractingAudio'); title.textContent = t('transcribing');
         break;
@@ -2403,19 +2490,48 @@ async function launchProcessing() {
   }
 }
 
+function simpleMarkdown(text) {
+  if (!text) return '';
+  let html = escHtml(text);
+  // Headers
+  html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+  // Bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Italic
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  // Bullet lists - collect consecutive li items into ul
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  // Numbered lists
+  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  // Line breaks (double newline = paragraph, single = br)
+  html = html.replace(/\n\n/g, '</p><p>');
+  html = html.replace(/\n/g, '<br>');
+  html = '<p>' + html + '</p>';
+  // Clean up lists
+  html = html.replace(/<p>(<li>)/g, '<ul><li>');
+  html = html.replace(/(<\/li>)<\/p>/g, '$1</ul>');
+  html = html.replace(/<br><li>/g, '<li>');
+  html = html.replace(/<\/li><br>/g, '</li>');
+  return html;
+}
+
 // ── STEP 5: RESULT ──
+let currentResultText = '';
 function showResult(data, tp) {
   setWizardStep(5);
+  currentResultText = data.result || data.content || data.text || '';
   document.getElementById('resultTitle').textContent = t('result');
   document.getElementById('resultMeta').textContent =
     (tp ? 'Template: ' + (tf(tp, 'title')) : '') +
     (data.duration ? ' | ' + data.duration : '') +
     ' | ' + new Date().toLocaleDateString();
-  document.getElementById('resultContent').textContent = data.result || data.content || data.text || '';
+  document.getElementById('resultContent').innerHTML = simpleMarkdown(currentResultText);
 }
 
 function copyResult() {
-  const text = document.getElementById('resultContent').textContent;
+  const text = currentResultText || document.getElementById('resultContent').textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btns = document.querySelectorAll('.result-actions .btn-primary');
     if (btns[0]) { btns[0].textContent = t('copied'); setTimeout(() => { btns[0].textContent = t('copyResult'); }, 2000); }
@@ -2428,11 +2544,17 @@ function copyResult() {
 }
 
 function exportPDF() {
-  if (currentResultId) window.open('/api/history/' + currentResultId + '/pdf');
+  if (currentResultId) {
+    const token = localStorage.getItem('plaud_token');
+    window.open('/api/history/' + currentResultId + '/pdf?token=' + encodeURIComponent(token));
+  }
 }
 
 function exportMD() {
-  if (currentResultId) window.open('/api/history/' + currentResultId + '/md');
+  if (currentResultId) {
+    const token = localStorage.getItem('plaud_token');
+    window.open('/api/history/' + currentResultId + '/md?token=' + encodeURIComponent(token));
+  }
 }
 
 function sendEmail() {

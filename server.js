@@ -12,6 +12,9 @@ import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import PDFDocument from 'pdfkit';
 import nodemailer from 'nodemailer';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+const execAsync = promisify(exec);
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -84,6 +87,29 @@ function requireAuth(req, res, next) {
     next();
   } catch {
     return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+// Alternative auth for download routes (accepts token as query param)
+function authFromQueryOrHeader(req, res, next) {
+  const authHeader = req.headers.authorization;
+  let token = null;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.slice(7);
+  }
+  if (!token && req.query.token) {
+    token = req.query.token;
+  }
+  if (!token) return res.status(401).json({ error: 'Authentication required' });
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    const users = readJSON(USERS_FILE);
+    const user = users.find(u => u.id === payload.id);
+    if (!user) return res.status(401).json({ error: 'User not found' });
+    req.user = { id: user.id, email: user.email, name: user.name };
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid token' });
   }
 }
 
@@ -249,15 +275,24 @@ async function processJob(jobId) {
 
     for (let i = 0; i < chunks.length; i++) {
       const chunkPath = chunks[i];
-      const transcription = await openai.audio.transcriptions.create({
+      const whisperOptions = {
         file: fs.createReadStream(chunkPath),
         model: 'whisper-1',
         response_format: 'verbose_json',
         timestamp_granularities: ['segment']
-      });
+      };
+      if (job.language) {
+        whisperOptions.language = job.language;
+      }
+      const transcription = await openai.audio.transcriptions.create(whisperOptions);
 
       const chunkText = transcription.text || '';
       fullTranscript += (fullTranscript ? ' ' : '') + chunkText;
+
+      // Save detected language from first chunk
+      if (i === 0 && transcription.language && !job.detectedLanguage) {
+        job.detectedLanguage = transcription.language;
+      }
 
       if (transcription.segments) {
         for (const seg of transcription.segments) {
@@ -351,6 +386,7 @@ app.post('/api/transcribe', requireAuth, upload.single('file'), async (req, res)
       status: 'uploading',
       filename: req.file.originalname,
       filePath: req.file.path,
+      language: req.body.language || '',
       createdAt: new Date().toISOString(),
       progress: 0
     };
@@ -447,6 +483,11 @@ app.post('/api/process', requireAuth, async (req, res) => {
     const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const transcript = job.transcript;
 
+    // Build language instruction
+    const langInstruction = job.detectedLanguage
+      ? `IMPORTANT: Réponds dans la même langue que la transcription (${job.detectedLanguage}). Si la transcription est en français, réponds en français.\n\n`
+      : 'IMPORTANT: Réponds dans la même langue que la transcription. Si la transcription est en français, réponds en français. Si elle est en anglais, réponds en anglais.\n\n';
+
     let resultText = '';
 
     // If very long transcript, split into sections and process sequentially
@@ -460,7 +501,7 @@ app.post('/api/process', requireAuth, async (req, res) => {
       const sectionResults = [];
       for (let i = 0; i < sections.length; i++) {
         const sectionContent = i === 0
-          ? `${promptToUse}\n\n---\n\nTranscription (partie ${i + 1}/${sections.length}):\n${sections[i]}`
+          ? `${langInstruction}${promptToUse}\n\n---\n\nTranscription (partie ${i + 1}/${sections.length}):\n${sections[i]}`
           : `Continue l'analyse pour la partie ${i + 1}/${sections.length} de la transcription:\n${sections[i]}`;
 
         const result = await anthropic.messages.create({
@@ -477,7 +518,7 @@ app.post('/api/process', requireAuth, async (req, res) => {
         max_tokens: 8192,
         messages: [{
           role: 'user',
-          content: `${promptToUse}\n\n---\n\nTranscription:\n${transcript}`
+          content: `${langInstruction}${promptToUse}\n\n---\n\nTranscription:\n${transcript}`
         }]
       });
       resultText = result.content[0]?.text || '';
@@ -543,7 +584,7 @@ app.delete('/api/history/:id', requireAuth, (req, res) => {
 
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
 
-app.get('/api/history/:id/pdf', requireAuth, (req, res) => {
+app.get('/api/history/:id/pdf', authFromQueryOrHeader, (req, res) => {
   try {
     const result = readResult(req.params.id);
     if (!result) return res.status(404).json({ error: 'Result not found' });
@@ -580,7 +621,7 @@ app.get('/api/history/:id/pdf', requireAuth, (req, res) => {
   }
 });
 
-app.get('/api/history/:id/md', requireAuth, (req, res) => {
+app.get('/api/history/:id/md', authFromQueryOrHeader, (req, res) => {
   try {
     const result = readResult(req.params.id);
     if (!result) return res.status(404).json({ error: 'Result not found' });
@@ -702,6 +743,80 @@ app.delete('/api/categories/:name', (req, res) => {
   cats = cats.filter(c => c.name !== req.params.name);
   writeJSON(CATEGORIES_FILE, cats);
   res.json({ ok: true });
+});
+
+// ─── URL / YOUTUBE TRANSCRIPTION ─────────────────────────────────────────────
+
+app.post('/api/transcribe/url', requireAuth, async (req, res) => {
+  try {
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ error: 'URL is required' });
+
+    const jobId = uuidv4();
+    const outputPath = path.join(UPLOADS_DIR, jobId + '.wav');
+
+    const job = {
+      id: jobId,
+      userId: req.user.id,
+      status: 'downloading',
+      progress: 5,
+      filename: url,
+      sourceUrl: url,
+      filePath: outputPath,
+      language: req.body.language || '',
+      createdAt: new Date().toISOString()
+    };
+    writeJob(job);
+
+    res.json({ jobId, status: 'downloading' });
+
+    // Background: download then process
+    (async () => {
+      try {
+        job.status = 'downloading';
+        job.progress = 5;
+        writeJob(job);
+
+        // Download audio only, convert to wav
+        await execAsync(
+          `yt-dlp -x --audio-format wav --audio-quality 0 -o "${outputPath.replace('.wav', '.%(ext)s')}" "${url}"`,
+          { timeout: 600000 }
+        );
+
+        // Find the downloaded file
+        const files = fs.readdirSync(UPLOADS_DIR).filter(f => f.startsWith(jobId));
+        if (files.length === 0) throw new Error('Download failed - no file created');
+
+        const downloadedFile = path.join(UPLOADS_DIR, files[0]);
+
+        // If not wav, convert
+        if (!downloadedFile.endsWith('.wav')) {
+          const wavPath = path.join(UPLOADS_DIR, jobId + '.wav');
+          await new Promise((resolve, reject) => {
+            ffmpeg(downloadedFile)
+              .audioChannels(1).audioFrequency(16000).toFormat('wav')
+              .on('end', resolve).on('error', reject)
+              .save(wavPath);
+          });
+          fs.unlinkSync(downloadedFile);
+          job.filePath = wavPath;
+        } else {
+          job.filePath = downloadedFile;
+        }
+
+        writeJob(job);
+
+        await processJob(jobId);
+      } catch (err) {
+        job.status = 'error';
+        job.error = 'Erreur de téléchargement: ' + err.message;
+        writeJob(job);
+      }
+    })();
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ─── FALLBACK ─────────────────────────────────────────────────────────────────
