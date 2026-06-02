@@ -819,6 +819,11 @@ app.post('/api/transcribe/url', requireAuth, async (req, res) => {
   }
 });
 
+// ─── STATIC DOCS ──────────────────────────────────────────────────────────────
+
+app.get('/refonte.v1', (req, res) => res.sendFile(path.join(__dirname, 'refonte.v1.html')));
+app.get('/refonte.v1.html', (req, res) => res.sendFile(path.join(__dirname, 'refonte.v1.html')));
+
 // ─── FALLBACK ─────────────────────────────────────────────────────────────────
 
 app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));

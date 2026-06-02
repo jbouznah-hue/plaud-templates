@@ -1,0 +1,3537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TranscriptAI — Product Documentation</title>
+<style>
+:root {
+  --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2a2d3e;
+  --accent: #6366f1; --accent2: #10b981; --accent3: #f59e0b; --red: #ef4444;
+  --text: #e2e8f0; --muted: #94a3b8; --code-bg: #0d1117;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+h1 { font-size: 2rem; font-weight: 700; color: #fff; }
+h2 { font-size: 1.4rem; font-weight: 600; color: var(--accent); margin: 1.5rem 0 0.75rem; }
+h3 { font-size: 1.1rem; font-weight: 600; color: var(--accent3); margin: 1.2rem 0 0.5rem; }
+h4 { font-size: 0.95rem; font-weight: 600; color: var(--accent2); margin: 1rem 0 0.4rem; }
+p { margin-bottom: 0.75rem; color: var(--text); }
+a { color: var(--accent); text-decoration: none; }
+
+/* HEADER */
+.header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+.logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.tagline { color: var(--muted); font-size: 0.85rem; }
+
+/* TABS */
+.tab-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 1rem; display: flex; flex-wrap: wrap; gap: 0; overflow-x: auto; }
+.tab-btn { padding: 0.75rem 1rem; cursor: pointer; border: none; background: transparent; color: var(--muted); font-size: 0.82rem; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.tab-btn:hover { color: var(--text); background: var(--surface2); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: transparent; }
+
+/* CONTENT */
+.tab-content { display: none; padding: 2rem; max-width: 1400px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+.card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.card h4 { color: var(--text); margin-top: 0; }
+.card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 0; }
+.card.accent { border-left: 3px solid var(--accent); }
+.card.green { border-left: 3px solid var(--accent2); }
+.card.amber { border-left: 3px solid var(--accent3); }
+.card.red { border-left: 3px solid var(--red); }
+
+/* TABLES */
+.table-wrap { overflow-x: auto; margin: 1rem 0; }
+table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+th { background: var(--surface2); color: var(--text); padding: 0.6rem 0.75rem; text-align: left; border: 1px solid var(--border); font-weight: 600; position: sticky; top: 0; }
+td { padding: 0.5rem 0.75rem; border: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+tr:hover td { background: var(--surface2); color: var(--text); }
+.badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+.badge-green { background: rgba(16,185,129,0.15); color: var(--accent2); }
+.badge-blue { background: rgba(99,102,241,0.15); color: var(--accent); }
+.badge-amber { background: rgba(245,158,11,0.15); color: var(--accent3); }
+.badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
+.badge-gray { background: rgba(148,163,184,0.15); color: var(--muted); }
+
+/* CODE */
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.8rem; line-height: 1.5; margin: 0.75rem 0; color: #a8b3cf; }
+code { background: var(--code-bg); padding: 0.1rem 0.3rem; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #a8b3cf; }
+.kw { color: #c792ea; }
+.str { color: #c3e88d; }
+.cm { color: #546e7a; font-style: italic; }
+.num { color: #f78c6c; }
+.fn { color: #82aaff; }
+.key { color: #ffcb6b; }
+
+/* PIPELINE */
+.pipeline { margin: 1rem 0; }
+.pipe-step { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 0.5rem; position: relative; }
+.pipe-step::before { content: ''; position: absolute; left: 50%; top: 100%; width: 2px; height: 0.5rem; background: var(--accent); transform: translateX(-50%); }
+.pipe-step:last-child::before { display: none; }
+.pipe-step-num { display: inline-block; background: var(--accent); color: #fff; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-size: 0.75rem; font-weight: 700; margin-right: 0.5rem; }
+.pipe-step-title { font-weight: 600; color: var(--text); }
+.pipe-step-body { margin-top: 0.75rem; padding-left: 2rem; color: var(--muted); font-size: 0.83rem; }
+.pipe-arrow { text-align: center; color: var(--accent); font-size: 1.2rem; margin: 0.25rem 0; }
+
+/* DETAILS */
+details { margin: 0.75rem 0; }
+details > summary { cursor: pointer; padding: 0.6rem 0.75rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; font-weight: 600; color: var(--text); list-style: none; display: flex; align-items: center; gap: 0.5rem; }
+details > summary::before { content: '▶'; font-size: 0.7rem; transition: transform 0.2s; }
+details[open] > summary::before { transform: rotate(90deg); }
+details > .details-body { padding: 1rem; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; }
+
+/* STACK VISUAL */
+.stack-visual { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+.stack-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.85rem; font-size: 0.82rem; font-weight: 500; display: flex; align-items: center; gap: 0.4rem; }
+
+/* STAT BOXES */
+.stat-boxes { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+.stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+.stat-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+.stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; }
+
+/* INFRA DIAGRAM */
+.infra-box { background: var(--surface2); border: 2px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; margin: 0.25rem; display: inline-block; font-size: 0.8rem; text-align: center; }
+.infra-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin: 0.5rem 0; }
+.infra-arrow { text-align: center; color: var(--accent); font-size: 1.5rem; }
+
+/* PROMPT BLOCK */
+.prompt-block { background: var(--code-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.6; color: #c9d1d9; white-space: pre-wrap; margin: 0.75rem 0; }
+.prompt-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+
+/* WARNING / INFO BOXES */
+.info-box { border-radius: 6px; padding: 0.75rem 1rem; margin: 0.75rem 0; border-left: 3px solid; font-size: 0.85rem; }
+.info-box.warn { background: rgba(245,158,11,0.08); border-color: var(--accent3); color: var(--accent3); }
+.info-box.info { background: rgba(99,102,241,0.08); border-color: var(--accent); color: #a5b4fc; }
+.info-box.success { background: rgba(16,185,129,0.08); border-color: var(--accent2); color: var(--accent2); }
+.info-box.danger { background: rgba(239,68,68,0.08); border-color: var(--red); color: #fca5a5; }
+
+/* PRINT */
+@media print {
+  .tab-nav { display: none; }
+  .tab-content { display: block !important; page-break-before: always; }
+  pre { white-space: pre-wrap; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">TranscriptAI</div>
+  <div class="tagline">Documentation Produit — Plateforme de transcription et d'intelligence réunions</div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('overview')">1. Vue d'ensemble</button>
+  <button class="tab-btn" onclick="switchTab('architecture')">2. Architecture & Pipeline</button>
+  <button class="tab-btn" onclick="switchTab('datamodel')">3. Modèle de données</button>
+  <button class="tab-btn" onclick="switchTab('features')">4. Features complètes</button>
+  <button class="tab-btn" onclick="switchTab('usecases')">5. Use Cases</button>
+  <button class="tab-btn" onclick="switchTab('params')">6. Paramètres</button>
+  <button class="tab-btn" onclick="switchTab('prompts')">7. Prompts validés</button>
+  <button class="tab-btn" onclick="switchTab('ffmpeg')">8. FFmpeg & Formats</button>
+  <button class="tab-btn" onclick="switchTab('capacity')">9. Ressources & Capacité</button>
+  <button class="tab-btn" onclick="switchTab('phases')">10. Phases de déploiement</button>
+  <button class="tab-btn" onclick="switchTab('mockup')">11. Prompt Cloud Design</button>
+  <button class="tab-btn" onclick="switchTab('quotas')">12. Quotas utilisateurs</button>
+</div>
+
+
+<!-- ============================================================ TAB 1 -->
+<div id="tab-overview" class="tab-content active">
+  <h1>TranscriptAI — Vue d'ensemble</h1>
+  <p style="color:var(--muted);font-size:1rem;margin-bottom:1.5rem;">Battre Plaud + tl;dv réunis — Une plateforme souveraine, auto-hébergée, sans abonnement SaaS.</p>
+
+  <div class="stat-boxes">
+    <div class="stat-box"><div class="stat-num">390</div><div class="stat-label">Fichiers Plaud à archiver</div></div>
+    <div class="stat-box"><div class="stat-num">467</div><div class="stat-label">Réunions tl;dv à archiver</div></div>
+    <div class="stat-box"><div class="stat-num">857</div><div class="stat-label">Total fichiers Phase 3</div></div>
+    <div class="stat-box"><div class="stat-num">8h</div><div class="stat-label">Audio traité / jour cible</div></div>
+    <div class="stat-box"><div class="stat-num">€0</div><div class="stat-label">Abonnement SaaS</div></div>
+    <div class="stat-box"><div class="stat-num">100%</div><div class="stat-label">Données sous contrôle</div></div>
+  </div>
+
+  <h2>Pourquoi TranscriptAI ?</h2>
+  <div class="info-box info">
+    <strong>Problème :</strong> Plaud coûte $12/mois avec stockage limité et dépendance cloud. tl;dv facture $25+/mois. Les deux ont des transcriptions médiocres en hébreu et une intelligence limitée. Impossible de croiser les données entre les deux outils. 390 fichiers Plaud + 467 réunions tl;dv = archive dispersée impossible à exploiter.
+  </div>
+  <div class="info-box success">
+    <strong>Solution :</strong> Un pipeline unifié auto-hébergé sur Hetzner. Groq Whisper pour la transcription (35x moins cher qu'OpenAI, 216x temps réel), pyannote pour la diarisation, Claude pour l'intelligence. Toutes vos réunions dans une seule interface, cherchables, annotées, exportables.
+  </div>
+
+  <h2>Principes fondateurs</h2>
+  <div class="cards">
+    <div class="card accent">
+      <div class="card-icon">🔌</div>
+      <h4>Sources configurables</h4>
+      <p>Plaud, tl;dv, Google Meet, Teams, WhatsApp, Email, URL (YouTube/Loom), upload direct, enregistrement live, bot réunion. Toutes les sources se branchent sur le même pipeline.</p>
+    </div>
+    <div class="card accent">
+      <div class="card-icon">🔧</div>
+      <h4>Pipeline propre</h4>
+      <p>FFmpeg → Demucs → Groq Whisper → pyannote → WhisperX → Claude. Chaque étape est auditée, loggée, retry-able. Jamais de boîte noire.</p>
+    </div>
+    <div class="card green">
+      <div class="card-icon">🏠</div>
+      <h4>Indépendance totale</h4>
+      <p>Auto-hébergé sur Hetzner CX31. Vos données ne quittent jamais votre serveur sauf pour les appels API Groq/Claude (texte seulement, pas d'audio). Zéro abonnement SaaS.</p>
+    </div>
+    <div class="card green">
+      <div class="card-icon">📱</div>
+      <h4>Mobile-first PWA</h4>
+      <p>Progressive Web App installable sur iOS et Android. Share Target : partager directement depuis l'app de messagerie vers TranscriptAI. Interface responsive complète.</p>
+    </div>
+    <div class="card amber">
+      <div class="card-icon">🏢</div>
+      <h4>Multi-tenant ready</h4>
+      <p>Architecture organisations depuis le début. Chaque org a ses projets, ses speakers, ses prompts, ses quotas. Prêt pour une commercialisation future sans refactoring.</p>
+    </div>
+    <div class="card amber">
+      <div class="card-icon">🔁</div>
+      <h4>Module réutilisable</h4>
+      <p>Le pipeline de transcription est un module FastAPI autonome. Il peut être intégré dans d'autres produits (INOOWI, Merkasa) ou exposé comme microservice interne.</p>
+    </div>
+  </div>
+
+  <h2>Stack technique</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Couche</th><th>Technologie</th><th>Rôle</th><th>Coût</th></tr>
+      <tr><td><span class="badge badge-blue">API</span></td><td><strong>FastAPI (Python)</strong></td><td>Backend REST, WebSocket, orchestration pipeline</td><td>Gratuit</td></tr>
+      <tr><td><span class="badge badge-blue">Frontend</span></td><td><strong>Next.js 14 (React)</strong></td><td>Interface web, PWA, Share Target</td><td>Gratuit</td></tr>
+      <tr><td><span class="badge badge-green">Transcription</span></td><td><strong>Groq Whisper</strong></td><td>whisper-large-v3-turbo, 216x realtime</td><td>$0.001/min audio</td></tr>
+      <tr><td><span class="badge badge-green">Diarisation</span></td><td><strong>pyannote.audio 3.1</strong></td><td>Qui parle quand, embeddings speakers</td><td>Gratuit (local)</td></tr>
+      <tr><td><span class="badge badge-green">Alignement</span></td><td><strong>WhisperX + wav2vec2</strong></td><td>Alignement forcé mot-à-mot ±50ms</td><td>Gratuit (local)</td></tr>
+      <tr><td><span class="badge badge-amber">Intelligence</span></td><td><strong>Claude Haiku / Sonnet</strong></td><td>Notes, chapitres, Q&A, termes, classification</td><td>~$0.01-0.05/réunion</td></tr>
+      <tr><td><span class="badge badge-amber">Séparation</span></td><td><strong>Demucs (Facebook)</strong></td><td>Séparation vocale, optionnel</td><td>Gratuit (local)</td></tr>
+      <tr><td><span class="badge badge-gray">Base de données</span></td><td><strong>PostgreSQL 16 + pgvector</strong></td><td>Données + recherche vectorielle speakers</td><td>Gratuit</td></tr>
+      <tr><td><span class="badge badge-gray">Stockage</span></td><td><strong>MinIO</strong></td><td>Objets audio/vidéo S3-compatible</td><td>Gratuit</td></tr>
+      <tr><td><span class="badge badge-gray">Queue</span></td><td><strong>Celery + Redis</strong></td><td>Jobs asynchrones, retry, priorité</td><td>Gratuit</td></tr>
+      <tr><td><span class="badge badge-gray">Infra</span></td><td><strong>Hetzner CX31</strong></td><td>4 vCPU, 8GB RAM, 160GB SSD</td><td>€15/mois</td></tr>
+      <tr><td><span class="badge badge-gray">Deploy</span></td><td><strong>Docker Compose + Coolify</strong></td><td>Orchestration containers, CI/CD</td><td>Gratuit</td></tr>
+      <tr><td><span class="badge badge-gray">Audio proc.</span></td><td><strong>FFmpeg</strong></td><td>Conversion universelle tous formats</td><td>Gratuit</td></tr>
+    </table>
+  </div>
+
+  <h2>Vision produit</h2>
+  <div class="cards">
+    <div class="card">
+      <h4>Phase 1-2 (Usage personnel)</h4>
+      <p>Jeremy seul ou petit team Merkasa/INOOWI. Archive les 857 fichiers existants. Transcription + notes + search.</p>
+    </div>
+    <div class="card">
+      <h4>Phase 3-4 (Sources auto)</h4>
+      <p>Plaud polling automatique, tl;dv webhooks, email intake. Zéro friction : la réunion se transcrit sans intervention.</p>
+    </div>
+    <div class="card">
+      <h4>Phase 5-6 (Commercial)</h4>
+      <p>Multi-tenant, quotas, white-label, bot réunion. Vendre à des équipes externalizables. Récupérer les coûts infra.</p>
+    </div>
+  </div>
+
+  <h2>Comparaison concurrents</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Critère</th><th>Plaud</th><th>tl;dv</th><th>Otter.ai</th><th>TranscriptAI</th></tr>
+      <tr><td>Prix/mois</td><td>$12</td><td>$25+</td><td>$17</td><td><strong style="color:var(--accent2)">€15 infra tout inclus</strong></td></tr>
+      <tr><td>Hébreu</td><td>Moyen</td><td>Mauvais</td><td>Moyen</td><td><strong style="color:var(--accent2)">Excellent (Whisper Large)</strong></td></tr>
+      <tr><td>Diarisation</td><td>Non</td><td>Oui (basique)</td><td>Oui (basique)</td><td><strong style="color:var(--accent2)">pyannote 3.1 (SOTA)</strong></td></tr>
+      <tr><td>Données privées</td><td>Cloud US</td><td>Cloud US</td><td>Cloud US</td><td><strong style="color:var(--accent2)">Hetzner EU + API texte only</strong></td></tr>
+      <tr><td>Prompts custom</td><td>Non</td><td>Templates fixes</td><td>Non</td><td><strong style="color:var(--accent2)">Illimités, bibliothèque</strong></td></tr>
+      <tr><td>Multi-source</td><td>Plaud seul</td><td>Meet/Zoom/Teams</td><td>Meet/Zoom</td><td><strong style="color:var(--accent2)">10 sources</strong></td></tr>
+      <tr><td>Vocabulaire custom</td><td>Non</td><td>Non</td><td>Limité</td><td><strong style="color:var(--accent2)">Hotwords + CSV import</strong></td></tr>
+      <tr><td>Export</td><td>TXT/PDF</td><td>SRT/DOCX</td><td>TXT/PDF</td><td><strong style="color:var(--accent2)">PDF/MD/DOCX/TXT/JSON/SRT</strong></td></tr>
+      <tr><td>API / Webhooks</td><td>Non</td><td>Webhooks entrants</td><td>Non</td><td><strong style="color:var(--accent2)">REST API + Webhooks E/S</strong></td></tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============================================================ TAB 2 -->
+<div id="tab-architecture" class="tab-content">
+  <h1>Architecture & Pipeline</h1>
+  <p style="color:var(--muted)">Description exhaustive de chaque micro-étape du pipeline de traitement.</p>
+
+  <h2>Vue d'ensemble Infrastructure</h2>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1rem 0;">
+    <pre style="font-size:0.78rem;">
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    HETZNER CX31 — Docker Compose                        │
+│                                                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │
+│  │  Next.js 14  │  │   FastAPI    │  │    Celery    │                 │
+│  │  :3000 (PWA) │  │   :8000      │  │   Workers    │                 │
+│  │  Nginx proxy │  │   REST+WS    │  │   (x2 default)│                │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘                 │
+│         │                 │                  │                          │
+│         └────────────┬────┘                  │                          │
+│                      │         ┌─────────────┘                          │
+│                      ▼         ▼                                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                 │
+│  │  PostgreSQL  │  │    Redis     │  │    MinIO     │                 │
+│  │  :5432       │  │   :6379      │  │   :9000      │                 │
+│  │  + pgvector  │  │  Queue/Cache │  │  Audio store │                 │
+│  └──────────────┘  └──────────────┘  └──────────────┘                 │
+│                                                                         │
+│  ┌──────────────────────────────────────────────────┐                  │
+│  │  ML Services (on-demand, 0 RAM idle)             │                  │
+│  │  pyannote · WhisperX · Demucs · faster-whisper   │                  │
+│  └──────────────────────────────────────────────────┘                  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+RÉSEAU EXTERNE:
+  Groq API ────────────────── Whisper transcription (audio chunks)
+  Anthropic API ──────────── Claude Haiku/Sonnet (texte uniquement)
+  Plaud API ──────────────── Polling nouveaux enregistrements
+  tl;dv Webhooks ─────────── Push MeetingReady events
+  Google Drive API ───────── Watch folder changes
+  Mailgun ────────────────── Email intake (audio joints)
+</pre>
+  </div>
+
+  <h2>Sources configurables → Pipeline unique</h2>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1rem 0;">
+    <pre style="font-size:0.78rem;">
+SOURCES D'ENTRÉE:
+  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+  │ Plaud API   │  │ tl;dv       │  │Google Drive │
+  │ (polling    │  │ webhook     │  │ API (watch) │
+  │  5-60min)   │  │ MeetingReady│  │             │
+  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+         │                │                 │
+  ┌──────┴──────┐  ┌──────┴──────┐  ┌──────┴──────┐
+  │ Email/Mailgun│  │ Direct Upload│  │ Live Record │
+  │ (attachments)│  │ UI + API    │  │ PWA Share   │
+  │              │  │ Target      │  │ Target      │
+  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+         │                │                 │
+  ┌──────┴──────┐  ┌──────┴──────┐
+  │ URL (yt-dlp)│  │ Bot Réunion │
+  │ YouTube,    │  │ Chrome Ext  │
+  │ Loom, etc.  │  │ + Server bot│
+  └──────┬──────┘  └──────┬──────┘
+         │                │
+         └────────┬────────┘
+                  ▼
+         ┌────────────────┐
+         │  INGESTION API │  FastAPI endpoint POST /recordings/ingest
+         │  Normalisation │  source_type + metadata extraction
+         │  Job création  │  PostgreSQL: status=queued
+         └────────┬───────┘
+                  ▼
+         ┌────────────────┐
+         │  CELERY QUEUE  │  Redis broker, priority-based
+         │  concurrency=2 │  Max 2 jobs ML simultanés
+         └────────┬───────┘
+                  ▼
+         PIPELINE 13 ÉTAPES (voir ci-dessous)
+</pre>
+  </div>
+
+  <h2>Pipeline complet — 13 étapes détaillées</h2>
+
+  <details open>
+    <summary>STEP 0 — Création du job</summary>
+    <div class="details-body">
+      <p>Dès qu'une source détecte un nouveau fichier, un job est créé en base :</p>
+      <pre><code><span class="cm">-- PostgreSQL: recordings table</span>
+INSERT INTO recordings (
+  id, org_id, source_type, source_id,
+  original_filename, original_format, file_size_bytes,
+  status, created_at
+) VALUES (
+  gen_random_uuid(), ?, ?,  <span class="cm">-- source_type: 'plaud'|'tldv'|'upload'|'email'|'url'|'live'|'bot'</span>
+  ?, ?, ?,
+  <span class="str">'queued'</span>, NOW()
+);
+
+<span class="cm">-- Celery task dispatched immediately</span>
+process_recording.apply_async(
+  args=[recording_id],
+  queue=<span class="str">'transcription'</span>,
+  priority=5  <span class="cm">-- 0=lowest, 9=highest</span>
+)</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 1 — Validation intake</summary>
+    <div class="details-body">
+      <h4>Vérifications effectuées :</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li><strong>Existence fichier</strong> : MinIO object exists → 404 → job.status = 'failed', reason = 'file_not_found'</li>
+        <li><strong>Format détection</strong> : python-magic (file magic bytes, pas l'extension) → détecte audio/video/inconnu</li>
+        <li><strong>Taille</strong> : &gt; 0 bytes, &lt; 2GB (configurable MAX_FILE_SIZE_GB)</li>
+        <li><strong>Durée estimée</strong> : <code>ffprobe -v error -show_entries format=duration -of json</code> → duration_seconds stocké</li>
+        <li><strong>Lisibilité</strong> : FFmpeg probe test → détecte fichiers corrompus</li>
+      </ul>
+      <pre><code><span class="cm"># Python FastAPI</span>
+<span class="kw">async def</span> <span class="fn">validate_intake</span>(job_id: str) -> ValidationResult:
+    file_info = <span class="kw">await</span> minio.stat_object(bucket, path)
+    mime = magic.from_buffer(<span class="kw">await</span> minio.get_partial(path, <span class="num">1024</span>), mime=<span class="kw">True</span>)
+    probe = subprocess.run([<span class="str">"ffprobe"</span>, <span class="str">"-v"</span>, <span class="str">"quiet"</span>, <span class="str">"-print_format"</span>, <span class="str">"json"</span>,
+                            <span class="str">"-show_format"</span>, <span class="str">"-show_streams"</span>, input_path])
+    <span class="kw">return</span> ValidationResult(
+        valid=<span class="kw">True</span>, format=mime, duration_s=probe[<span class="str">"format"</span>][<span class="str">"duration"</span>],
+        size_bytes=file_info.size
+    )</code></pre>
+      <p><code>job.status</code> → <span class="badge badge-blue">validating</span></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 2 — Analyse qualité audio (F02 — pre-processing)</summary>
+    <div class="details-body">
+      <p>Analyse complète du fichier <em>avant</em> normalisation. Score stocké pour comparaison après.</p>
+      <pre><code><span class="cm"># FFmpeg loudnorm analysis (2-pass)</span>
+ffmpeg -i input -af loudnorm=print_format=json -f null - 2>&1
+
+<span class="cm"># Outputs:</span>
+<span class="cm"># input_i: -23.4 LUFS (integrated loudness)</span>
+<span class="cm"># input_tp: -2.1 dBFS (true peak)</span>
+<span class="cm"># input_lra: 8.3 LU (loudness range)</span>
+
+<span class="cm"># Silence detection</span>
+ffmpeg -i input -af silencedetect=noise=-40dB:duration=0.5 -f null - 2>&1
+
+<span class="cm"># SNR via librosa</span>
+y, sr = librosa.load(input, sr=<span class="num">16000</span>)
+rms = librosa.feature.rms(y=y)
+noise_floor = np.percentile(rms, <span class="num">10</span>)
+signal_peak = np.percentile(rms, <span class="num">90</span>)
+snr_db = <span class="num">20</span> * np.log10(signal_peak / noise_floor)</code></pre>
+
+      <h4>Score qualité calculé (0-100) :</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Critère</th><th>Poids</th><th>Excellent</th><th>Bon</th><th>Mauvais</th></tr>
+          <tr><td>Loudness LUFS</td><td>25%</td><td>-18 à -14 LUFS</td><td>-23 à -10 LUFS</td><td>&lt; -30 ou &gt; -5 LUFS</td></tr>
+          <tr><td>SNR</td><td>30%</td><td>&gt; 25 dB</td><td>15-25 dB</td><td>&lt; 10 dB</td></tr>
+          <tr><td>% Silence</td><td>20%</td><td>&lt; 30%</td><td>30-60%</td><td>&gt; 70%</td></tr>
+          <tr><td>Clipping</td><td>15%</td><td>0 clips</td><td>&lt; 5 clips/min</td><td>&gt; 20 clips/min</td></tr>
+          <tr><td>Durée</td><td>10%</td><td>&gt; 30s</td><td>10-30s</td><td>&lt; 5s</td></tr>
+        </table>
+      </div>
+      <p>Résultat stocké : <code>recordings.quality_before JSONB</code></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 3 — Normalisation FFmpeg + extraction</summary>
+    <div class="details-body">
+      <p>Conversion universelle : <strong>n'importe quel format</strong> → WAV 16kHz mono 16-bit PCM.</p>
+      <pre><code><span class="cm"># Commande complète de normalisation</span>
+ffmpeg \
+  -i <span class="str">"{input}"</span> \
+  -vn \                              <span class="cm"># Supprimer piste vidéo</span>
+  -ac 1 \                            <span class="cm"># Mono (1 canal)</span>
+  -ar 16000 \                        <span class="cm"># 16kHz sample rate (optimal Whisper)</span>
+  -acodec pcm_s16le \                <span class="cm"># 16-bit PCM little-endian</span>
+  -af "loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json" \  <span class="cm"># Normalisation -16 LUFS</span>
+  <span class="str">"{output.wav}"</span>
+
+<span class="cm"># Si VAD pre-filter activé (enlève silences &gt;500ms)</span>
+-af "silenceremove=start_periods=1:start_duration=0.5:start_threshold=-40dB,
+     loudnorm=I=-16:TP=-1.5:LRA=11"</span></code></pre>
+
+      <h4>Formats d'entrée supportés :</h4>
+      <p style="color:var(--muted);font-size:0.82rem;">MP3, WAV, M4A, AAC, OGG/Vorbis, OPUS, FLAC, AMR, WMA, AIFF, WebM audio, 3GP, MP4, MOV, AVI, MKV, FLV, WMV, M2TS, VOB, OGV, RM, et plus de 100 autres via les codecs FFmpeg. Les vocaux WhatsApp (.ogg opus) sont supportés nativement.</p>
+
+      <p><code>job.status</code> → <span class="badge badge-blue">extracted</span> | Stockage : <code>MinIO temp/{job_id}/normalized.wav</code></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 4 — Demucs séparation vocale (F01, optionnel)</summary>
+    <div class="details-body">
+      <div class="info-box warn">⚠️ Cette étape est <strong>optionnelle</strong> et désactivée par défaut. Elle consomme 2-4GB RAM pendant 5min/h audio. Ne pas activer avec concurrency=2 sur 8GB RAM sans surveillance.</div>
+      <pre><code><span class="kw">from</span> demucs.apply <span class="kw">import</span> apply_model
+<span class="kw">from</span> demucs.pretrained <span class="kw">import</span> get_model
+
+model = get_model(<span class="str">"htdemucs"</span>)  <span class="cm"># Facebook Demucs v4</span>
+model.eval()
+
+<span class="cm"># Sépare: drums, bass, other, vocals</span>
+sources = apply_model(model, audio_tensor, device=<span class="str">"cpu"</span>)
+vocals = sources[..., model.sources.index(<span class="str">"vocals"</span>), :]
+
+<span class="cm"># Sauvegarde</span>
+torchaudio.save(<span class="str">"vocals.wav"</span>, vocals, sample_rate=<span class="num">44100</span>)
+<span class="cm"># Puis re-sample à 16kHz pour pyannote</span>
+ffmpeg -i vocals.wav -ar 16000 -ac 1 vocals_16k.wav</code></pre>
+
+      <div class="info-box info">
+        <strong>Important :</strong> Groq reçoit <code>normalized.wav</code> (audio original normalisé). pyannote reçoit <code>vocals.wav</code> (vocal isolé = meilleure diarisation). Les deux processus utilisent des fichiers différents.
+      </div>
+      <p><code>job.status</code> → <span class="badge badge-blue">demucs_done</span></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 5 — Découpage en chunks avec overlap</summary>
+    <div class="details-body">
+      <h4>Stratégie de découpage (F21 — overlap 3s)</h4>
+      <pre><code><span class="cm"># Paramètres configurables</span>
+CHUNK_DURATION = <span class="num">600</span>  <span class="cm"># 10 minutes (défaut, range 300-900s)</span>
+OVERLAP = <span class="num">3</span>          <span class="cm"># 3 secondes de chevauchement (défaut)</span>
+
+<span class="cm"># Calcul des segments</span>
+chunks = []
+pos = <span class="num">0</span>
+<span class="kw">while</span> pos &lt; total_duration:
+    start = max(<span class="num">0</span>, pos - OVERLAP)
+    end = min(total_duration, pos + CHUNK_DURATION + OVERLAP)
+    chunks.append({
+        <span class="str">"index"</span>: len(chunks),
+        <span class="str">"start_s"</span>: start,
+        <span class="str">"end_s"</span>: end,
+        <span class="str">"logical_start"</span>: pos,      <span class="cm"># Pour déduplication</span>
+        <span class="str">"logical_end"</span>: pos + CHUNK_DURATION
+    })
+    pos += CHUNK_DURATION
+
+<span class="cm"># Exemple pour 35 minutes:</span>
+<span class="cm">#  chunk_0: 0:00 - 10:03  (logical: 0-10)</span>
+<span class="cm">#  chunk_1: 9:57 - 20:03  (logical: 10-20)</span>
+<span class="cm">#  chunk_2: 19:57 - 30:03 (logical: 20-30)</span>
+<span class="cm">#  chunk_3: 29:57 - 35:00 (logical: 30-35)</span></code></pre>
+
+      <h4>Taille des chunks :</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Durée chunk</th><th>Taille WAV 16kHz</th><th>Limite Groq</th><th>Recommandé pour</th></tr>
+          <tr><td>5 min</td><td>~9.6 MB</td><td>✅ OK</td><td>Connexion lente, retry rapide</td></tr>
+          <tr><td>10 min (défaut)</td><td>~19.2 MB</td><td>✅ OK</td><td>Usage standard</td></tr>
+          <tr><td>15 min</td><td>~28.8 MB</td><td>⚠️ Dépasse 25MB!</td><td>Ne pas utiliser en WAV — compress d'abord</td></tr>
+        </table>
+      </div>
+      <p><code>job.status</code> → <span class="badge badge-blue">splitting</span> | Stockage : <code>MinIO temp/{job_id}/chunk_N.wav</code></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 6 — Transcription Groq Whisper (parallèle)</summary>
+    <div class="details-body">
+      <h4>Appels parallèles — tous les chunks simultanément</h4>
+      <pre><code><span class="kw">import</span> asyncio
+<span class="kw">from</span> groq <span class="kw">import</span> AsyncGroq
+
+client = AsyncGroq(api_key=GROQ_API_KEY)
+
+<span class="kw">async def</span> <span class="fn">transcribe_chunk</span>(chunk_path: str, chunk_meta: dict) -> dict:
+    <span class="kw">with</span> open(chunk_path, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+        result = <span class="kw">await</span> client.audio.transcriptions.create(
+            file=(chunk_path, f, <span class="str">"audio/wav"</span>),
+            model=<span class="str">"whisper-large-v3-turbo"</span>,  <span class="cm"># ou whisper-large-v3</span>
+            response_format=<span class="str">"verbose_json"</span>,
+            timestamp_granularities=[<span class="str">"word"</span>, <span class="str">"segment"</span>],
+            language=<span class="str">"fr"</span>,            <span class="cm"># auto, fr, he, en</span>
+            temperature=<span class="num">0</span>,             <span class="cm"># Déterministe</span>
+            prompt=INITIAL_PROMPT,       <span class="cm"># Vocabulaire custom injecté</span>
+            <span class="cm"># Anti-hallucination params</span>
+            condition_on_previous_text=<span class="kw">False</span>,
+            repetition_penalty=<span class="num">1.2</span>,
+            no_speech_threshold=<span class="num">0.6</span>,
+        )
+    <span class="kw">return</span> {<span class="str">"chunk"</span>: chunk_meta, <span class="str">"result"</span>: result}
+
+<span class="cm"># Lancement parallèle</span>
+tasks = [transcribe_chunk(path, meta) <span class="kw">for</span> path, meta <span class="kw">in</span> chunks]
+results = <span class="kw">await</span> asyncio.gather(*tasks)</code></pre>
+
+      <h4>Structure de réponse Groq :</h4>
+      <pre><code>{
+  <span class="key">"text"</span>: <span class="str">"Texte complet du chunk..."</span>,
+  <span class="key">"language"</span>: <span class="str">"fr"</span>, <span class="key">"language_probability"</span>: <span class="num">0.97</span>,
+  <span class="key">"segments"</span>: [
+    {<span class="key">"id"</span>: <span class="num">0</span>, <span class="key">"start"</span>: <span class="num">0.0</span>, <span class="key">"end"</span>: <span class="num">3.4</span>, <span class="key">"text"</span>: <span class="str">" Donc on va"</span>,
+     <span class="key">"avg_logprob"</span>: <span class="num">-0.23</span>, <span class="key">"compression_ratio"</span>: <span class="num">1.5</span>, <span class="key">"no_speech_prob"</span>: <span class="num">0.01</span>}
+  ],
+  <span class="key">"words"</span>: [
+    {<span class="key">"word"</span>: <span class="str">" Donc"</span>, <span class="key">"start"</span>: <span class="num">0.0</span>, <span class="key">"end"</span>: <span class="num">0.4</span>, <span class="key">"probability"</span>: <span class="num">0.99</span>},
+    {<span class="key">"word"</span>: <span class="str">" on"</span>, <span class="key">"start"</span>: <span class="num">0.4</span>, <span class="key">"end"</span>: <span class="num">0.6</span>, <span class="key">"probability"</span>: <span class="num">0.98</span>},
+    {<span class="key">"word"</span>: <span class="str">" Inoowi"</span>, <span class="key">"start"</span>: <span class="num">2.1</span>, <span class="key">"end"</span>: <span class="num">2.7</span>, <span class="key">"probability"</span>: <span class="num">0.43</span>}
+    <span class="cm">// ↑ Confidence 0.43 &lt; 0.6 → sera signalé comme terme ambigu</span>
+  ]
+}</code></pre>
+
+      <h4>Déduplication overlap :</h4>
+      <pre><code><span class="kw">def</span> <span class="fn">merge_chunks</span>(chunks_results: list) -> list:
+    all_words = []
+    <span class="kw">for</span> chunk <span class="kw">in</span> sorted(chunks_results, key=<span class="kw">lambda</span> x: x[<span class="str">"chunk"</span>][<span class="str">"logical_start"</span>]):
+        logical_start = chunk[<span class="str">"chunk"</span>][<span class="str">"logical_start"</span>]
+        logical_end = chunk[<span class="str">"chunk"</span>][<span class="str">"logical_end"</span>]
+        <span class="kw">for</span> word <span class="kw">in</span> chunk[<span class="str">"result"</span>][<span class="str">"words"</span>]:
+            abs_start = word[<span class="str">"start"</span>] + chunk[<span class="str">"chunk"</span>][<span class="str">"start_s"</span>]
+            abs_end = word[<span class="str">"end"</span>] + chunk[<span class="str">"chunk"</span>][<span class="str">"start_s"</span>]
+            <span class="cm"># Garder seulement les mots dans la zone logique (pas l'overlap)</span>
+            <span class="kw">if</span> logical_start &lt;= abs_start &lt; logical_end:
+                all_words.append({**word, <span class="str">"abs_start"</span>: abs_start, <span class="str">"abs_end"</span>: abs_end})
+    <span class="kw">return</span> all_words  <span class="cm"># Transcript continu sans doublons</span></code></pre>
+
+      <p><code>job.status</code> → <span class="badge badge-blue">transcribed</span></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 7 — Diarisation pyannote.audio (parallèle avec Step 6)</summary>
+    <div class="details-body">
+      <p>Lancé en parallèle avec Step 6 pour optimiser le temps total de traitement.</p>
+      <pre><code><span class="kw">from</span> pyannote.audio <span class="kw">import</span> Pipeline
+
+pipeline = Pipeline.from_pretrained(
+    <span class="str">"pyannote/speaker-diarization-3.1"</span>,
+    use_auth_token=HF_TOKEN
+)
+
+<span class="cm"># Paramètres configurables</span>
+diarization = pipeline(
+    vocals_path,  <span class="cm"># vocals.wav si Demucs, sinon normalized.wav</span>
+    min_speakers=min_spk,   <span class="cm"># 1-20 ou None (auto)</span>
+    max_speakers=max_spk,   <span class="cm"># 1-20 ou None (auto)</span>
+    segmentation_onset=<span class="num">0.5</span>,
+    segmentation_offset=<span class="num">0.4</span>,
+)
+
+<span class="cm"># Sortie: liste de segments {start, end, speaker}</span>
+segments = []
+<span class="kw">for</span> turn, _, speaker <span class="kw">in</span> diarization.itertracks(yield_label=<span class="kw">True</span>):
+    segments.append({
+        <span class="str">"start"</span>: turn.start,
+        <span class="str">"end"</span>: turn.end,
+        <span class="str">"speaker"</span>: speaker  <span class="cm"># "SPEAKER_00", "SPEAKER_01", etc.</span>
+    })</code></pre>
+
+      <h4>Pipeline interne pyannote :</h4>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.83rem;line-height:2;">
+        <li><strong>VAD (Voice Activity Detection)</strong> — silero-vad : détecte zones de parole</li>
+        <li><strong>Segmentation</strong> — réseau de neurones pyannote : découpe en segments monospeaker</li>
+        <li><strong>Embedding extraction</strong> — ResNet256 : vecteur 192 dimensions par segment</li>
+        <li><strong>Clustering agglomératif</strong> — regroupe les segments par locuteur</li>
+        <li><strong>Attribution</strong> — SPEAKER_00, SPEAKER_01... par ordre d'apparition</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 8 — Alignement temporel WhisperX + wav2vec2</summary>
+    <div class="details-body">
+      <pre><code><span class="kw">import</span> whisperx
+
+<span class="cm"># Modèle d'alignement (spécifique à la langue)</span>
+model_a, metadata = whisperx.load_align_model(language_code=lang, device=<span class="str">"cpu"</span>)
+<span class="cm"># Langues supportées: fr, en, he, ar, de, es, it, nl, pt, ru, zh, ja...</span>
+
+<span class="cm"># Alignement forcé: affine les timestamps Whisper avec l'audio réel</span>
+aligned = whisperx.align(
+    whisper_words,    <span class="cm"># Sortie Step 6: words[]</span>
+    model_a,
+    metadata,
+    audio,            <span class="cm"># normalized.wav en array numpy</span>
+    device=<span class="str">"cpu"</span>,
+    return_char_alignments=<span class="kw">False</span>
+)
+
+<span class="cm"># Attribution speaker (fusion avec Step 7)</span>
+diarize_df = whisperx.assign_word_speakers(diarization_result, aligned)
+
+<span class="cm"># Résultat: chaque mot a maintenant un speaker_id</span>
+<span class="cm"># {word, start_ms, end_ms, confidence, speaker: "SPEAKER_00"}</span></code></pre>
+
+      <h4>Logique d'attribution speaker :</h4>
+      <p style="color:var(--muted);font-size:0.83rem;">Pour chaque mot [start, end], on cherche le segment pyannote qui couvre la plus grande partie de ce mot. Si plusieurs speakers couvrent le même mot (turn change), on prend celui avec la plus grande intersection temporelle.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 9 — Speaker matching (pgvector)</summary>
+    <div class="details-body">
+      <pre><code><span class="cm">-- Pour chaque cluster (SPEAKER_00, SPEAKER_01...)</span>
+<span class="cm">-- Extraire l'embedding moyen du cluster</span>
+<span class="cm">-- (moyenne des embeddings pyannote de tous les segments)</span>
+
+<span class="cm">-- Requête PostgreSQL avec pgvector</span>
+SELECT id, display_name, 
+       <span class="num">1</span> - (embedding_vector &lt;=&gt; $1) AS similarity
+FROM speakers
+WHERE org_id = $2
+ORDER BY embedding_vector &lt;=&gt; $1
+LIMIT <span class="num">3</span>;
+
+<span class="cm">-- Si similarity > 0.85 → match → utiliser display_name</span>
+<span class="cm">-- Si similarity < 0.85 → nouveau speaker → garder SPEAKER_00</span>
+<span class="cm">--   → UI demandera à l'utilisateur de nommer</span>
+
+<span class="cm">-- Stocker dans recording_speakers</span>
+INSERT INTO recording_speakers (recording_id, speaker_id, cluster_label, 
+                                 talk_time_sec, turn_count)
+VALUES (?, ?, <span class="str">'SPEAKER_00'</span>, ?, ?);</code></pre>
+
+      <div class="info-box info">
+        <strong>Apprentissage progressif :</strong> À chaque fois qu'un utilisateur nomme ou confirme un speaker, son embedding est stocké dans <code>speakers.embedding_vector</code>. Les prochaines réunions reconnaîtront automatiquement cette personne.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 10 — Détection termes ambigus (Claude Haiku P1)</summary>
+    <div class="details-body">
+      <h4>Deux sources d'ambiguïtés :</h4>
+      <p><strong>Source 1 — Claude Haiku (sémantique) :</strong> Détecte les termes qui semblent mal transcrits par le contexte (noms propres, termes techniques, mots étrangers).</p>
+      <p><strong>Source 2 — Confidence Whisper :</strong> Mots avec probability &lt; 0.6 dans la sortie verbose_json (Step 6).</p>
+      <pre><code><span class="cm"># Merge des deux sources</span>
+haiku_terms = call_claude_haiku(P1_PROMPT, transcript)  <span class="cm"># [{term, position, suggestion}]</span>
+whisper_low_conf = [w <span class="kw">for</span> w <span class="kw">in</span> words <span class="kw">if</span> w[<span class="str">"probability"</span>] &lt; <span class="num">0.6</span>]
+
+all_ambiguous = deduplicate(haiku_terms + whisper_low_conf)
+
+<span class="cm"># Vérification base apprenante</span>
+<span class="kw">for</span> term <span class="kw">in</span> all_ambiguous:
+    existing = db.query(<span class="str">"SELECT * FROM ambiguous_terms WHERE term = ?"</span>, term)
+    <span class="kw">if</span> existing <span class="kw">and</span> existing.resolved_as:
+        auto_correct(transcript, term, existing.resolved_as)  <span class="cm"># Silencieux</span>
+    <span class="kw">else</span>:
+        flag_for_user_review(term)</code></pre>
+
+      <p><code>job.status</code> → <span class="badge badge-blue">terms_detected</span></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 11 — Stockage PostgreSQL + MinIO + cleanup</summary>
+    <div class="details-body">
+      <pre><code><span class="cm">-- Sauvegarder la transcription</span>
+INSERT INTO transcripts (id, recording_id, type, content, word_count, 
+                          version_id, is_current, model_used)
+VALUES (gen_random_uuid(), ?, <span class="str">'raw'</span>, ?, ?, ?, <span class="kw">true</span>, <span class="str">'whisper-large-v3-turbo'</span>);
+
+<span class="cm">-- Sauvegarder les segments diarisés</span>
+INSERT INTO segments (id, recording_id, speaker_id, start_ms, end_ms, 
+                       text, confidence_avg)
+SELECT gen_random_uuid(), ?, ?, ?, ?, ?, ?
+FROM unnest($segments_array);
+
+<span class="cm">-- Sauvegarder les termes ambigus</span>
+INSERT INTO ambiguous_terms (recording_id, term, position, suggestion, confidence)
+VALUES ... ON CONFLICT (term) DO UPDATE SET occurrences = occurrences + 1;
+
+<span class="cm">-- Nettoyage MinIO temp</span>
+<span class="cm">-- DELETE MinIO temp/{job_id}/ (chunks, vocals, normalized)</span>
+<span class="cm">-- KEEP MinIO audio/{org_id}/{recording_id}/source.{ext}</span>
+
+<span class="cm">-- Mise à jour recording</span>
+UPDATE recordings SET status = <span class="str">'stored'</span>, duration_seconds = ?, 
+       word_count = ?, speaker_count = ? WHERE id = ?;</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 12 — Auto-processing (workflows configurables)</summary>
+    <div class="details-body">
+      <p>Si un workflow est configuré pour cette source, les prompts s'exécutent automatiquement.</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Process</th><th>Modèle</th><th>Prompt</th><th>Sortie</th><th>Configurable</th></tr>
+          <tr><td>Qualité post</td><td>FFmpeg local</td><td>F02</td><td>quality_after JSONB</td><td>Toujours on</td></tr>
+          <tr><td>Chapitres</td><td>Claude Sonnet</td><td>P3</td><td>chapters table</td><td>Par workflow</td></tr>
+          <tr><td>Note de réunion</td><td>Claude Sonnet</td><td>P4</td><td>prompt_runs (auto)</td><td>Par workflow</td></tr>
+          <tr><td>Nommage speakers</td><td>Claude Haiku</td><td>P5</td><td>proposals → UI</td><td>Toujours on</td></tr>
+          <tr><td>Classification projet</td><td>Claude Haiku</td><td>P6</td><td>project_id (si auto)</td><td>Par projet</td></tr>
+        </table>
+      </div>
+      <p><code>job.status</code> → <span class="badge badge-green">ready</span></p>
+    </div>
+  </details>
+
+  <details>
+    <summary>STEP 13 — Notifications</summary>
+    <div class="details-body">
+      <pre><code><span class="cm"># WebSocket push → mise à jour carte dans UI (temps réel)</span>
+ws_manager.broadcast_to_org(org_id, {
+    <span class="str">"type"</span>: <span class="str">"recording.ready"</span>,
+    <span class="str">"recording_id"</span>: recording_id,
+    <span class="str">"status"</span>: <span class="str">"ready"</span>,
+    <span class="str">"duration_seconds"</span>: duration,
+    <span class="str">"speaker_count"</span>: n_speakers,
+    <span class="str">"word_count"</span>: word_count
+})
+
+<span class="cm"># Webhook sortant (F17) si configuré</span>
+<span class="kw">if</span> webhook_config := get_webhook_config(org_id, <span class="str">"recording.ready"</span>):
+    send_webhook(webhook_config.url, payload, secret=webhook_config.secret)
+
+<span class="cm"># Email si préférence user</span>
+<span class="kw">if</span> user_prefs.email_on_complete:
+    send_email(user.email, <span class="str">"Transcription prête"</span>, ...)
+
+<span class="cm"># Mise à jour finale</span>
+UPDATE recordings SET status = <span class="str">'ready'</span>, completed_at = NOW() WHERE id = ?;</code></pre>
+    </div>
+  </details>
+
+</div>
+
+
+<!-- ============================================================ TAB 3 -->
+<div id="tab-datamodel" class="tab-content">
+  <h1>Modèle de données PostgreSQL</h1>
+  <p style="color:var(--muted)">Schéma complet — toutes les tables avec colonnes, types et relations.</p>
+
+  <h2>Diagramme des relations (ASCII)</h2>
+  <pre style="font-size:0.72rem;">
+organizations ──┬── users ──────────────── user_quotas
+                │        └── prompt_runs
+                │
+                ├── projects ─────────────── recordings ──┬── transcripts ────── transcript_versions
+                │                                         │        └── segments ─── annotations
+                │                                         ├── chapters
+                │                                         ├── recording_speakers ── speakers
+                │                                         ├── recording_sources
+                │                                         ├── ambiguous_terms
+                │                                         ├── recording_bot_sessions
+                │                                         └── exports
+                │
+                ├── speakers (org-level, réutilisés entre réunions)
+                ├── custom_vocabulary
+                ├── prompt_templates
+                ├── workflows
+                └── webhook_configs
+  </pre>
+
+  <h2>Tables principales</h2>
+
+  <details open>
+    <summary>organizations</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE organizations (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        TEXT NOT NULL,
+  slug        TEXT UNIQUE NOT NULL,           <span class="cm">-- URL-friendly: "merkasa", "inoowi"</span>
+  plan        TEXT DEFAULT <span class="str">'free'</span>,            <span class="cm">-- 'free' | 'pro' | 'enterprise'</span>
+  settings    JSONB DEFAULT <span class="str">'{}'</span>,            <span class="cm">-- Config org: logo, couleurs, timezone...</span>
+  is_active   BOOLEAN DEFAULT true,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>users</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE users (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id          UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  email           TEXT UNIQUE NOT NULL,
+  display_name    TEXT,
+  role            TEXT DEFAULT <span class="str">'member'</span>,       <span class="cm">-- 'super_admin' | 'admin' | 'member' | 'viewer'</span>
+  permissions     JSONB DEFAULT <span class="str">'{}'</span>,         <span class="cm">-- Granulaire: {"can_export": true, "can_delete": false}</span>
+  hashed_password TEXT NOT NULL,
+  is_active       BOOLEAN DEFAULT true,
+  last_login_at   TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>user_quotas (NEW)</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE user_quotas (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id           UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  hours_allocated   FLOAT NULL,                   <span class="cm">-- NULL = illimité (super admin)</span>
+  hours_used_month  FLOAT DEFAULT 0.0,
+  reset_day         INT DEFAULT 1,                <span class="cm">-- Jour du mois pour reset (1-28)</span>
+  overage_policy    TEXT DEFAULT <span class="str">'warn'</span>,          <span class="cm">-- 'block' | 'warn' | 'allow'</span>
+  alert_at_50       BOOLEAN DEFAULT true,
+  alert_at_80       BOOLEAN DEFAULT true,
+  alert_at_100      BOOLEAN DEFAULT true,
+  updated_at        TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>recordings</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE recordings (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id              UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  project_id          UUID REFERENCES projects(id) ON DELETE SET NULL,
+  uploaded_by         UUID REFERENCES users(id),
+  
+  <span class="cm">-- Source info</span>
+  source_type         TEXT NOT NULL,              <span class="cm">-- 'plaud'|'tldv'|'upload'|'email'|'url'|'live'|'bot'|'drive'|'whatsapp'</span>
+  source_id           TEXT,                       <span class="cm">-- ID externe (Plaud file ID, tl;dv meeting ID...)</span>
+  source_url          TEXT,                       <span class="cm">-- URL originale si applicable</span>
+  
+  <span class="cm">-- File info</span>
+  original_filename   TEXT,
+  original_format     TEXT,                       <span class="cm">-- Extension détectée par magic bytes</span>
+  file_size_bytes     BIGINT,
+  storage_path        TEXT,                       <span class="cm">-- MinIO: audio/{org_id}/{id}/source.{ext}</span>
+  
+  <span class="cm">-- Processing status</span>
+  status              TEXT DEFAULT <span class="str">'queued'</span>,     <span class="cm">-- queued|validating|extracted|demucs_done|splitting|transcribed|stored|ready|failed</span>
+  error_message       TEXT,
+  retry_count         INT DEFAULT 0,
+  
+  <span class="cm">-- Audio metadata (post-validation)</span>
+  duration_seconds    FLOAT,
+  sample_rate         INT,
+  channels            INT,
+  
+  <span class="cm">-- Quality scores (F02)</span>
+  quality_before      JSONB,                      <span class="cm">-- {lufs, snr_db, silence_pct, clipping_count, score}</span>
+  quality_after       JSONB,                      <span class="cm">-- Idem après normalisation</span>
+  
+  <span class="cm">-- Transcript metadata</span>
+  word_count          INT,
+  speaker_count       INT,
+  language_detected   TEXT,
+  
+  <span class="cm">-- Pipeline config (snapshot au moment du traitement)</span>
+  pipeline_config     JSONB,                      <span class="cm">-- {model, chunk_size, demucs, language...}</span>
+  
+  <span class="cm">-- Timestamps</span>
+  recorded_at         TIMESTAMPTZ,                <span class="cm">-- Date/heure de l'enregistrement réel</span>
+  created_at          TIMESTAMPTZ DEFAULT NOW(),
+  completed_at        TIMESTAMPTZ
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>transcript_versions (NEW)</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE transcript_versions (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id  UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  version_label TEXT,                             <span class="cm">-- 'v1 Turbo', 'v2 Large v3', 'v3 re-run 2024-01'</span>
+  model_used    TEXT NOT NULL,                    <span class="cm">-- 'whisper-large-v3-turbo' | 'whisper-large-v3'</span>
+  pipeline_config JSONB,                          <span class="cm">-- Config exacte utilisée</span>
+  created_by    UUID REFERENCES users(id),
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>transcripts (modifié)</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE transcripts (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id  UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  version_id    UUID REFERENCES transcript_versions(id),   <span class="cm">-- NEW</span>
+  is_current    BOOLEAN DEFAULT true,                       <span class="cm">-- NEW: une seule current par recording</span>
+  type          TEXT DEFAULT <span class="str">'raw'</span>,             <span class="cm">-- 'raw' | 'cleaned' | 'translated'</span>
+  language      TEXT,
+  content       TEXT NOT NULL,
+  word_count    INT,
+  model_used    TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+<span class="cm">-- Contrainte: un seul transcript is_current par recording</span>
+CREATE UNIQUE INDEX idx_one_current_transcript 
+ON transcripts(recording_id) WHERE is_current = true AND type = 'raw';</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>segments</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE segments (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id    UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  transcript_id   UUID REFERENCES transcripts(id) ON DELETE CASCADE,
+  speaker_id      UUID REFERENCES speakers(id) ON DELETE SET NULL,
+  cluster_label   TEXT,                           <span class="cm">-- 'SPEAKER_00' avant identification</span>
+  start_ms        INT NOT NULL,
+  end_ms          INT NOT NULL,
+  text            TEXT NOT NULL,
+  confidence_avg  FLOAT,                          <span class="cm">-- Moyenne des probabilités Whisper pour ce segment</span>
+  word_data       JSONB,                          <span class="cm">-- [{word, start_ms, end_ms, confidence}]</span>
+  order_index     INT NOT NULL,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_segments_recording ON segments(recording_id);
+CREATE INDEX idx_segments_speaker ON segments(speaker_id);
+CREATE INDEX idx_segments_time ON segments(recording_id, start_ms);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>annotations (NEW — F18)</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE annotations (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id    UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  start_ms        INT,                            <span class="cm">-- Début de la sélection (NULL si annotation globale)</span>
+  end_ms          INT,                            <span class="cm">-- Fin de la sélection</span>
+  selected_text   TEXT,                           <span class="cm">-- Texte sélectionné (snapshot)</span>
+  content         TEXT NOT NULL,                  <span class="cm">-- Note de l'utilisateur</span>
+  annotation_type TEXT DEFAULT <span class="str">'note'</span>,           <span class="cm">-- 'note' | 'action' | 'decision' | 'flag'</span>
+  created_by      UUID REFERENCES users(id),
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>speakers</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE speakers (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id            UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  display_name      TEXT NOT NULL,
+  aliases           TEXT[],                       <span class="cm">-- Noms alternatifs/surnoms</span>
+  email             TEXT,
+  embedding_vector  vector(192),                  <span class="cm">-- pgvector: empreinte vocale pyannote</span>
+  embedding_samples INT DEFAULT 0,                <span class="cm">-- Nombre d'échantillons moyennés</span>
+  total_talk_time   FLOAT DEFAULT 0,              <span class="cm">-- Cumulé toutes réunions (secondes)</span>
+  meeting_count     INT DEFAULT 0,
+  created_at        TIMESTAMPTZ DEFAULT NOW(),
+  updated_at        TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_speakers_org ON speakers(org_id);
+CREATE INDEX idx_speakers_embedding ON speakers USING ivfflat (embedding_vector vector_cosine_ops);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>recording_speakers</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE recording_speakers (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id    UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  speaker_id      UUID REFERENCES speakers(id) ON DELETE SET NULL,
+  cluster_label   TEXT NOT NULL,                  <span class="cm">-- 'SPEAKER_00'</span>
+  talk_time_sec   FLOAT DEFAULT 0,
+  turn_count      INT DEFAULT 0,
+  word_count      INT DEFAULT 0,
+  is_confirmed    BOOLEAN DEFAULT false,           <span class="cm">-- User a confirmé l'identification</span>
+  embedding_local vector(192)                     <span class="cm">-- Embedding spécifique à cette réunion</span>
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>chapters</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE chapters (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id  UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  order_index   INT NOT NULL,
+  start_ms      INT NOT NULL,
+  end_ms        INT NOT NULL,
+  title         TEXT NOT NULL,
+  summary       TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>projects</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE projects (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id              UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  name                TEXT NOT NULL,
+  description         TEXT,
+  classification_mode TEXT DEFAULT <span class="str">'manual'</span>,      <span class="cm">-- 'manual' | 'suggest' | 'auto'</span>
+  color               TEXT,                       <span class="cm">-- Hex color</span>
+  emoji               TEXT,
+  is_archived         BOOLEAN DEFAULT false,
+  created_by          UUID REFERENCES users(id),
+  created_at          TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>ambiguous_terms</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE ambiguous_terms (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id        UUID REFERENCES organizations(id),
+  recording_id  UUID REFERENCES recordings(id),
+  term          TEXT NOT NULL,
+  position      INT,                              <span class="cm">-- Position dans le transcript</span>
+  suggestion    TEXT,
+  confidence    FLOAT,
+  source        TEXT,                             <span class="cm">-- 'haiku' | 'whisper_conf' | 'manual'</span>
+  resolved_as   TEXT,                             <span class="cm">-- Ce que l'user a validé (NULL si non résolu)</span>
+  occurrences   INT DEFAULT 1,
+  is_resolved   BOOLEAN DEFAULT false,
+  resolved_by   UUID REFERENCES users(id),
+  resolved_at   TIMESTAMPTZ,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>custom_vocabulary (NEW — F06)</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE custom_vocabulary (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id        UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  term          TEXT NOT NULL,
+  category      TEXT,                             <span class="cm">-- 'company', 'product', 'person', 'acronym', 'technical'</span>
+  boost_weight  FLOAT DEFAULT 1.5,                <span class="cm">-- Poids pour injection dans initial_prompt</span>
+  is_active     BOOLEAN DEFAULT true,
+  created_by    UUID REFERENCES users(id),
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(org_id, term)
+);
+
+<span class="cm">-- Usage: termes injectés dans Groq initial_prompt</span>
+<span class="cm">-- Ex: "INOOWI, Merkasa, Jeremy, BANT, tl;dv, Plaud..."</span></code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>prompt_templates & prompt_runs</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE prompt_templates (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id        UUID REFERENCES organizations(id),   <span class="cm">-- NULL = système (partagé)</span>
+  name          TEXT NOT NULL,
+  description   TEXT,
+  system_prompt TEXT NOT NULL,
+  user_template TEXT NOT NULL,                    <span class="cm">-- Template avec {{VARIABLES}}</span>
+  model         TEXT DEFAULT <span class="str">'claude-haiku-4-5'</span>,
+  is_system     BOOLEAN DEFAULT false,             <span class="cm">-- Templates système (P1-P9)</span>
+  is_active     BOOLEAN DEFAULT true,
+  created_by    UUID REFERENCES users(id),
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE prompt_runs (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id    UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  template_id     UUID REFERENCES prompt_templates(id),
+  tab_label       TEXT NOT NULL,                  <span class="cm">-- Label de l'onglet résultat dans l'UI</span>
+  input_context   TEXT,                           <span class="cm">-- Contenu des fichiers contexte injectés</span>
+  model_used      TEXT NOT NULL,
+  input_tokens    INT,
+  output_tokens   INT,
+  cost_usd        FLOAT,
+  result_content  TEXT NOT NULL,                  <span class="cm">-- Résultat brut (Markdown)</span>
+  is_auto         BOOLEAN DEFAULT false,           <span class="cm">-- Lancé par workflow auto</span>
+  run_by          UUID REFERENCES users(id),
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>recording_bot_sessions (NEW — F12)</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE recording_bot_sessions (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id          UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  platform              TEXT NOT NULL,            <span class="cm">-- 'google_meet' | 'zoom' | 'teams'</span>
+  join_url              TEXT NOT NULL,
+  status                TEXT DEFAULT <span class="str">'pending'</span>,   <span class="cm">-- 'pending'|'joining'|'recording'|'done'|'failed'</span>
+  playwright_session_id TEXT,                     <span class="cm">-- Pour bot serveur (Phase 5+)</span>
+  bot_type              TEXT DEFAULT <span class="str">'extension'</span>, <span class="cm">-- 'extension' | 'server'</span>
+  started_at            TIMESTAMPTZ,
+  ended_at              TIMESTAMPTZ,
+  error_message         TEXT,
+  created_at            TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>workflows & webhook_configs</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE workflows (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id          UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  name            TEXT NOT NULL,
+  source_types    TEXT[],                         <span class="cm">-- Sources déclenchantes: ['plaud', 'tldv']</span>
+  auto_prompts    UUID[],                         <span class="cm">-- IDs prompt_templates à lancer auto</span>
+  is_active       BOOLEAN DEFAULT true,
+  created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE webhook_configs (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id        UUID REFERENCES organizations(id) ON DELETE CASCADE,
+  name          TEXT NOT NULL,
+  target_url    TEXT NOT NULL,
+  secret        TEXT,                             <span class="cm">-- HMAC-SHA256 signing secret</span>
+  events        TEXT[],                           <span class="cm">-- ['recording.ready', 'recording.failed']</span>
+  is_active     BOOLEAN DEFAULT true,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>exports & shares</summary>
+    <div class="details-body">
+      <pre><code>CREATE TABLE exports (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id  UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  format        TEXT NOT NULL,                    <span class="cm">-- 'pdf'|'md'|'docx'|'txt'|'json'|'srt'</span>
+  storage_path  TEXT,                             <span class="cm">-- MinIO path</span>
+  created_by    UUID REFERENCES users(id),
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  expires_at    TIMESTAMPTZ                       <span class="cm">-- Nettoyage automatique</span>
+);
+
+CREATE TABLE shares (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recording_id  UUID REFERENCES recordings(id) ON DELETE CASCADE,
+  token         TEXT UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(24), 'base64url'),
+  password_hash TEXT,                             <span class="cm">-- Optionnel</span>
+  expires_at    TIMESTAMPTZ,
+  include_audio BOOLEAN DEFAULT false,
+  show_cta      BOOLEAN DEFAULT true,             <span class="cm">-- CTA "Créez votre espace"</span>
+  view_count    INT DEFAULT 0,
+  created_by    UUID REFERENCES users(id),
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);</code></pre>
+    </div>
+  </details>
+
+</div>
+
+
+<!-- ============================================================ TAB 4 -->
+<div id="tab-features" class="tab-content">
+  <h1>Features complètes</h1>
+  <p style="color:var(--muted)">29 features base + 21 améliorations validées = 50 features total</p>
+
+  <h2>Features Base (29)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>#</th><th>Feature</th><th>Catégorie</th><th>Toujours actif</th><th>Phase</th></tr>
+      <tr><td>1</td><td><strong>Multi-source ingestion</strong><br><small style="color:var(--muted)">Plaud, tl;dv, Google Meet/Drive, Teams, WhatsApp, Upload, Email, Live, URL (yt-dlp), Bot réunion</small></td><td><span class="badge badge-blue">Ingestion</span></td><td>Oui</td><td>1-5</td></tr>
+      <tr><td>2</td><td><strong>Transcription Groq Whisper</strong><br><small style="color:var(--muted)">Turbo (défaut) ou Large v3, configurable par enregistrement</small></td><td><span class="badge badge-blue">Core</span></td><td>Oui</td><td>1</td></tr>
+      <tr><td>3</td><td><strong>Diarisation pyannote.audio 3.1</strong><br><small style="color:var(--muted)">SOTA speaker diarization, qui parle quand</small></td><td><span class="badge badge-blue">Core</span></td><td>Oui</td><td>2</td></tr>
+      <tr><td>4</td><td><strong>Alignement WhisperX word-level ±50ms</strong><br><small style="color:var(--muted)">wav2vec2 forced alignment, timestamps précis par mot</small></td><td><span class="badge badge-blue">Core</span></td><td>Oui</td><td>2</td></tr>
+      <tr><td>5</td><td><strong>Speaker matching (embeddings 192-dim)</strong><br><small style="color:var(--muted)">pgvector cosine similarity, reconnaissance automatique des habitués</small></td><td><span class="badge badge-green">Intelligence</span></td><td>Oui</td><td>2</td></tr>
+      <tr><td>6</td><td><strong>Speaker naming UI</strong><br><small style="color:var(--muted)">Nommer, fusionner des clusters, créer des alias</small></td><td><span class="badge badge-green">UI</span></td><td>Oui</td><td>2</td></tr>
+      <tr><td>7</td><td><strong>Transcript brut + nettoyé</strong><br><small style="color:var(--muted)">Vue raw (avec hésitations) et vue cleaned (Claude Haiku P2)</small></td><td><span class="badge badge-blue">Core</span></td><td>Oui</td><td>1-2</td></tr>
+      <tr><td>8</td><td><strong>Chapitres/Timeline auto (P3)</strong><br><small style="color:var(--muted)">Claude Sonnet, segments avec titres et résumés, navigation cliquable</small></td><td><span class="badge badge-green">Intelligence</span></td><td>On-demand / auto</td><td>3</td></tr>
+      <tr><td>9</td><td><strong>Note de réunion auto (P4)</strong><br><small style="color:var(--muted)">Claude Sonnet, prompt entièrement éditable, décisions/actions/KPIs</small></td><td><span class="badge badge-green">Intelligence</span></td><td>On-demand / auto</td><td>3</td></tr>
+      <tr><td>10</td><td><strong>Termes ambigus (base apprenante)</strong><br><small style="color:var(--muted)">Claude Haiku P1 + Whisper confidence &lt;0.6, validation UI, auto-correct futur</small></td><td><span class="badge badge-amber">Qualité</span></td><td>Oui</td><td>2</td></tr>
+      <tr><td>11</td><td><strong>Search & Replace dans transcript</strong><br><small style="color:var(--muted)">Correction manuelle non-destructive, historique</small></td><td><span class="badge badge-amber">Edition</span></td><td>Oui</td><td>2</td></tr>
+      <tr><td>12</td><td><strong>Multi-pass prompts</strong><br><small style="color:var(--muted)">Avec contexte fichiers, sans écrasement, historique des runs</small></td><td><span class="badge badge-green">Intelligence</span></td><td>On-demand</td><td>3</td></tr>
+      <tr><td>13</td><td><strong>Bibliothèque prompts</strong><br><small style="color:var(--muted)">Templates système P1-P9 + templates user custom illimités</small></td><td><span class="badge badge-green">Intelligence</span></td><td>On-demand</td><td>3</td></tr>
+      <tr><td>14</td><td><strong>Onglets dynamiques résultats</strong><br><small style="color:var(--muted)">Supprimables sauf SOURCE, nommés par l'utilisateur</small></td><td><span class="badge badge-blue">UI</span></td><td>Oui</td><td>1</td></tr>
+      <tr><td>15</td><td><strong>Contexte fichiers (PDF/MD/DOCX)</strong><br><small style="color:var(--muted)">Injectés dans prompts Claude, cache pour réutilisation</small></td><td><span class="badge badge-green">Intelligence</span></td><td>On-demand</td><td>3</td></tr>
+      <tr><td>16</td><td><strong>Q&A sur la réunion</strong><br><small style="color:var(--muted)">Claude Sonnet, questions libres sur le contenu de la réunion</small></td><td><span class="badge badge-green">Intelligence</span></td><td>On-demand</td><td>3</td></tr>
+      <tr><td>17</td><td><strong>Organisation par projet</strong><br><small style="color:var(--muted)">Projets dynamiques, tag multiple possible</small></td><td><span class="badge badge-blue">Organisation</span></td><td>Oui</td><td>3</td></tr>
+      <tr><td>18</td><td><strong>Classification projet (P6)</strong><br><small style="color:var(--muted)">Manuel / suggest (Claude propose) / auto (Claude assigne)</small></td><td><span class="badge badge-green">Intelligence</span></td><td>Configurable</td><td>3</td></tr>
+      <tr><td>19</td><td><strong>Export multi-format</strong><br><small style="color:var(--muted)">PDF (logo, couleurs), MD, DOCX, TXT, JSON, SRT</small></td><td><span class="badge badge-blue">Export</span></td><td>On-demand</td><td>1</td></tr>
+      <tr><td>20</td><td><strong>Partage externe</strong><br><small style="color:var(--muted)">Lien tokenisé, expiration configurable, password optionnel, CTA</small></td><td><span class="badge badge-blue">Partage</span></td><td>On-demand</td><td>3</td></tr>
+      <tr><td>21</td><td><strong>Auth JWT + rôles + permissions JSONB</strong><br><small style="color:var(--muted)">super_admin, admin, member, viewer. Permissions granulaires par action</small></td><td><span class="badge badge-blue">Sécurité</span></td><td>Oui</td><td>1</td></tr>
+      <tr><td>22</td><td><strong>User quotas</strong><br><small style="color:var(--muted)">Heures allouées / illimité, overage policies, alertes 50/80/100%</small></td><td><span class="badge badge-blue">Admin</span></td><td>Oui</td><td>6</td></tr>
+      <tr><td>23</td><td><strong>Workflows automatisés</strong><br><small style="color:var(--muted)">Par source, prompts auto post-transcription configurables</small></td><td><span class="badge badge-blue">Automation</span></td><td>Configurable</td><td>4</td></tr>
+      <tr><td>24</td><td><strong>Sources configurables via UI admin</strong><br><small style="color:var(--muted)">Activer/désactiver sources, credentials, polling intervals</small></td><td><span class="badge badge-blue">Admin</span></td><td>Oui</td><td>4</td></tr>
+      <tr><td>25</td><td><strong>Enregistrement live</strong><br><small style="color:var(--muted)">2 modes: live transcript (chunking 30s) ou post-recording (upload complet)</small></td><td><span class="badge badge-blue">Ingestion</span></td><td>On-demand</td><td>4</td></tr>
+      <tr><td>26</td><td><strong>PWA (Share Target iOS/Android)</strong><br><small style="color:var(--muted)">Installable, Share Target API, offline partiel, cache SW</small></td><td><span class="badge badge-blue">Mobile</span></td><td>Oui</td><td>4</td></tr>
+      <tr><td>27</td><td><strong>Email intake</strong><br><small style="color:var(--muted)">Mailgun webhook, fichiers audio joints → ingestion automatique</small></td><td><span class="badge badge-blue">Ingestion</span></td><td>Oui (si configuré)</td><td>4</td></tr>
+      <tr><td>28</td><td><strong>Multi-tenant (organisations)</strong><br><small style="color:var(--muted)">Isolation complète des données par org_id</small></td><td><span class="badge badge-blue">Architecture</span></td><td>Oui</td><td>6</td></tr>
+      <tr><td>29</td><td><strong>Webhooks entrants</strong><br><small style="color:var(--muted)">tl;dv MeetingReady, Google Drive changes, Zapier/n8n</small></td><td><span class="badge badge-blue">Intégration</span></td><td>Oui (si configuré)</td><td>4</td></tr>
+    </table>
+  </div>
+
+  <h2>Améliorations validées (F01-F21)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>ID</th><th>Nom</th><th>Catégorie</th><th>Coût</th><th>Qui</th><th>Mode</th><th>Phase</th></tr>
+      <tr><td><span class="badge badge-blue">F01</span></td><td><strong>Demucs vocal separation</strong><br><small>Séparation vocale facebook/demucs htdemucs avant diarisation</small></td><td>Qualité</td><td>0 (local) + RAM</td><td>Celery worker</td><td>On-demand</td><td>5</td></tr>
+      <tr><td><span class="badge badge-blue">F02</span></td><td><strong>Audio quality score before+after</strong><br><small>Loudness LUFS, SNR, clipping, silence %. Score 0-100 affiché UI</small></td><td>Qualité</td><td>0 (local)</td><td>FFmpeg + librosa</td><td>Toujours</td><td>2</td></tr>
+      <tr><td><span class="badge badge-green">F03</span></td><td><strong>Traduction</strong><br><small>Onglet dédié, choix contenu (raw/cleaned/notes), langue cible</small></td><td>Intelligence</td><td>~$0.01 Claude</td><td>Claude Haiku P7</td><td>On-demand</td><td>5</td></tr>
+      <tr><td><span class="badge badge-amber">F04</span></td><td><strong>Anti-hallucinations Whisper</strong><br><small>condition_on_previous_text=False, repetition_penalty=1.2, no_speech_threshold=0.6</small></td><td>Qualité</td><td>0</td><td>Groq params</td><td>Toujours</td><td>1</td></tr>
+      <tr><td><span class="badge badge-amber">F05</span></td><td><strong>Confidence scores → ambiguous terms</strong><br><small>Mots Whisper probability &lt; 0.6 → signalés automatiquement</small></td><td>Qualité</td><td>0</td><td>Post-processing</td><td>Toujours</td><td>2</td></tr>
+      <tr><td><span class="badge badge-green">F06</span></td><td><strong>Vocabulaire custom (hotwords)</strong><br><small>CSV import, poids boost, injecté dans Groq initial_prompt</small></td><td>Qualité</td><td>0</td><td>custom_vocabulary</td><td>Toujours (si actif)</td><td>5</td></tr>
+      <tr><td><span class="badge badge-blue">F07</span></td><td><strong>Re-transcription</strong><br><small>Nouvel onglet, pas d'écrasement. Modèle ou paramètres différents</small></td><td>Qualité</td><td>Groq coût</td><td>Pipeline complet</td><td>On-demand</td><td>3</td></tr>
+      <tr><td><span class="badge badge-blue">F08</span></td><td><strong>Min/max speakers constraint</strong><br><small>Force pyannote à un intervalle de speakers connus</small></td><td>Qualité</td><td>0</td><td>pyannote params</td><td>Configurable</td><td>2</td></tr>
+      <tr><td><span class="badge badge-green">F09</span></td><td><strong>Stats temps de parole</strong><br><small>% par speaker, top speaker, graphique barre dans l'UI</small></td><td>Analytics</td><td>0</td><td>PostgreSQL agrégat</td><td>Toujours</td><td>2</td></tr>
+      <tr><td><span class="badge badge-blue">F10</span></td><td><strong>Export SRT sous-titres</strong><br><small>Format SRT standard, timecodes Whisper word-level</small></td><td>Export</td><td>0</td><td>FastAPI export</td><td>On-demand</td><td>3</td></tr>
+      <tr><td><span class="badge badge-amber">F11</span></td><td><strong>Batch multi-fichiers</strong><br><small>Upload 50+ fichiers, queue Celery, progress bar par fichier</small></td><td>Ingestion</td><td>Groq coût batch</td><td>Celery queue</td><td>On-demand</td><td>3</td></tr>
+      <tr><td><span class="badge badge-red">F12</span></td><td><strong>Bot réunion</strong><br><small>Chrome Extension (Phase 4) + Server bot Playwright (Phase 5+)</small></td><td>Ingestion</td><td>0 (ext) / RAM (srv)</td><td>Extension / Playwright</td><td>On-demand</td><td>4/5</td></tr>
+      <tr><td><span class="badge badge-amber">F13</span></td><td><strong>Transcript live</strong><br><small>Mode live (chunks 30s, transcript temps réel) ou post-recording</small></td><td>Ingestion</td><td>Groq coût</td><td>WebSocket + Groq</td><td>On-demand</td><td>4</td></tr>
+      <tr><td><span class="badge badge-green">F14</span></td><td><strong>Power Dynamics</strong><br><small>Analyse tours de parole, interruptions, adoption d'idées, influence</small></td><td>Intelligence</td><td>~$0.02 Claude</td><td>Claude Sonnet P8</td><td>On-demand</td><td>5</td></tr>
+      <tr><td><span class="badge badge-green">F15</span></td><td><strong>Digest multi-réunions</strong><br><small>Résumé de N réunions d'un projet sur une période configurable</small></td><td>Intelligence</td><td>~$0.03 Claude</td><td>Claude Sonnet P9</td><td>On-demand</td><td>5</td></tr>
+      <tr><td><span class="badge badge-blue">F16</span></td><td><strong>Recherche full-text globale</strong><br><small>pg_trgm sur transcripts + metadata. Résultats avec extrait contexte</small></td><td>Search</td><td>0</td><td>PostgreSQL</td><td>Toujours</td><td>3</td></tr>
+      <tr><td><span class="badge badge-green">F17</span></td><td><strong>Webhooks sortants</strong><br><small>HubSpot, Slack, n8n. Événements: recording.ready, transcription.done</small></td><td>Intégration</td><td>0</td><td>FastAPI async</td><td>Si configuré</td><td>5</td></tr>
+      <tr><td><span class="badge badge-amber">F18</span></td><td><strong>Annotations manuelles</strong><br><small>Range temps/mots, types note/action/décision/flag, non-destructif</small></td><td>Edition</td><td>0</td><td>PostgreSQL</td><td>On-demand</td><td>5</td></tr>
+      <tr><td><span class="badge badge-blue">F19</span></td><td><strong>Dashboard monitoring jobs</strong><br><small>Retry manuel, logs par étape, durée, erreurs, statuts temps réel</small></td><td>Admin</td><td>0</td><td>FastAPI + WebSocket</td><td>Toujours (admin)</td><td>3</td></tr>
+      <tr><td><span class="badge badge-red">F20</span></td><td><strong>Mode offline (faster-whisper)</strong><br><small>0 RAM idle, Groq remplacé par faster-whisper local. Qualité légèrement inférieure</small></td><td>Infrastructure</td><td>0 (CPU seul)</td><td>faster-whisper</td><td>Config switch</td><td>6</td></tr>
+      <tr><td><span class="badge badge-amber">F21</span></td><td><strong>Overlap chunks (3s)</strong><br><small>Chevauchement de 3s entre chunks, déduplication par timestamp</small></td><td>Qualité</td><td>0</td><td>Pipeline</td><td>Toujours</td><td>1</td></tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ============================================================ TAB 5 -->
+<div id="tab-usecases" class="tab-content">
+  <h1>Use Cases détaillés</h1>
+  <p style="color:var(--muted)">10 scénarios réels avec déclencheur, étapes, output, temps et coût.</p>
+
+  <details open>
+    <summary>UC01 — Import batch archive Plaud (390 fichiers)</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Jeremy veut archiver ses 390 enregistrements Plaud des 2 dernières années</p></div>
+        <div class="card"><h4>Temps total</h4><p>~6-8 heures de traitement (non-bloquant, en arrière-plan)</p></div>
+        <div class="card"><h4>Coût estimé</h4><p>~$12-18 Groq + ~$2-5 Claude (notes auto si workflow actif)</p></div>
+      </div>
+      <h4>Étapes :</h4>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Jeremy va dans <strong>Batch Upload</strong> → sélectionne les 390 fichiers .ogg depuis son Mac</li>
+        <li>L'UI affiche une progress bar globale (0/390) + ETA estimé</li>
+        <li>FastAPI crée 390 jobs Celery en queue avec priorité normale</li>
+        <li>Celery workers (concurrency=2) traitent 2 fichiers simultanément</li>
+        <li>Chaque fichier : validation → FFmpeg → Groq (1-2 min/h audio) → pyannote → alignment → Claude</li>
+        <li>Dashboard monitoring : chaque job visible avec statut, durée, erreurs éventuelles</li>
+        <li>Les fichiers failés (corrompus, trop courts) sont listés séparément pour review</li>
+        <li>Après completion : 390 réunions dans la bibliothèque, cherchables par texte</li>
+      </ol>
+      <div class="info-box success">Résultat : 2 ans d'enregistrements Plaud archivés, cherchables, avec speakers identifiés pour les habitués. Rechercher "Merkasa funding" retrouve toutes les réunions pertinentes.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC02 — Réunion Google Meet → notes automatiques (post-meeting)</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Bot Chrome Extension joint la réunion Meet, enregistre, upload auto à la fin</p></div>
+        <div class="card"><h4>Temps</h4><p>Note disponible ~5 min après fin de réunion (réunion 1h)</p></div>
+        <div class="card"><h4>Coût</h4><p>~$0.12 Groq (60min × $0.002) + ~$0.04 Claude = ~$0.16/réunion</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Jeremy ouvre Google Meet → l'extension Chrome détecte la réunion → bouton "REC" apparaît</li>
+        <li>Clic REC → extension capture l'audio via Web Audio API (qualité micro native)</li>
+        <li>Fin de réunion → extension upload le WebM audio vers FastAPI</li>
+        <li>Pipeline complet : FFmpeg → Groq (chunks parallèles) → pyannote → WhisperX → Claude</li>
+        <li>Workflow "Google Meet" configuré : lance P4 (Note de réunion) automatiquement</li>
+        <li>WebSocket push → Jeremy voit la carte de réunion passer de "transcription..." à "prête"</li>
+        <li>Note de réunion disponible avec : résumé, décisions, actions, prochaines étapes</li>
+        <li>Si projet configuré en mode "auto" → assignée automatiquement</li>
+        <li>Webhook sortant → note envoyée au CRM HubSpot si configuré</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC03 — Enregistrement vocal Plaud (terrain, hébreu)</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Jeremy enregistre un client prospect avec son Plaud Pin (hébreu + français mélangé)</p></div>
+        <div class="card"><h4>Temps</h4><p>Détection auto dans les 15 min (polling), traitement 3 min pour 45 min audio</p></div>
+        <div class="card"><h4>Coût</h4><p>~$0.09 Groq + ~$0.03 Claude</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Plaud poller (toutes les 15 min) détecte le nouveau fichier .ogg sur l'API Plaud</li>
+        <li>Télécharge le fichier → crée job avec source_type='plaud', language=null (auto-detect)</li>
+        <li>Groq Whisper large-v3 détecte l'hébreu + français → transcription bilingue</li>
+        <li>Termes mal reconnus en hébreu → signalés en termes ambigus pour validation</li>
+        <li>Vocabulaire custom (INOOWI, Merkasa, prénom client) → correctement reconnu via hotwords</li>
+        <li>Diarisation : SPEAKER_00 = Jeremy (reconnu automatiquement), SPEAKER_01 = Prospect (nouveau)</li>
+        <li>UI demande à Jeremy de nommer SPEAKER_01 → stocké pour futures réunions avec cette personne</li>
+        <li>Note P4 + classification projet suggérée "Merkasa Prospects"</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC04 — WhatsApp vocal → transcription</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Message vocal WhatsApp reçu dans un groupe de travail → n8n bridge</p></div>
+        <div class="card"><h4>Temps</h4><p>&lt; 2 min pour un vocal de 5 min</p></div>
+        <div class="card"><h4>Coût</h4><p>~$0.01 Groq + ~$0.005 Claude</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>n8n workflow : écoute le groupe WhatsApp via WhatsApp Business API</li>
+        <li>Nouveau message audio → n8n télécharge le .ogg (opus codec) et poste vers <code>POST /recordings/ingest</code></li>
+        <li>FFmpeg décode l'OGG Opus nativement (codec WhatsApp standard)</li>
+        <li>Groq transcrit (généralement hébreu ou français)</li>
+        <li>Résultat envoyé via webhook sortant vers n8n → réponse dans le groupe WhatsApp</li>
+        <li>Réunion archivée dans TranscriptAI avec source_type='whatsapp'</li>
+      </ol>
+      <div class="info-box info">Note : Les vocaux WhatsApp sont au format .ogg conteneur avec codec Opus. FFmpeg les décode sans conversion intermédiaire.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC05 — Re-transcription avec meilleur modèle</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Transcription Turbo d'une réunion importante insatisfaisante → re-run Large v3</p></td></div>
+        <div class="card"><h4>Temps</h4><p>3-4× plus lent que Turbo mais 20-30% meilleure qualité hébreu</p></div>
+        <div class="card"><h4>Coût</h4><p>2× le coût Turbo (Large v3 à $0.002/min vs $0.001)</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Jeremy ouvre la réunion → bouton "Re-transcrire" (icône refresh)</li>
+        <li>Modal : choix modèle (Large v3 recommandé), langue forcée (hébreu), Demucs activé</li>
+        <li>Confirmation → nouveau job créé → transcript_version 'v2 Large v3' créé</li>
+        <li>Nouvel onglet "SOURCE v2" créé dans l'UI — l'onglet v1 reste disponible</li>
+        <li>Comparaison côte-à-côte possible : v1 Turbo vs v2 Large v3</li>
+        <li>Jeremy marque v2 comme "current" si meilleure qualité</li>
+        <li>Les prompt_runs générés sur v1 sont conservés et peuvent être relancés sur v2</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC06 — Digest hebdomadaire projet Merkasa</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Vendredi 18h : résumé de toutes les réunions Merkasa de la semaine</p></div>
+        <div class="card"><h4>Temps</h4><p>~2 min pour 10 réunions</p></div>
+        <div class="card"><h4>Coût</h4><p>~$0.05-0.15 Claude Sonnet selon volume</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Jeremy ouvre le projet Merkasa → bouton "Digest" → sélection période (cette semaine)</li>
+        <li>Système récupère les N réunions de la période → extrait les notes/résumés de chacune</li>
+        <li>Claude Sonnet P9 reçoit tous les résumés → génère un meta-digest</li>
+        <li>Digest contient : thèmes récurrents, décisions prises, actions ouvertes, tendances</li>
+        <li>Export PDF ou envoi email automatique si configuré</li>
+        <li>Peut être configuré comme workflow automatique (cron vendredi 18h)</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC07 — Analyse Power Dynamics d'une négociation</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Réunion de négociation importante → analyse des dynamiques de pouvoir</p></div>
+        <div class="card"><h4>Temps</h4><p>~30 sec (Claude Sonnet)</p></div>
+        <div class="card"><h4>Coût</h4><p>~$0.03-0.06 Claude Sonnet</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Jeremy ouvre la réunion → Bibliothèque Prompts → "Power Dynamics (F14)"</li>
+        <li>Claude Sonnet analyse : qui prend la parole en premier, qui est interrompu, qui réoriente</li>
+        <li>Résultat : tableau des tours de parole, carte d'influence, idées adoptées par qui</li>
+        <li>Visualisation : qui a dominé la réunion, qui a cédé, propositions acceptées/rejetées</li>
+        <li>Insight actionable : "SPEAKER_01 a été interrompu 7 fois. Ses propositions ont été adoptées à 60%"</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC08 — Email avec vocal joint → ingestion auto</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Email reçu avec fichier MP3 en pièce jointe sur transcribe@domain.com</p></div>
+        <div class="card"><h4>Temps</h4><p>Réception email → traitement en ~5 min</p></div>
+        <div class="card"><h4>Coût</h4><p>Groq + Claude selon durée audio</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Email envoyé à transcribe@org.transcriptai.com avec MP3 en pièce jointe</li>
+        <li>Mailgun webhook → FastAPI endpoint → extraction de la pièce jointe</li>
+        <li>Filtre : taille max configurable, extensions autorisées</li>
+        <li>Job créé avec source_type='email', metadata: {from, subject, date}</li>
+        <li>Le sujet de l'email devient le titre de la réunion</li>
+        <li>Email de confirmation envoyé à l'expéditeur avec lien vers la transcription</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC09 — Partage externe d'une transcription client</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Jeremy veut envoyer le compte-rendu d'une réunion client sans accès à TranscriptAI</p></div>
+        <div class="card"><h4>Temps</h4><p>30 secondes pour créer le lien</p></div>
+        <div class="card"><h4>Coût</h4><p>0</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Réunion → bouton "Partager" → modal de configuration</li>
+        <li>Options : expiration (7j, 30j, illimitée), password optionnel, inclure audio (oui/non), CTA (oui/non)</li>
+        <li>Génération d'un token URL-safe unique : <code>transcriptai.com/share/abc123xyz</code></li>
+        <li>Page publique : lecture seule, transcript + notes, pas d'interface complète</li>
+        <li>CTA configurable : "Créez votre espace de transcription" → lien vers signup</li>
+        <li>Compteur de vues dans l'admin, révocation possible à tout moment</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>UC10 — URL YouTube → transcription (conférence publique)</summary>
+    <div class="details-body">
+      <div class="cards" style="margin-bottom:1rem;">
+        <div class="card"><h4>Déclencheur</h4><p>Conférence YouTube intéressante → transcription + notes pour étude</p></div>
+        <div class="card"><h4>Temps</h4><p>5 min pour 1h de vidéo</p></div>
+        <div class="card"><h4>Coût</h4><p>Groq + Claude selon durée</p></div>
+      </div>
+      <ol style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:2;">
+        <li>Nouvelle réunion → "Depuis une URL" → coller l'URL YouTube/Loom/Vimeo</li>
+        <li>yt-dlp télécharge la piste audio uniquement (pas la vidéo) → .m4a</li>
+        <li>Pipeline standard : FFmpeg → Groq → Claude</li>
+        <li>Titre et métadonnées YouTube importés automatiquement (via yt-dlp metadata)</li>
+        <li>Diarisation : identifie le présentateur vs questions de l'audience</li>
+        <li>Note de réunion → key takeaways, citations importantes</li>
+      </ol>
+      <div class="info-box warn">⚠️ Respecter les conditions d'utilisation des plateformes vidéo. Usage personnel/recherche uniquement.</div>
+    </div>
+  </details>
+
+</div>
+
+
+<!-- ============================================================ TAB 6 -->
+<div id="tab-params" class="tab-content">
+  <h1>Paramètres configurables</h1>
+  <p style="color:var(--muted)">Toutes les variables ajustables — niveau global (org), par source, ou par enregistrement.</p>
+
+  <h2>Moteur de transcription</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Paramètre</th><th>Valeurs</th><th>Défaut</th><th>Niveau</th><th>Impact</th></tr>
+      <tr><td><strong>Modèle Whisper</strong></td><td>whisper-large-v3-turbo / whisper-large-v3</td><td>Turbo</td><td>Global / par rec.</td><td>Vitesse vs qualité. Turbo = 216x realtime, Large v3 = meilleur hébreu/langues rares</td></tr>
+      <tr><td><strong>Chunk size</strong></td><td>5 / 7 / 10 / 15 min</td><td>10 min</td><td>Global</td><td>5min = plus de requêtes Groq mais retry plus rapide. 15min dépasse 25MB en WAV</td></tr>
+      <tr><td><strong>Overlap chunks</strong></td><td>2 / 3 / 5 s</td><td>3 s</td><td>Global</td><td>Évite la perte de mots aux bordures. 3s = bon compromis déduplication/couverture</td></tr>
+      <tr><td><strong>Langue</strong></td><td>auto / fr / he / en / ar / de / es...</td><td>auto</td><td>Global / par rec.</td><td>Forcer la langue améliore la précision sur les locuteurs mono-langue. Auto = détection Whisper</td></tr>
+      <tr><td><strong>VAD threshold</strong></td><td>0.3 – 0.8</td><td>0.5</td><td>Global</td><td>Seuil de détection de voix avant envoi à Groq. Plus bas = plus sensible (risque bruit)</td></tr>
+      <tr><td><strong>Demucs</strong></td><td>on / off</td><td>off</td><td>Global / par rec.</td><td>Séparation vocale. +qualité diarisation, -performance (2-4GB RAM, 5min/h audio)</td></tr>
+      <tr><td><strong>repetition_penalty</strong></td><td>1.0 – 2.0</td><td>1.2</td><td>Global</td><td>Anti-hallucination. 1.0 = désactivé. >1.5 peut couper des répétitions légitimes</td></tr>
+      <tr><td><strong>no_speech_threshold</strong></td><td>0.3 – 0.9</td><td>0.6</td><td>Global</td><td>Seuil au-delà duquel un segment est considéré silencieux. Plus bas = moins de faux positifs silences</td></tr>
+      <tr><td><strong>temperature</strong></td><td>0 – 0.5</td><td>0</td><td>Global</td><td>0 = déterministe (recommandé production). >0 = créatif mais moins reproductible</td></tr>
+      <tr><td><strong>condition_on_previous</strong></td><td>true / false</td><td>false</td><td>Global</td><td>false = anti-hallucination. true = meilleure cohérence inter-segments (risque de copie)</td></tr>
+      <tr><td><strong>Initial prompt</strong></td><td>Texte libre (max ~200 tokens)</td><td>Vocab custom</td><td>Global / par rec.</td><td>Vocabulaire injecté avant transcription. Améliore reconnaissance des noms propres, acronymes</td></tr>
+    </table>
+  </div>
+
+  <h2>Diarisation</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Paramètre</th><th>Valeurs</th><th>Défaut</th><th>Impact</th></tr>
+      <tr><td><strong>Min speakers</strong></td><td>1-20 ou auto (None)</td><td>auto</td><td>Force pyannote à trouver au moins N locuteurs. Utile pour entretiens 1-on-1</td></tr>
+      <tr><td><strong>Max speakers</strong></td><td>1-20 ou auto (None)</td><td>auto</td><td>Limite le nombre de clusters. Utile si on sait qu'il y a 3 participants max</td></tr>
+      <tr><td><strong>Segmentation onset</strong></td><td>0.3 – 0.7</td><td>0.5</td><td>Seuil d'activation segment. Plus bas = plus sensible aux changements de locuteur courts</td></tr>
+      <tr><td><strong>Segmentation offset</strong></td><td>0.2 – 0.6</td><td>0.4</td><td>Seuil de désactivation. Doit être < onset. Contrôle la durée min d'un segment</td></tr>
+      <tr><td><strong>Similarity threshold</strong></td><td>0.70 – 0.95</td><td>0.85</td><td>Seuil cosine similarity pour reconnaître un speaker. 0.85 = équilibre faux positifs/négatifs</td></tr>
+    </table>
+  </div>
+
+  <h2>Prompts système (P1-P9)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Prompt</th><th>Modèle</th><th>Editable</th><th>Objet</th></tr>
+      <tr><td>P1 — Termes ambigus</td><td>Claude Haiku</td><td>Admin seulement</td><td>Détection termes mal transcrits</td></tr>
+      <tr><td>P2 — Correction</td><td>Claude Haiku</td><td>Admin seulement</td><td>Nettoyage transcript raw</td></tr>
+      <tr><td>P3 — Chapitres</td><td>Claude Sonnet</td><td>Admin seulement</td><td>Timeline et chapitres auto</td></tr>
+      <tr><td><strong>P4 — Note réunion</strong></td><td>Claude Sonnet</td><td><span class="badge badge-green">Oui, par user</span></td><td>Note structurée entièrement configurable</td></tr>
+      <tr><td>P5 — Nommage speakers</td><td>Claude Haiku</td><td>Admin seulement</td><td>Suggestions de noms pour clusters</td></tr>
+      <tr><td>P6 — Classification</td><td>Claude Haiku</td><td>Admin seulement</td><td>Assignation automatique aux projets</td></tr>
+      <tr><td>P7 — Traduction</td><td>Claude Haiku</td><td>Admin seulement</td><td>Traduction vers langue cible</td></tr>
+      <tr><td>P8 — Power Dynamics</td><td>Claude Sonnet</td><td>Admin seulement</td><td>Analyse dynamiques de pouvoir</td></tr>
+      <tr><td><strong>P9 — Digest</strong></td><td>Claude Sonnet</td><td><span class="badge badge-green">Oui, par user</span></td><td>Résumé multi-réunions configurable</td></tr>
+    </table>
+  </div>
+
+  <h2>Utilisateurs & Quotas</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Paramètre</th><th>Valeurs</th><th>Par défaut</th><th>Description</th></tr>
+      <tr><td><strong>Quota heures</strong></td><td>Slider 0h – 1000h ou illimité</td><td>Illimité (admin)</td><td>Heures audio traitées par mois. NULL = illimité (super_admin)</td></tr>
+      <tr><td><strong>Overage policy</strong></td><td>block / warn / allow</td><td>warn</td><td>Comportement dépassement quota: bloquer, avertir, ou laisser passer</td></tr>
+      <tr><td><strong>Alert 50%</strong></td><td>on / off</td><td>on</td><td>Email d'alerte à 50% quota consommé</td></tr>
+      <tr><td><strong>Alert 80%</strong></td><td>on / off</td><td>on</td><td>Email d'alerte à 80% quota consommé</td></tr>
+      <tr><td><strong>Alert 100%</strong></td><td>on / off</td><td>on</td><td>Email à l'atteinte du quota</td></tr>
+      <tr><td><strong>Reset day</strong></td><td>1 – 28</td><td>1</td><td>Jour du mois pour reset du compteur mensuel</td></tr>
+    </table>
+  </div>
+
+  <h2>Configuration des sources</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Source</th><th>Paramètre</th><th>Valeurs</th><th>Notes</th></tr>
+      <tr><td rowspan="3"><strong>Plaud</strong></td><td>API Key</td><td>Texte</td><td>Récupéré depuis l'app Plaud</td></tr>
+      <tr><td>Polling interval</td><td>5 / 15 / 30 / 60 min</td><td>15 min recommandé</td></tr>
+      <tr><td>Télécharger depuis</td><td>Date sélectionnable</td><td>Pour import historique</td></tr>
+      <tr><td rowspan="2"><strong>tl;dv</strong></td><td>Webhook secret</td><td>Texte</td><td>Configuré dans tl;dv settings</td></tr>
+      <tr><td>Endpoint URL</td><td>Auto-généré</td><td><code>/webhooks/tldv/{org_id}</code></td></tr>
+      <tr><td rowspan="3"><strong>Google Meet/Drive</strong></td><td>OAuth 2.0</td><td>Bouton Connect</td><td>Scopes: Drive read-only, Calendar read</td></tr>
+      <tr><td>Folder ID</td><td>Texte</td><td>Dossier Drive à surveiller</td></tr>
+      <tr><td>Watch interval</td><td>5 / 15 / 60 min</td><td>Push webhook via Drive API si possible</td></tr>
+      <tr><td rowspan="3"><strong>Email</strong></td><td>Adresse intake</td><td>Auto-générée</td><td><code>transcribe+{org_slug}@domain.com</code></td></tr>
+      <tr><td>Filtre sujet</td><td>Regex optionnel</td><td>Ex: "REC:" pour filtrer</td></tr>
+      <tr><td>Taille max pièce jointe</td><td>MB slider</td><td>500 MB</td></tr>
+      <tr><td rowspan="2"><strong>WhatsApp</strong></td><td>Group ID</td><td>Texte</td><td>Via n8n bridge configuré séparément</td></tr>
+      <tr><td>Webhook secret</td><td>Texte</td><td>HMAC validation</td></tr>
+    </table>
+  </div>
+
+  <h2>Workflows automatisés</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Paramètre</th><th>Description</th></tr>
+      <tr><td><strong>Workflow par source</strong></td><td>Assigner un workflow différent selon la source. Ex: Plaud → workflow "terrain" (note BANT), Meet → workflow "réunion interne" (note standard)</td></tr>
+      <tr><td><strong>Prompts auto</strong></td><td>Sélection des prompts à lancer automatiquement après transcription. Ordre d'exécution configurable</td></tr>
+      <tr><td><strong>Mode classification</strong></td><td>Par projet: manual (user assigne) / suggest (Claude propose, user valide) / auto (Claude assigne directement)</td></tr>
+      <tr><td><strong>Délai d'exécution</strong></td><td>Immédiat / +5min / +15min (évite les pics de charge)</td></tr>
+    </table>
+  </div>
+
+  <h2>Exports & Formats</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Paramètre</th><th>Valeurs</th><th>Description</th></tr>
+      <tr><td><strong>Format défaut</strong></td><td>PDF / MD / DOCX / TXT / JSON / SRT</td><td>Format pré-sélectionné à l'export</td></tr>
+      <tr><td><strong>PDF — Logo</strong></td><td>Upload image</td><td>Logo en haut du PDF exporté</td></tr>
+      <tr><td><strong>PDF — Couleur principale</strong></td><td>Color picker</td><td>Couleur des headers et accents</td></tr>
+      <tr><td><strong>PDF — Header</strong></td><td>Texte libre</td><td>Texte en haut de chaque page (org name, date...)</td></tr>
+      <tr><td><strong>PDF — Footer</strong></td><td>Texte libre</td><td>Pied de page avec confidentialité si besoin</td></tr>
+      <tr><td><strong>Email SMTP</strong></td><td>Host, port, user, password</td><td>Pour envoi d'exports et notifications par email</td></tr>
+    </table>
+  </div>
+
+  <h2>Performance & Infrastructure</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Paramètre</th><th>Valeurs</th><th>Défaut</th><th>Impact</th></tr>
+      <tr><td><strong>Celery concurrency</strong></td><td>1 – 8</td><td>2</td><td>Nombre de jobs ML simultanés. 2 = sécurisé pour 8GB RAM. 4 = recommandé sur 16GB</td></tr>
+      <tr><td><strong>Job timeout</strong></td><td>15 – 120 min</td><td>30 min</td><td>Durée max avant qu'un job soit marqué failed. Augmenter pour fichiers très longs</td></tr>
+      <tr><td><strong>Max file size</strong></td><td>100MB – 10GB</td><td>2 GB</td><td>Limite par fichier uploadé. Au-delà: rejeter ou streamer</td></tr>
+      <tr><td><strong>Retry count max</strong></td><td>0 – 5</td><td>3</td><td>Nombre de retries automatiques sur erreur Groq/réseau</td></tr>
+      <tr><td><strong>Retry backoff</strong></td><td>Linear / Exponential</td><td>Exponential</td><td>Délai entre retries. Exponentiel = 1min, 2min, 4min...</td></tr>
+      <tr><td><strong>Temp cleanup</strong></td><td>Immédiat / 1h / 24h</td><td>Immédiat</td><td>Suppression des fichiers temp MinIO après job terminé</td></tr>
+    </table>
+  </div>
+
+</div>
+
+
+<!-- ============================================================ TAB 7 -->
+<div id="tab-prompts" class="tab-content">
+  <h1>Prompts validés</h1>
+  <p style="color:var(--muted)">Texte complet des 9 prompts système + initial_prompt + bibliothèque templates.</p>
+
+  <details open>
+    <summary>P_GROQ — Initial prompt (vocabulaire Whisper)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">Groq Whisper</span>
+        <span class="badge badge-gray">~50-200 tokens</span>
+        <span class="badge badge-green">Auto-généré depuis custom_vocabulary</span>
+      </div>
+      <div class="prompt-block">Transcription d'une réunion professionnelle en français et/ou hébreu.
+
+Vocabulaire spécifique à utiliser impérativement :
+Entreprises: INOOWI, Merkasa, Plaud, tl;dv
+Personnes: Jeremy, [AUTRES CONTACTS ORG]
+Produits: TranscriptAI, [TERMES PRODUIT]
+Acronymes: BANT (Budget, Authority, Need, Timeline), KPI, CRM, MVP
+
+Pour l'hébreu, maintenir la transcription en hébreu original.
+Pour les mots mixtes (franglais, hébreu-français), transcrire fidèlement.</div>
+      <p style="color:var(--muted);font-size:0.82rem;">Le prompt est auto-généré à partir de la table <code>custom_vocabulary</code>. Les termes avec <code>boost_weight</code> les plus élevés apparaissent en premier.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>P1 — Détection termes ambigus (Claude Haiku)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-haiku-4-5</span>
+        <span class="badge badge-amber">~$0.001/réunion</span>
+        <span class="badge badge-gray">Automatique post-transcription</span>
+      </div>
+      <div class="prompt-block">Tu es un assistant spécialisé dans la relecture de transcriptions automatiques.
+
+CONTEXTE:
+La transcription ci-dessous a été générée par Whisper AI et peut contenir des erreurs typiques:
+- Noms propres mal orthographiés (entreprises, personnes, produits)
+- Termes techniques ou acronymes déformés
+- Mots en hébreu transcrits phonétiquement en caractères latins
+- Homophones (ex: "c'est" vs "ses", "à" vs "a")
+- Mots étrangers mal retranscrits
+
+TÂCHE:
+Identifie les termes qui semblent mal transcrits ou ambigus.
+Pour chaque terme trouvé, propose une correction probable.
+
+TRANSCRIPTION:
+{{TRANSCRIPT}}
+
+CONTEXTE ORGANISATIONNEL (vocabulaire attendu):
+{{VOCABULARY_CONTEXT}}
+
+RÉPONSE (JSON uniquement, pas d'autre texte):
+[
+  {
+    "term": "terme tel qu'il apparaît",
+    "position": 42,
+    "suggestion": "correction probable",
+    "confidence": 0.85,
+    "reason": "explication courte",
+    "language": "fr"
+  }
+]
+
+Si aucun terme ambigu: répondre []
+Maximum 20 termes. Prioriser par impact sur la compréhension.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P2 — Correction transcription (Claude Haiku)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-haiku-4-5</span>
+        <span class="badge badge-amber">~$0.002/réunion</span>
+        <span class="badge badge-gray">On-demand</span>
+      </div>
+      <div class="prompt-block">Tu es un éditeur expert en transcription audio professionnelle.
+
+TÂCHE:
+Nettoie et améliore la transcription brute ci-dessous.
+
+RÈGLES STRICTES:
+1. Ne jamais changer le sens des propos
+2. Corriger uniquement: hésitations (euh, hm, ben), répétitions involontaires, tics verbaux
+3. Corriger la ponctuation et les majuscules
+4. Appliquer les corrections validées: {{RESOLVED_TERMS}}
+5. Conserver les marqueurs de locuteur [SPEAKER_XX] exactement
+6. Conserver les timestamps [00:00:00] si présents
+7. Ne pas reformuler, paraphraser ou résumer
+8. Garder le style oral naturel
+
+TRANSCRIPTION BRUTE:
+{{RAW_TRANSCRIPT}}
+
+Retourner uniquement la transcription corrigée, sans commentaire.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P3 — Chapitres / Timeline (Claude Sonnet)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-sonnet-4-5</span>
+        <span class="badge badge-amber">~$0.01-0.03/réunion</span>
+        <span class="badge badge-gray">Auto ou on-demand</span>
+      </div>
+      <div class="prompt-block">Tu es un assistant expert en structuration de réunions professionnelles.
+
+TÂCHE:
+Découpe la transcription suivante en chapitres thématiques cohérents.
+Chaque chapitre représente un sujet ou une phase de la réunion.
+
+CONTRAINTES:
+- Minimum 2 chapitres, maximum 12
+- Chaque chapitre doit durer au moins 2 minutes
+- Les timestamps sont en millisecondes dans la transcription
+- Les titres doivent être concis (3-7 mots) et descriptifs
+- Le résumé de chaque chapitre: 1-3 phrases, points clés seulement
+
+TRANSCRIPTION DIARISÉE:
+{{DIARIZED_TRANSCRIPT}}
+
+RÉPONSE (JSON uniquement):
+[
+  {
+    "order_index": 1,
+    "start_ms": 0,
+    "end_ms": 180000,
+    "title": "Ouverture et ordre du jour",
+    "summary": "Jeremy présente les objectifs de la réunion. Trois points à l'ordre du jour: bilan Q3, roadmap Q4, budget."
+  }
+]</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P4 — Note de réunion (Claude Sonnet, ÉDITABLE)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-sonnet-4-5</span>
+        <span class="badge badge-amber">~$0.02-0.05/réunion</span>
+        <span class="badge badge-green">Entièrement éditable par l'utilisateur</span>
+      </div>
+      <div class="info-box info">Ce prompt peut être entièrement modifié par l'utilisateur dans les settings. La version ci-dessous est le template par défaut.</div>
+      <div class="prompt-block">Tu es un assistant expert en prise de notes professionnelles.
+
+CONTEXTE DE LA RÉUNION:
+Date: {{DATE}}
+Participants: {{SPEAKERS_LIST}}
+Projet: {{PROJECT_NAME}}
+Durée: {{DURATION}}
+
+FICHIERS CONTEXTE (si fournis):
+{{CONTEXT_FILES}}
+
+TÂCHE:
+Rédige une note de réunion structurée et actionnable.
+
+TRANSCRIPTION:
+{{DIARIZED_TRANSCRIPT}}
+
+---
+
+# Note de réunion — {{DATE}}
+
+## Participants
+{{SPEAKERS_LIST}}
+
+## Résumé exécutif
+[2-3 phrases maximum résumant l'essentiel]
+
+## Points clés discutés
+- [Point 1]
+- [Point 2]
+
+## Décisions prises
+| Décision | Décideur | Contexte |
+|----------|----------|----------|
+
+## Actions & Responsabilités
+| Action | Responsable | Échéance | Priorité |
+|--------|-------------|----------|----------|
+
+## Questions ouvertes
+- [Question non résolue 1]
+
+## Prochaines étapes
+- [Étape 1]
+
+## Notes complémentaires
+[Informations importantes non catégorisées ci-dessus]
+
+---
+RÈGLES:
+- Être précis et factuel, jamais d'interprétation
+- Citer les participants par nom quand pertinent
+- Format Markdown valide
+- Langue: {{LANGUAGE}} (même langue que la réunion si non spécifiée)</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P5 — Nommage speakers (Claude Haiku)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-haiku-4-5</span>
+        <span class="badge badge-amber">~$0.001/réunion</span>
+        <span class="badge badge-gray">Automatique post-diarisation</span>
+      </div>
+      <div class="prompt-block">Tu es un assistant qui analyse des transcriptions pour identifier des locuteurs.
+
+CONTEXTE:
+Voici des extraits de transcription avec des locuteurs non identifiés (SPEAKER_00, SPEAKER_01...).
+Le contexte organisationnel est fourni pour t'aider.
+
+PARTICIPANTS CONNUS DE L'ORGANISATION:
+{{KNOWN_SPEAKERS}}
+
+EXTRAITS PAR LOCUTEUR (3 premiers extraits de chaque):
+{{SPEAKER_SAMPLES}}
+
+INDICES ADDITIONNELS:
+- Qui parle en premier? Souvent l'organisateur
+- Qui pose des questions vs qui répond?
+- Y a-t-il des auto-présentations dans les extraits?
+- Mentions de prénoms dans le texte?
+
+RÉPONSE (JSON uniquement):
+[
+  {
+    "cluster_label": "SPEAKER_00",
+    "suggested_name": "Jeremy",
+    "confidence": 0.90,
+    "reasoning": "Parle en premier, initie les sujets, style directif"
+  }
+]
+
+Confidence &lt; 0.5 = ne pas suggérer, laisser l'utilisateur nommer.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P6 — Classification projet (Claude Haiku)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-haiku-4-5</span>
+        <span class="badge badge-amber">~$0.001/réunion</span>
+        <span class="badge badge-gray">Auto ou suggest selon config projet</span>
+      </div>
+      <div class="prompt-block">Tu dois classifier une réunion dans le projet le plus pertinent.
+
+PROJETS DISPONIBLES:
+{{PROJECTS_LIST}}
+Format: [{"id": "uuid", "name": "Merkasa", "description": "Startup immobilière..."}]
+
+EXTRAIT DE LA RÉUNION (premiers 500 mots):
+{{TRANSCRIPT_EXCERPT}}
+
+MÉTADONNÉES:
+- Source: {{SOURCE_TYPE}}
+- Participants: {{SPEAKERS}}
+- Date: {{DATE}}
+
+RÈGLES:
+- Choisir UN seul projet (le plus pertinent)
+- Si aucun projet ne correspond clairement: retourner null
+- Confidence &lt; 0.7 = retourner null plutôt qu'une mauvaise classification
+
+RÉPONSE (JSON uniquement):
+{
+  "project_id": "uuid-ou-null",
+  "confidence": 0.85,
+  "reason": "La réunion traite du pitch Merkasa Series A"
+}</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P7 — Traduction (Claude Haiku)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-haiku-4-5</span>
+        <span class="badge badge-amber">~$0.005-0.02</span>
+        <span class="badge badge-gray">On-demand</span>
+      </div>
+      <div class="prompt-block">Tu es un traducteur professionnel expert en contenu de réunions d'affaires.
+
+TÂCHE:
+Traduis le contenu suivant vers: {{TARGET_LANGUAGE}}
+
+TYPE DE CONTENU: {{CONTENT_TYPE}}
+(raw_transcript / cleaned_transcript / meeting_notes / chapters)
+
+RÈGLES SELON LE TYPE:
+- raw_transcript: traduire fidèlement, conserver [SPEAKER_XX] et timestamps
+- cleaned_transcript: traduire et polir légèrement le style
+- meeting_notes: traduire en maintenant la structure Markdown exacte
+- chapters: traduire uniquement les titres et résumés
+
+CONTENU À TRADUIRE:
+{{CONTENT}}
+
+RÈGLES GÉNÉRALES:
+- Conserver les noms propres (personnes, entreprises, produits) en langue originale
+- Conserver les acronymes (BANT, KPI, MVP...) sauf si équivalent local évident
+- Style: professionnel et naturel dans la langue cible
+- Ne pas ajouter de commentaires ou explications
+
+Retourner uniquement le contenu traduit.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P8 — Power Dynamics (Claude Sonnet)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-sonnet-4-5</span>
+        <span class="badge badge-amber">~$0.03-0.06</span>
+        <span class="badge badge-gray">On-demand (feature F14)</span>
+      </div>
+      <div class="prompt-block">Tu es un expert en dynamiques de communication et psychologie organisationnelle.
+
+TÂCHE:
+Analyse les dynamiques de pouvoir et d'influence dans cette réunion.
+
+STATISTIQUES DISPONIBLES:
+{{SPEAKER_STATS}}
+Format: [{speaker, name, talk_time_pct, turn_count, avg_turn_duration_s}]
+
+TRANSCRIPTION DIARISÉE:
+{{DIARIZED_TRANSCRIPT}}
+
+ANALYSE À PRODUIRE:
+
+## Dynamiques de pouvoir — {{DATE}}
+
+### Répartition de la parole
+[Tableau: Participant | % temps de parole | Tours | Durée moy. tour]
+
+### Patterns d'interruption
+- Qui interrompt le plus?
+- Qui est le plus interrompu?
+- Analyse: domination vs nervosité vs engagement
+
+### Flux d'influence des idées
+- Propositions émises par participant
+- Propositions adoptées vs rejetées
+- Qui a le plus influencé les décisions?
+
+### Dynamiques de leadership
+- Leadership formel vs leadership émergent
+- Moments de changement d'influence
+- Patterns question-réponse (qui interroge, qui répond)
+
+### Insights actionnables
+[3-5 observations concrètes pour améliorer la dynamique d'équipe]
+
+### Score d'équilibre participatif
+[0-100: 0 = monopole total, 100 = participation parfaitement équilibrée]
+Explique le score.
+
+IMPORTANT: Être factuel et bienveillant. Pas de jugements moraux. Focus sur les patterns comportementaux observables.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>P9 — Digest multi-réunions (Claude Sonnet, ÉDITABLE)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-sonnet-4-5</span>
+        <span class="badge badge-amber">~$0.05-0.15 selon volume</span>
+        <span class="badge badge-green">Éditable par l'utilisateur</span>
+      </div>
+      <div class="prompt-block">Tu es un assistant expert en synthèse stratégique de réunions.
+
+CONTEXTE:
+Projet: {{PROJECT_NAME}}
+Période: {{DATE_FROM}} au {{DATE_TO}}
+Nombre de réunions: {{MEETING_COUNT}}
+Participants récurrents: {{RECURRING_SPEAKERS}}
+
+RÉSUMÉS DES RÉUNIONS:
+{{MEETINGS_SUMMARIES}}
+Format: [{date, title, participants, notes_content}]
+
+TÂCHE:
+Génère un digest synthétique de cette période.
+
+---
+
+# Digest {{PROJECT_NAME}} — {{DATE_FROM}} → {{DATE_TO}}
+
+## Synthèse de la période
+[Vue d'ensemble en 3-5 phrases: qu'est-ce qui s'est passé cette période?]
+
+## Thèmes récurrents
+[Sujets qui sont revenus dans plusieurs réunions]
+
+## Décisions importantes prises
+| Décision | Date | Réunion |
+
+## Actions en cours (non closes)
+| Action | Responsable | Deadline | Statut |
+
+## Évolution des indicateurs clés
+[KPIs, métriques mentionnés dans les réunions]
+
+## Tendances observées
+[Patterns, évolutions, tensions récurrentes]
+
+## Recommandations pour la prochaine période
+[3-5 recommandations basées sur l'analyse]
+
+## Prochaines échéances
+[Dates et deadlines mentionnées dans les réunions]
+
+---
+RÈGLES:
+- Factuel: ne citer que ce qui est dans les réunions
+- Chronologique dans les tableaux (plus récent en premier)
+- Mettre en évidence les changements significatifs entre le début et la fin de la période</div>
+    </div>
+  </details>
+
+  <h2>Bibliothèque templates communautaires</h2>
+
+  <details>
+    <summary>Template — Key Points, Decisions & Actions</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-haiku-4-5</span>
+        <span class="badge badge-gray">Inspiré Plaud community</span>
+      </div>
+      <div class="prompt-block">Analyse cette transcription de réunion et extrais:
+
+1. POINTS CLÉS (max 7 bullets)
+Les informations les plus importantes échangées.
+
+2. DÉCISIONS PRISES
+Liste numérotée des décisions actées.
+
+3. ACTIONS & RESPONSABILITÉS
+Format: - [NOM] → [ACTION] avant [DATE si mentionnée]
+
+4. QUESTIONS OUVERTES
+Sujets non résolus nécessitant un suivi.
+
+TRANSCRIPTION:
+{{TRANSCRIPT}}
+
+Format de réponse: Markdown structuré, concis, actionnable.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Template — Secrétaire de réunion (Meeting Secretary)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-sonnet-4-5</span>
+        <span class="badge badge-gray">Usage général</span>
+      </div>
+      <div class="prompt-block">Tu es un secrétaire de réunion professionnel. Rédige un compte-rendu formel.
+
+RÉUNION: {{TITLE}}
+DATE: {{DATE}}
+PRÉSENTS: {{SPEAKERS}}
+
+TRANSCRIPTION:
+{{DIARIZED_TRANSCRIPT}}
+
+COMPTE-RENDU:
+
+**Objet de la réunion:** [1 phrase]
+
+**Participants:** [Liste avec rôles si identifiables]
+
+**Ordre du jour traité:**
+1. [Point 1] — [statut: traité/reporté/partiellement]
+2. [Point 2]
+
+**Discussions:**
+[Synthèse chronologique des échanges importants, attribuée aux participants]
+
+**Résolutions adoptées:**
+[Liste numérotée des décisions formelles]
+
+**Plan d'action:**
+[Tableau: Qui | Quoi | Pour quand]
+
+**Date de la prochaine réunion:** [si mentionnée]
+
+*Compte-rendu rédigé le {{TODAY}} par TranscriptAI*</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Template — Appel commercial (BANT Framework)</summary>
+    <div class="details-body">
+      <div class="prompt-meta">
+        <span class="badge badge-blue">claude-sonnet-4-5</span>
+        <span class="badge badge-amber">Idéal pour: Jeremy calls prospects Merkasa/INOOWI</span>
+      </div>
+      <div class="prompt-block">Tu es un expert commercial spécialisé en qualification de prospects (méthode BANT).
+
+Analyse cet appel commercial et produis une fiche de qualification complète.
+
+TRANSCRIPTION:
+{{DIARIZED_TRANSCRIPT}}
+
+---
+## Fiche qualification prospect
+
+**Entreprise:** [si mentionnée]
+**Contact:** [nom + rôle]
+**Date de l'appel:** {{DATE}}
+
+### B — Budget
+- Budget disponible: [montant ou fourchette si mentionné]
+- Processus d'approbation: [qui décide?]
+- Timing budget: [quand disponible?]
+- Signal: 🟢 Qualifié / 🟡 À clarifier / 🔴 Non qualifié
+
+### A — Authority (Autorité)
+- Décideur final: [nom/rôle]
+- Influenceurs impliqués: [liste]
+- Notre interlocuteur est-il le décideur? [Oui/Non/Partiellement]
+- Signal: 🟢 / 🟡 / 🔴
+
+### N — Need (Besoin)
+- Problème principal exprimé: [description]
+- Urgence ressentie: [forte/moyenne/faible]
+- Solution actuelle: [ce qu'ils utilisent]
+- Adéquation notre solution: [forte/moyenne/faible]
+- Signal: 🟢 / 🟡 / 🔴
+
+### T — Timeline
+- Horizon décision: [délai mentionné]
+- Facteurs bloquants: [liste]
+- Prochaine étape convenue: [description]
+- Signal: 🟢 / 🟡 / 🔴
+
+### Score BANT global: [X/4 qualifiés]
+
+### Objections soulevées
+- [Objection 1] → [Réponse apportée]
+
+### Next steps
+- [Action 1] → Responsable, deadline
+- [Action 2]
+
+### Verbatims clés (citations directes)
+> "[Citation importante du prospect]"</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Template — Résumé adaptatif (longueur selon durée)</summary>
+    <div class="details-body">
+      <div class="prompt-block">Génère un résumé adapté à la durée de cette réunion.
+
+RÈGLE DE TAILLE:
+- &lt; 15 min → 3 bullets max
+- 15-30 min → 5 bullets + 3 actions
+- 30-60 min → synthèse + decisions + actions
+- &gt; 60 min → résumé exécutif complet (template P4)
+
+DURÉE: {{DURATION_MINUTES}} minutes
+
+TRANSCRIPTION:
+{{TRANSCRIPT}}
+
+Applique le format approprié automatiquement.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Template — Recherche qualitative / Interview</summary>
+    <div class="details-body">
+      <div class="prompt-block">Tu es un chercheur UX/qualitativiste expert en analyse d'entretiens.
+
+Analyse cet entretien de recherche.
+
+TRANSCRIPTION:
+{{DIARIZED_TRANSCRIPT}}
+
+## Analyse de l'entretien
+
+### Profil du répondant
+[Rôle, contexte, niveau d'expertise estimé]
+
+### Verbatims clés par thème
+**Thème 1: [Nom du thème]**
+> "[Citation exacte]" — {{SPEAKER_NAME}}
+> "[Citation exacte]" — {{SPEAKER_NAME}}
+
+**Thème 2: ...**
+
+### Insights principaux
+[Top 5 insights actionnables pour la recherche]
+
+### Frictions / Pain points identifiés
+[Liste avec niveau d'intensité: fort/moyen/faible]
+
+### Comportements observés
+[Ce que le répondant FAIT vs ce qu'il DIT]
+
+### Opportunités design/produit
+[Suggestions issues de l'entretien]
+
+### Tags recommandés
+[#tag1 #tag2 pour classification dans la base de recherche]</div>
+    </div>
+  </details>
+
+</div>
+
+
+<!-- ============================================================ TAB 8 -->
+<div id="tab-ffmpeg" class="tab-content">
+  <h1>FFmpeg & Formats audio/vidéo</h1>
+
+  <div class="info-box info">
+    <strong>Qu'est-ce que FFmpeg ?</strong><br>
+    FFmpeg est le couteau suisse universel de l'audio et de la vidéo. C'est un logiciel open source (100% gratuit) qui comprend et convertit <strong>TOUS les formats audio/vidéo qui existent</strong>. Quand votre fichier arrive dans TranscriptAI, FFmpeg le lit, extrait l'audio, et le convertit en WAV 16kHz mono — le format optimal pour Whisper. <strong>L'utilisateur n'a jamais à se soucier du format de son fichier.</strong>
+  </div>
+
+  <h2>Formats d'entrée supportés</h2>
+
+  <h3>Audio</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Format</th><th>Extension(s)</th><th>Codec</th><th>Usage courant</th><th>Notes</th></tr>
+      <tr><td><strong>MP3</strong></td><td>.mp3</td><td>MPEG-1 Layer III</td><td>Universal, emails, partages</td><td>✅ Support natif FFmpeg</td></tr>
+      <tr><td><strong>WAV</strong></td><td>.wav</td><td>PCM (divers)</td><td>Audio pro, DAW, enregistreurs</td><td>✅ Zéro perte de qualité</td></tr>
+      <tr><td><strong>M4A / AAC</strong></td><td>.m4a, .aac</td><td>AAC</td><td>Apple iPhone, iPad, iTunes</td><td>✅ Format natif iOS</td></tr>
+      <tr><td><strong>OGG Vorbis</strong></td><td>.ogg</td><td>Vorbis</td><td>Linux, web, Plaud</td><td>✅ Format Plaud (.ogg vorbis)</td></tr>
+      <tr><td><strong>OGG Opus</strong></td><td>.ogg, .opus</td><td>Opus</td><td><strong>WhatsApp vocaux</strong>, Telegram</td><td>✅ Vocaux WhatsApp (.ogg opus)</td></tr>
+      <tr><td><strong>FLAC</strong></td><td>.flac</td><td>FLAC</td><td>Audiophiles, archivage sans perte</td><td>✅ Sans perte</td></tr>
+      <tr><td><strong>AMR</strong></td><td>.amr, .3ga</td><td>AMR-NB/WB</td><td>Téléphonie, vieux téléphones</td><td>✅ Appels téléphoniques</td></tr>
+      <tr><td><strong>WMA</strong></td><td>.wma</td><td>WMA</td><td>Windows Media Player, anciens PC</td><td>✅ Support complet</td></tr>
+      <tr><td><strong>AIFF</strong></td><td>.aiff, .aif</td><td>PCM/AIFF</td><td>Mac ancienne génération, Logic Pro</td><td>✅ Format Apple pro</td></tr>
+      <tr><td><strong>WebM Audio</strong></td><td>.webm</td><td>Vorbis/Opus</td><td>Web browsers, Chrome recording</td><td>✅ Enregistrements navigateur</td></tr>
+      <tr><td><strong>3GP Audio</strong></td><td>.3gp</td><td>AMR/AAC</td><td>Vieux mobiles Android</td><td>✅</td></tr>
+      <tr><td><strong>MP2</strong></td><td>.mp2</td><td>MPEG-1 Layer II</td><td>Radio, TV anciens</td><td>✅</td></tr>
+      <tr><td><strong>CAF</strong></td><td>.caf</td><td>Divers</td><td>Apple Core Audio Format</td><td>✅ GarageBand exports</td></tr>
+      <tr><td><strong>APE</strong></td><td>.ape</td><td>Monkey's Audio</td><td>Archivage sans perte</td><td>✅</td></tr>
+      <tr><td><strong>AC3</strong></td><td>.ac3</td><td>Dolby AC-3</td><td>DVD, Blu-ray audio</td><td>✅</td></tr>
+      <tr><td><strong>RealAudio</strong></td><td>.ra, .rm</td><td>RealAudio</td><td>Vieux streaming internet</td><td>✅ Compatibilité héritée</td></tr>
+      <tr><td><strong>AU</strong></td><td>.au, .snd</td><td>PCM/μ-law</td><td>Unix/Sun Microsystems</td><td>✅</td></tr>
+      <tr><td><strong>MKA</strong></td><td>.mka</td><td>Divers</td><td>Matroska audio only</td><td>✅</td></tr>
+    </table>
+  </div>
+
+  <h3>Vidéo (extraction audio)</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Format</th><th>Extension(s)</th><th>Usage courant</th><th>Notes</th></tr>
+      <tr><td><strong>MP4</strong></td><td>.mp4</td><td>Zoom, Teams, tl;dv, YouTube, <strong>tl;dv exports</strong></td><td>✅ Format le plus courant</td></tr>
+      <tr><td><strong>MOV</strong></td><td>.mov</td><td>QuickTime, iPhone vidéo</td><td>✅ Apple natif</td></tr>
+      <tr><td><strong>AVI</strong></td><td>.avi</td><td>Windows Media, vieux enregistreurs</td><td>✅</td></tr>
+      <tr><td><strong>MKV</strong></td><td>.mkv</td><td>Matroska, films, OBS recordings</td><td>✅</td></tr>
+      <tr><td><strong>WebM</strong></td><td>.webm</td><td>Chrome/Firefox recordings, <strong>Extension bot</strong></td><td>✅ Format enregistrement navigateur</td></tr>
+      <tr><td><strong>FLV</strong></td><td>.flv</td><td>Flash video, vieux YouTube</td><td>✅</td></tr>
+      <tr><td><strong>WMV</strong></td><td>.wmv</td><td>Windows Media, Teams anciens</td><td>✅</td></tr>
+      <tr><td><strong>M2TS / TS</strong></td><td>.m2ts, .ts, .mts</td><td>TV recordings, Blu-ray</td><td>✅</td></tr>
+      <tr><td><strong>3GP</strong></td><td>.3gp</td><td>Vieux mobiles vidéo</td><td>✅</td></tr>
+      <tr><td><strong>VOB</strong></td><td>.vob</td><td>DVD</td><td>✅</td></tr>
+      <tr><td><strong>OGV</strong></td><td>.ogv</td><td>Vidéo open source web</td><td>✅</td></tr>
+      <tr><td><strong>RM / RMVB</strong></td><td>.rm, .rmvb</td><td>RealMedia</td><td>✅</td></tr>
+    </table>
+  </div>
+
+  <h3>Cas particuliers importants</h3>
+  <div class="cards">
+    <div class="card green">
+      <h4>Vocaux WhatsApp</h4>
+      <p>Format : <code>.ogg</code> avec codec <strong>Opus</strong>. FFmpeg les décode nativement. Commande : <code>ffmpeg -i voice.ogg -ac 1 -ar 16000 -acodec pcm_s16le out.wav</code></p>
+    </div>
+    <div class="card green">
+      <h4>Enregistrements Plaud</h4>
+      <p>Format : <code>.ogg</code> avec codec <strong>Vorbis</strong>. Qualité 32-64kbps. Support natif FFmpeg sans librairie additionnelle.</p>
+    </div>
+    <div class="card green">
+      <h4>Exports tl;dv</h4>
+      <p>Format : <code>.mp4</code> H.264. FFmpeg extrait la piste audio avec <code>-vn</code> (no video), conversion immédiate.</p>
+    </div>
+    <div class="card amber">
+      <h4>Enregistrements Zoom</h4>
+      <p>Format : <code>.mp4</code> ou <code>.m4a</code>. Parfois multi-pistes (speaker séparé). FFmpeg fusionne automatiquement avec <code>-ac 1</code>.</p>
+    </div>
+    <div class="card amber">
+      <h4>Chrome Extension (bot)</h4>
+      <p>Capture via Web Audio API → <code>.webm</code> (codec Opus ou Vorbis selon navigateur). FFmpeg supporte les deux.</p>
+    </div>
+    <div class="card">
+      <h4>iPhone Voice Memos</h4>
+      <p>Format : <code>.m4a</code> (AAC). Excellent pour la transcription, qualité micro iPhone souvent meilleure que Plaud.</p>
+    </div>
+  </div>
+
+  <h2>Formats de sortie (choix utilisateur)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Format</th><th>Qualité</th><th>Taille relative</th><th>Compatibilité</th><th>Usage recommandé</th></tr>
+      <tr><td><strong>MP3 128kbps</strong></td><td>Bonne</td><td>Petit (~1MB/min)</td><td>Universel</td><td>Partage, écoute légère</td></tr>
+      <tr><td><strong>MP3 320kbps</strong></td><td>Excellente</td><td>Moyen (~2.5MB/min)</td><td>Universel</td><td>Archivage qualité</td></tr>
+      <tr><td><strong>WAV 16bit 44.1kHz</strong></td><td>Parfaite</td><td>Grand (~5MB/min)</td><td>Universel</td><td>Traitement professionnel</td></tr>
+      <tr><td><strong>M4A / AAC 128kbps</strong></td><td>Très bonne</td><td>Petit (~1MB/min)</td><td>Apple/iOS natif</td><td>iPhone, iPad, AirPods</td></tr>
+      <tr><td><strong>OGG Opus 64kbps</strong></td><td>Excellente</td><td>Très petit (~0.5MB/min)</td><td>Web, Android</td><td>Stockage optimisé, streaming</td></tr>
+      <tr><td><strong>FLAC</strong></td><td>Sans perte</td><td>Très grand (~15MB/min)</td><td>Lecteurs audiophiles</td><td>Archivage long terme sans perte</td></tr>
+    </table>
+  </div>
+
+  <h2>Commandes FFmpeg de référence</h2>
+
+  <details>
+    <summary>Conversion principale (pipeline TranscriptAI)</summary>
+    <div class="details-body">
+      <pre><code><span class="cm"># Conversion universelle → WAV optimal Whisper</span>
+ffmpeg -i <span class="str">"{input}"</span> \
+  -vn \                              <span class="cm"># Pas de vidéo</span>
+  -ac <span class="num">1</span> \                            <span class="cm"># Mono</span>
+  -ar <span class="num">16000</span> \                        <span class="cm"># 16kHz</span>
+  -acodec pcm_s16le \                <span class="cm"># 16-bit PCM little-endian</span>
+  -af <span class="str">"loudnorm=I=-16:TP=-1.5:LRA=11"</span> \  <span class="cm"># Normalisation LUFS</span>
+  <span class="str">"{output.wav}"</span>
+
+<span class="cm"># Taille résultante: 10min = 19.2MB | 1h = ~115MB</span></code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>Analyse qualité audio</summary>
+    <div class="details-body">
+      <pre><code><span class="cm"># Loudness analysis (LUFS)</span>
+ffmpeg -i input.wav -af loudnorm=print_format=json -f null - <span class="num">2</span>&gt;&1 | tail -<span class="num">12</span>
+
+<span class="cm"># Silence detection</span>
+ffmpeg -i input.wav -af silencedetect=noise=-<span class="num">40</span>dB:duration=0.5 -f null - <span class="num">2</span>&gt;&1
+
+<span class="cm"># Duration + format info</span>
+ffprobe -v quiet -print_format json -show_format -show_streams input.wav
+
+<span class="cm"># Peak level</span>
+ffmpeg -i input.wav -af astats=metadata=1:reset=1 -f null - <span class="num">2</span>&gt;&1 | grep Peak_level</code></pre>
+    </div>
+  </details>
+
+  <details>
+    <summary>Extraction WhatsApp vocal</summary>
+    <div class="details-body">
+      <pre><code><span class="cm"># WhatsApp .ogg (Opus codec) → WAV Whisper</span>
+ffmpeg -i whatsapp_voice.ogg \
+  -ac <span class="num">1</span> -ar <span class="num">16000</span> -acodec pcm_s16le \
+  output.wav
+
+<span class="cm"># Vérifier le codec avant traitement</span>
+ffprobe -v error -select_streams a:0 \
+  -show_entries stream=codec_name,codec_long_name \
+  -of default=noprint_wrappers=1 whatsapp_voice.ogg
+<span class="cm"># Sortie attendue: codec_name=opus</span></code></pre>
+    </div>
+  </details>
+
+</div>
+
+
+<!-- ============================================================ TAB 9 -->
+<div id="tab-capacity" class="tab-content">
+  <h1>Ressources & Capacité Hetzner</h1>
+
+  <h2>Serveur Hetzner CX31 — Spécifications</h2>
+  <div class="stat-boxes">
+    <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">vCPU (shared)</div></div>
+    <div class="stat-box"><div class="stat-num">8 GB</div><div class="stat-label">RAM</div></div>
+    <div class="stat-box"><div class="stat-num">160 GB</div><div class="stat-label">SSD NVMe</div></div>
+    <div class="stat-box"><div class="stat-num">€15</div><div class="stat-label">/ mois</div></div>
+    <div class="stat-box"><div class="stat-num">EU</div><div class="stat-label">Localisation données</div></div>
+  </div>
+
+  <h2>Consommation idle (services always-on)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Service</th><th>RAM idle</th><th>CPU idle</th><th>Toujours actif</th></tr>
+      <tr><td>PostgreSQL 16 + pgvector</td><td>256 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td>Redis</td><td>32 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td>MinIO</td><td>128 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td>FastAPI (uvicorn, 2 workers)</td><td>256 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td>Next.js (Node.js)</td><td>256 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td>Celery workers (x2, idle)</td><td>512 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td>Nginx</td><td>16 MB</td><td>&lt;1%</td><td>Oui</td></tr>
+      <tr><td><strong>TOTAL IDLE</strong></td><td><strong>~1.45 GB / 8 GB</strong></td><td><strong>&lt;5%</strong></td><td></td></tr>
+    </table>
+  </div>
+  <div class="info-box success">Marge libre au repos : ~6.5 GB disponibles pour les jobs ML. Très confortable pour usage solo.</div>
+
+  <h2>Consommation par feature (pendant utilisation)</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Feature</th><th>RAM pendant job</th><th>RAM idle</th><th>CPU</th><th>Coût API</th><th>Mode</th></tr>
+      <tr><td>FFmpeg (conversion + normalisation)</td><td>200 MB</td><td>0</td><td>80-100% × 45s/h audio</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>Groq Whisper Turbo (1 chunk)</td><td>0 (HTTP)</td><td>0</td><td>&lt;5% (I/O)</td><td>$0.001/min</td><td>On-demand</td></tr>
+      <tr><td>Groq Whisper Large v3</td><td>0 (HTTP)</td><td>0</td><td>&lt;5% (I/O)</td><td>$0.002/min</td><td>On-demand</td></tr>
+      <tr><td>pyannote diarisation</td><td>2-4 GB</td><td>0</td><td>200-300% × 7min/h audio</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>WhisperX alignment (wav2vec2)</td><td>1-2 GB</td><td>0</td><td>150% × 2min/h audio</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>Demucs (F01)</td><td>2-4 GB</td><td>0</td><td>300% × 5min/h audio</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>Claude Haiku (P1, P5, P6)</td><td>0 (HTTP)</td><td>0</td><td>&lt;5%</td><td>~$0.001</td><td>On-demand</td></tr>
+      <tr><td>Claude Sonnet (P3, P4, P8, P9)</td><td>0 (HTTP)</td><td>0</td><td>&lt;5%</td><td>~$0.01-0.05</td><td>On-demand</td></tr>
+      <tr><td>faster-whisper (F20 offline)</td><td>1-3 GB</td><td>0</td><td>300-400%</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>Bot serveur Playwright (F12)</td><td>800MB-1.5 GB/session</td><td>0</td><td>15-20%/session</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>pg_trgm full-text search (F16)</td><td>+50 MB</td><td>0</td><td>&lt;5%</td><td>0</td><td>Always</td></tr>
+      <tr><td>pgvector speaker matching</td><td>+100 MB</td><td>0</td><td>&lt;5%</td><td>0</td><td>On-demand</td></tr>
+      <tr><td>MinIO (stockage + streaming)</td><td>128 MB</td><td>128 MB</td><td>&lt;5%</td><td>0</td><td>Always</td></tr>
+      <tr><td>Celery Beat (scheduler)</td><td>32 MB</td><td>32 MB</td><td>&lt;1%</td><td>0</td><td>Always</td></tr>
+    </table>
+  </div>
+
+  <h2>Analyse capacité pour 40h audio/jour</h2>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:1rem 0;">
+    <pre style="font-size:0.8rem;">
+╔══════════════════════════════════════════════════════════════════════════╗
+║              ANALYSE CAPACITÉ — HETZNER CX31 — 40H AUDIO/JOUR           ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  TRANSCRIPTION GROQ:                                                     ║
+║    40h × 60min = 2400 min/jour                                           ║
+║    Groq 216x realtime: 2400min audio → ~11min API time réel              ║
+║    Coût Turbo:   2400 × $0.001 = $2.40/jour = $72/mois                  ║
+║    Coût Large v3: 2400 × $0.002 = $4.80/jour = $144/mois                ║
+║    CPU impact: NÉGLIGEABLE (appels HTTP uniquement)                      ║
+║                                                                          ║
+║  FFMPEG (extraction + split + normalisation):                            ║
+║    ~45 secondes CPU par heure audio                                      ║
+║    40h × 45s = 30 minutes CPU/jour                                       ║
+║    → Pas de goulot d'étranglement                                        ║
+║                                                                          ║
+║  PYANNOTE (GOULOT PRINCIPAL):                                            ║
+║    ~7 minutes CPU par heure audio (sur 4 vCPU)                          ║
+║    40h × 7min = 280min = 4h40 CPU/jour                                   ║
+║    RAM: 2-4 GB pendant le job, 0 après                                   ║
+║    Avec concurrency=2: 2h20 de traitement réel                           ║
+║    → FAISABLE si flux régulier sur la journée (pas tout en même temps)   ║
+║                                                                          ║
+║  AVEC DEMUCS ACTIF (F01):                                                ║
+║    ~5 minutes CPU par heure audio supplémentaires                        ║
+║    40h × 5min = 200min = 3h20 CPU/jour additionnels                      ║
+║    RAM: 2-4 GB (chevauchement avec pyannote possible → pic 6-7 GB!)      ║
+║    ⚠️  ATTENTION: avec Demucs actif, 8 GB peut saturer                   ║
+║    → Configurer: run Demucs AVANT pyannote (pas simultané)               ║
+║    → Ou désactiver Demucs par défaut, activer par réunion si besoin      ║
+║                                                                          ║
+║  STOCKAGE (40h/jour):                                                    ║
+║    Audio OGG source: ~1.5 GB/jour → 45 GB/mois                          ║
+║    WAV normalized (temp, supprimé après job): 0 (cleanup immédiat)       ║
+║    PostgreSQL transcripts + segments: ~50 MB/jour → 1.5 GB/mois         ║
+║    MinIO total après 6 mois: ~270 GB                                     ║
+║                                                                          ║
+║    ⚠️  Hetzner 160 GB SSD: INSUFFISANT après 3-4 mois à ce rythme!       ║
+║    → SOLUTION A: MinIO sur volume Hetzner séparé (€5/100 GB/mois)       ║
+║    → SOLUTION B: Archivage auto après 90j vers stockage froid (€2/TB)   ║
+║    → RECOMMANDÉ: Volume Hetzner 300 GB → +€15/mois → total €30/mois     ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  MULTI-UTILISATEURS SIMULTANÉS:                                          ║
+║                                                                          ║
+║  3-4 users actifs en même temps:                                         ║
+║    - Chacun lance 1 job pyannote → 3×3 GB = 9 GB → SATURE 8 GB!         ║
+║    - Celery concurrency=2 PROTÈGE: max 2 jobs ML simultanés              ║
+║    - Les autres entrent en file d'attente Redis                          ║
+║    - ETA affiché dans l'UI (position dans la queue)                      ║
+║                                                                          ║
+║  Pour usage commercial (10+ users):                                      ║
+║    → Hetzner CX41: 8 vCPU, 16 GB RAM, €30/mois                         ║
+║    → Celery concurrency=4                                                ║
+║    → 4 jobs simultanés → throughput ×4                                   ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  VERDICT HETZNER 8 GB:                                                   ║
+║                                                                          ║
+║  ✅ 40h/jour sans Demucs: TRÈS CONFORTABLE                               ║
+║  ⚠️  40h/jour avec Demucs: LIMITE (surveiller RAM avec htop)             ║
+║  ❌ 10+ users simultanés: INSUFFISANT → upgrade CX41                     ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  ROADMAP INFRASTRUCTURE:                                                  ║
+║                                                                          ║
+║  Phase 1-2 (solo/petit team)  → CX31  8 GB  €15/mois   ✓               ║
+║  Phase 3-4 (5-10 users)       → CX41  16 GB €30/mois   ↑               ║
+║  Phase 5+  (commercial 50+)   → CCX33 32 GB €120/mois  ↑↑              ║
+║                    +Volume 500 GB stockage     €25/mois                  ║
+║                    +CDN Hetzner pour exports   €5/mois                   ║
+╚══════════════════════════════════════════════════════════════════════════╝</pre>
+  </div>
+
+  <h2>Bot réunion — Analyse ressources</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Option</th><th>RAM serveur</th><th>CPU serveur</th><th>Qualité audio</th><th>Détection</th><th>Phase</th></tr>
+      <tr>
+        <td><strong>Option A — Chrome Extension</strong> (recommandé Phase 1-4)</td>
+        <td style="color:var(--accent2)">0 MB<br><small>Tourne sur le Mac/PC user</small></td>
+        <td style="color:var(--accent2)">0%<br><small>CPU user uniquement</small></td>
+        <td><span class="badge badge-green">Excellente</span><br><small>Capture navigateur native</small></td>
+        <td><span class="badge badge-green">Aucune</span><br><small>Bot invisible côté serveur</small></td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td><strong>Option B — Server Bot Playwright</strong> (Phase 5+)</td>
+        <td style="color:var(--accent3)">800MB-1.5 GB<br><small>par session active</small></td>
+        <td style="color:var(--accent3)">15-20%<br><small>constant par session</small></td>
+        <td><span class="badge badge-amber">Bonne</span><br><small>Dépend de la capture audio</small></td>
+        <td><span class="badge badge-red">Risque</span><br><small>Google/Zoom détectent parfois</small></td>
+        <td>5+</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="info-box warn">
+    <strong>Server Bot — Calcul RAM :</strong> 3 sessions simultanées × 1.5 GB = 4.5 GB → + 1.45 GB idle = 5.95 GB. Sur 8 GB, aucun job pyannote simultané possible. → Nécessite upgrade CX41 (16 GB) pour combiner bot serveur + diarisation.
+  </div>
+
+  <h2>Questions techniques résolues</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Question</th><th>Réponse</th></tr>
+      <tr><td>Pourquoi chunk 10min et pas 25min (limite Groq) ?</td><td>WAV 16kHz 10min = 19.2 MB → sous la limite 25 MB Groq. 15min = 28.8 MB → dépasserait. De plus, chunks plus courts = retry plus rapide et parallélisme plus efficace.</td></tr>
+      <tr><td>Overlap 3s — ne pas envoyer l'overlap à Groq pour économiser ?</td><td>L'overlap est DANS le chunk envoyé à Groq (on envoie les 3s extra). La déduplication retire les mots en double APRÈS la transcription. C'est intentionnel : on préfère payer 6s de transcription en plus plutôt que perdre des mots aux bordures.</td></tr>
+      <tr><td>Temps de démarrage à froid mode offline (faster-whisper) ?</td><td>faster-whisper large-v2 : ~15-20s de chargement du modèle sur CPU. Medium : ~8s. Pour usage fréquent, conserver le modèle en RAM est recommandé (coût : 1-3 GB RAM permanent).</td></tr>
+      <tr><td>Peut-on lancer pyannote et Demucs simultanément ?</td><td>Techniquement oui, mais 2×(2-4 GB) = 4-8 GB → sature les 8 GB disponibles. CONFIGURATION RECOMMANDÉE : exécuter Demucs AVANT pyannote séquentiellement dans le même job. Le gain de temps n'en vaut pas le risque OOM.</td></tr>
+      <tr><td>pgvector indexation performance pour 10 000 speakers ?</td><td>Index IVFFlat avec 100 listes : ~10ms par query. Reconstruire l'index tous les 1000 nouveaux speakers avec VACUUM ANALYZE.</td></tr>
+      <tr><td>Limite Groq API rate limit ?</td><td>Free tier : 100 req/min, 2000 req/jour. Paid : beaucoup plus élevé. Pour batch 390 fichiers (4 chunks/fichier = 1560 requêtes) : ~16 min sur free tier. Upgrade vers paid pour batch massif.</td></tr>
+    </table>
+  </div>
+
+</div>
+
+
+<!-- ============================================================ TAB 10 -->
+<div id="tab-phases" class="tab-content">
+  <h1>Phases de déploiement</h1>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Phase</th><th>Semaines</th><th>Scope</th><th>Infra</th><th>Critères validation</th></tr>
+      <tr><td><span class="badge badge-blue">Phase 1</span></td><td>1-2</td><td>Core MVP</td><td>Mac local → Hetzner</td><td>5 fichiers Plaud transcrits, export PDF</td></tr>
+      <tr><td><span class="badge badge-blue">Phase 2</span></td><td>3-4</td><td>Diarisation</td><td>Hetzner CX31</td><td>10 réunions diarisées correctement</td></tr>
+      <tr><td><span class="badge badge-blue">Phase 3</span></td><td>5-6</td><td>Organisation</td><td>Hetzner CX31</td><td>390 fichiers Plaud importés et cherchables</td></tr>
+      <tr><td><span class="badge badge-blue">Phase 4</span></td><td>7-8</td><td>Sources auto</td><td>Hetzner CX31</td><td>Plaud polling + email intake + PWA iOS</td></tr>
+      <tr><td><span class="badge badge-amber">Phase 5</span></td><td>9-12</td><td>Features avancées</td><td>Hetzner CX31</td><td>Vocab + Annotations + Webhooks + Digest</td></tr>
+      <tr><td><span class="badge badge-green">Phase 6</span></td><td>13+</td><td>Commercial</td><td>Hetzner CX41 16GB</td><td>Multi-tenant, quotas, white-label</td></tr>
+    </table>
+  </div>
+
+  <details open>
+    <summary>Phase 1 — Core MVP (Semaines 1-2)</summary>
+    <div class="details-body">
+      <h4>Scope</h4>
+      <p>Upload audio → Groq Whisper → transcript brut → Claude Sonnet → Export PDF/MD. Fonctionnel en local avant déploiement Hetzner.</p>
+
+      <h4>Features incluses</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>Auth JWT simple (1 user, 1 org)</li>
+        <li>Upload manuel (drag & drop, max 500 MB)</li>
+        <li>FFmpeg conversion universelle</li>
+        <li>Groq Whisper Turbo (chunks parallèles, F21 overlap)</li>
+        <li>F04 Anti-hallucinations params</li>
+        <li>Transcript brut dans l'UI (onglet SOURCE)</li>
+        <li>Claude Haiku P2 (correction) — onglet CLEANED</li>
+        <li>Export PDF et Markdown</li>
+        <li>Dashboard monitoring jobs (F19 basique)</li>
+      </ul>
+
+      <h4>Stack minimale</h4>
+      <pre><code><span class="cm"># docker-compose.yml Phase 1</span>
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+  redis:
+    image: redis:alpine
+  minio:
+    image: minio/minio
+  api:
+    build: ./api
+    depends_on: [postgres, redis, minio]
+  worker:
+    build: ./api
+    command: celery worker
+  frontend:
+    build: ./frontend</code></pre>
+
+      <h4>Critères de validation Phase 1</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>✅ Transcrire 5 fichiers Plaud réels (OGG) avec qualité acceptable</li>
+        <li>✅ Export PDF fonctionnel avec contenu de la transcription</li>
+        <li>✅ Auth sécurisée (JWT, refresh token)</li>
+        <li>✅ Jobs ne crashent pas sur fichiers corrompus (validation robuste)</li>
+        <li>✅ Cleanup MinIO temp après job</li>
+      </ul>
+
+      <div class="info-box info">Démarrer en local sur Mac avec Docker Desktop. Déployer sur Hetzner quand les 5 critères sont validés en local.</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Phase 2 — Diarisation & Speakers (Semaines 3-4)</summary>
+    <div class="details-body">
+      <h4>Scope</h4>
+      <p>+ pyannote diarisation + WhisperX alignment + speaker naming UI + overlap chunks + qualité audio.</p>
+
+      <h4>Features ajoutées</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>pyannote.audio 3.1 diarisation</li>
+        <li>WhisperX wav2vec2 alignment (±50ms)</li>
+        <li>Speaker naming UI (nommer SPEAKER_00, fusionner clusters)</li>
+        <li>pgvector speaker embeddings (reconnaissance auto des habitués)</li>
+        <li>F02 Audio quality score (avant/après normalisation)</li>
+        <li>F05 Confidence scores → termes ambigus</li>
+        <li>F08 Min/max speakers config</li>
+        <li>F09 Stats temps de parole par speaker</li>
+        <li>Claude Haiku P1 termes ambigus + base apprenante</li>
+      </ul>
+
+      <h4>Critères de validation Phase 2</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>✅ Diarisation correcte sur 10 réunions Plaud réelles (test manuel)</li>
+        <li>✅ Jeremy reconnu automatiquement dans les réunions après 3 nommages</li>
+        <li>✅ 0 mots perdus aux bordures de chunks (test avec enregistrement de 35 min)</li>
+        <li>✅ Score qualité audio cohérent avec perception subjective</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Phase 3 — Organisation & Intelligence (Semaines 5-6)</summary>
+    <div class="details-body">
+      <h4>Scope</h4>
+      <p>+ Projets + Batch import + Timeline chapitres + Note auto + Search global + Dashboard monitoring.</p>
+
+      <h4>Features ajoutées</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>Projets (création, organisation, classification manuelle)</li>
+        <li>F11 Batch upload (50+ fichiers simultanés)</li>
+        <li>F16 Recherche full-text globale (pg_trgm)</li>
+        <li>F19 Dashboard monitoring jobs complet (retry, logs détaillés)</li>
+        <li>Claude Sonnet P3 Chapitres auto</li>
+        <li>Claude Sonnet P4 Note de réunion auto (configurable)</li>
+        <li>F09 Stats temps de parole (graphiques)</li>
+        <li>F07 Re-transcription (avec versioning)</li>
+        <li>Export SRT (F10), DOCX, JSON</li>
+        <li>Bibliothèque prompts (system + custom)</li>
+        <li>Multi-pass prompts + contexte fichiers</li>
+      </ul>
+
+      <h4>Critères de validation Phase 3</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>✅ Import batch des 390 fichiers Plaud sans erreur (monitoring via dashboard)</li>
+        <li>✅ Recherche "Merkasa" retrouve toutes les réunions pertinentes en &lt; 500ms</li>
+        <li>✅ Dashboard monitoring affiche statut temps réel de tous les jobs</li>
+        <li>✅ Note de réunion générée automatiquement pour 10 nouvelles réunions Meet</li>
+        <li>✅ Export PDF correct (logo, formatting)</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Phase 4 — Sources automatiques (Semaines 7-8)</summary>
+    <div class="details-body">
+      <h4>Scope</h4>
+      <p>+ Plaud polling + tl;dv webhooks + Email intake + PWA + Live recording + Sources config UI.</p>
+
+      <h4>Features ajoutées</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>Plaud API polling (Celery Beat, 15min default)</li>
+        <li>tl;dv webhook endpoint (MeetingReady event)</li>
+        <li>Email intake Mailgun (pièces jointes audio)</li>
+        <li>PWA (manifest.json, service worker, installable iOS/Android)</li>
+        <li>Share Target API (recevoir fichiers depuis apps iOS/Android)</li>
+        <li>F13 Enregistrement live (2 modes: live + post-recording)</li>
+        <li>Sources configuration UI (admin)</li>
+        <li>F12 Bot Chrome Extension (premier déploiement)</li>
+        <li>Workflows automatisés configurables</li>
+      </ul>
+
+      <h4>Critères de validation Phase 4</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>✅ Nouvelle réunion Plaud détectée et traitée automatiquement en &lt; 20 min</li>
+        <li>✅ Email avec audio joint → réunion créée et transcrite automatiquement</li>
+        <li>✅ PWA installée sur iPhone, Share Target fonctionnel (partager depuis Voice Memos)</li>
+        <li>✅ Extension Chrome : enregistrement Google Meet de 30 min, upload OK</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Phase 5 — Features avancées (Semaines 9-12)</summary>
+    <div class="details-body">
+      <h4>Scope</h4>
+      <p>+ Demucs + Vocabulaire custom + Annotations + Webhooks sortants + Power Dynamics + Digest + Traduction.</p>
+
+      <h4>Features ajoutées</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>F01 Demucs séparation vocale (option par réunion)</li>
+        <li>F06 Vocabulaire custom (CSV import, hotwords Groq)</li>
+        <li>F18 Annotations manuelles (range, types, non-destructif)</li>
+        <li>F17 Webhooks sortants (HubSpot, Slack, n8n)</li>
+        <li>F14 Power Dynamics (Claude Sonnet P8)</li>
+        <li>F15 Digest multi-réunions (Claude Sonnet P9)</li>
+        <li>F03 Traduction (onglet dédié)</li>
+        <li>Partage externe (liens tokenisés, expiration, CTA)</li>
+        <li>Q&A sur réunion (Claude Sonnet)</li>
+        <li>Classification projet automatique (P6)</li>
+      </ul>
+
+      <h4>Critères de validation Phase 5</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>✅ "INOOWI" et "Merkasa" correctement transcrits via vocabulaire custom</li>
+        <li>✅ Annotation sur segment → visible sur timeline au bon timestamp</li>
+        <li>✅ Webhook HubSpot reçoit le résumé de réunion dans les 2 min après completion</li>
+        <li>✅ Digest hebdomadaire Merkasa généré sur les 5 dernières réunions</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Phase 6 — Commercialisation (Semaine 13+)</summary>
+    <div class="details-body">
+      <h4>Scope</h4>
+      <p>Multi-tenant complet, quotas, white-label, mode offline, bot serveur, invitations utilisateurs.</p>
+
+      <h4>Features ajoutées</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>Multi-tenant avec isolation totale par org_id</li>
+        <li>Quotas utilisateurs (user_quotas table, alertes, overage policies)</li>
+        <li>White-label (logo, couleurs par org)</li>
+        <li>Invitations email (user invite flow)</li>
+        <li>F20 Mode offline (faster-whisper, 0 RAM idle)</li>
+        <li>F12 Bot serveur Playwright (nécessite upgrade 16GB)</li>
+        <li>Billing hooks (prêt pour intégration Stripe)</li>
+        <li>Audit logs (qui a fait quoi)</li>
+        <li>RGPD: export data, delete account</li>
+      </ul>
+
+      <h4>Infrastructure upgrade Phase 6</h4>
+      <div class="info-box warn">Upgrade Hetzner CX31 → CX41 (8 vCPU, 16 GB RAM, €30/mois) avant le lancement commercial.</div>
+
+      <h4>Critères de validation Phase 6</h4>
+      <ul style="color:var(--muted);padding-left:1.5rem;font-size:0.85rem;line-height:1.8;">
+        <li>✅ Créer une org secondaire "Test Client" avec 5h de quota mensuel</li>
+        <li>✅ Dépasser le quota → comportement "warn" correct (email + badge UI)</li>
+        <li>✅ White-label : logo et couleurs différents pour Test Client</li>
+        <li>✅ Mode offline : 0 RAM idle confirmé avec faster-whisper non chargé</li>
+        <li>✅ Isolation org : Test Client ne voit pas les données Merkasa</li>
+      </ul>
+    </div>
+  </details>
+
+</div>
+
+
+<!-- ============================================================ TAB 11 -->
+<div id="tab-mockup" class="tab-content">
+  <h1>Prompt Cloud Design</h1>
+  <p style="color:var(--muted)">Prompt complet pour générer le design de l'interface TranscriptAI dans un outil de design IA (Cursor, v0, Claude...).</p>
+
+  <div style="display:flex;gap:0.75rem;margin-bottom:1rem;align-items:center;">
+    <button onclick="copyPrompt()" style="background:var(--accent);color:#fff;border:none;padding:0.6rem 1.2rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.85rem;">📋 Copier le prompt</button>
+    <span style="color:var(--muted);font-size:0.8rem;">Prompt complet pour v0.dev, Cursor, Claude Projects, ou ChatGPT</span>
+  </div>
+
+  <div id="design-prompt" class="prompt-block">Design System TranscriptAI — Interface complète à créer
+
+DESIGN SYSTEM:
+- Background: #0f1117 (très sombre)
+- Surface: #1a1d27 (cartes, sidebars)
+- Surface2: #22263a (hover, selected)
+- Border: #2a2d3e
+- Accent: #6366f1 (indigo — actions principales)
+- Accent2: #10b981 (vert — succès, confirmé)
+- Accent3: #f59e0b (ambre — warning, pending)
+- Red: #ef4444 (erreurs)
+- Text: #e2e8f0 (texte principal)
+- Muted: #94a3b8 (texte secondaire)
+- Code-bg: #0d1117
+- Police: 'Inter' ou système, 14px base
+- Radius: 8px cards, 6px boutons, 4px badges
+
+=============================================================
+ÉCRAN 1 — BIBLIOTHÈQUE (vue principale)
+=============================================================
+
+LAYOUT:
+- Sidebar gauche: 240px fixe
+- Contenu principal: flex-fill
+
+SIDEBAR:
+  Logo "TranscriptAI" en haut (gradient accent → accent2)
+  
+  NAVIGATION:
+  [📁 Bibliothèque] ← actif (accent color)
+  [📊 Dashboard]
+  [🔍 Recherche]
+  [⚙️ Paramètres]
+  [📤 Webhooks]
+  
+  PROJETS (section):
+  + Nouveau projet
+  ● Merkasa (7)
+  ○ INOOWI (12)  
+  ○ Personnel (34)
+  ○ WhatsApp (8)
+  
+  SOURCES (section):
+  🟢 Plaud (actif)
+  🟢 tl;dv (actif)
+  ⚪ Email (configuré)
+  ⚪ Chrome Bot (configuré)
+  
+  BOTTOM:
+  [Avatar] Jeremy Ortyl
+  Super Admin · Quota: ∞
+  
+HEADER BIBLIOTHÈQUE:
+  "Bibliothèque" h1 + sous-titre "61 enregistrements · 847h transcrites"
+  
+  BARRE FILTRES:
+  [Toutes les sources ▾] [Tous les projets ▾] [Toute période ▾] [Statut ▾]
+  
+  BARRE ACTIONS:
+  [+ Nouvelle réunion] [📤 Batch upload] [⚡ Workflow ▾]
+  
+  RECHERCHE GLOBALE (header top):
+  🔍 Rechercher dans toutes les réunions... (raccourci ⌘K)
+
+GRILLE CARTES (3 colonnes, responsive):
+  
+  CARTE RÉUNION (exemple):
+  ┌─────────────────────────────────────┐
+  │ [Plaud]  🟢 Prête          ⋮ menu  │
+  │                                     │
+  │ 📞 Réunion Merkasa Série A           │
+  │ Jeremy · David Cohen · +1            │
+  │                                     │
+  │ ⏱ 47min  💬 6 842 mots              │
+  │ 👥 3 speakers   🌐 FR/HE            │
+  │                                     │
+  │ [📁 Merkasa] [🏷 Pitch]             │
+  │                                     │
+  │ "...le besoin de financement est    │
+  │  estimé à 2M€ pour 18 mois..."     │
+  │                                     │
+  │ 12 janv 2025 · il y a 3h           │
+  │ 🎵 [──────────●──────] 23:47        │
+  └─────────────────────────────────────┘
+  
+  VARIANTES CARTES:
+  - Card avec statut "En traitement" → spinner + étape: "Diarisation..."
+  - Card avec statut "Erreur" → rouge + message + bouton "Retry"
+  - Card avec statut "En attente" → position queue: #3
+
+=============================================================
+ÉCRAN 2 — VUE RÉUNION (détail)
+=============================================================
+
+LAYOUT:
+  - Panel gauche 40%: transcript + player audio
+  - Panel droit 60%: onglets résultats + AI
+
+PANEL GAUCHE:
+  
+  HEADER:
+  "Réunion Merkasa Série A — 12 jan 2025"
+  [Modifier titre ✏️] [⭐ Favoris] [📤 Partager] [📥 Export ▾]
+  
+  PROJECT BADGE: [📁 Merkasa] ← cliquable
+  
+  STATS BARRE:
+  ⏱ 47min · 💬 6842 mots · 👥 3 speakers · 🌐 FR/HE
+  Score qualité: [████████░░] 84/100
+  
+  SPEAKING TIME BAR:
+  [Jeremy ████████████ 52%] [David ██████ 31%] [+1 ███ 17%]
+  Chaque barre cliquable → scroll vers premier tour de parole
+  
+  PLAYER AUDIO:
+  ┌──────────────────────────────────────┐
+  │ ◀ 15s  ◀  ▶/⏸  ▶  +15s   🔊 1.0x │
+  │ ──────────●────────────────────── │
+  │ 00:23:47 / 47:12                    │
+  └──────────────────────────────────────┘
+  
+  QUALITÉ AUDIO (F02, expandable):
+  ▶ Qualité audio (84/100)
+    Avant normalisation: LUFS -23.4, SNR 18dB, Silence 42%
+    Après normalisation: LUFS -16.0, SNR 22dB ✅
+
+  TERMES AMBIGUS (badge count si existants):
+  ⚠️ 3 termes à valider
+  ["Inoowi" → INOOWI ✓] ["Merkaza" → Merkasa ✓] ["Davide" → David ?]
+  
+  TRANSCRIPT DIARISÉ (scrollable):
+  
+  ┌─────────────────────────────────────┐
+  │ 🔵 Jeremy Ortyl          00:00:12  │
+  │ "Donc on va commencer par le point  │
+  │ sur le financement. David, tu as   │
+  │ les chiffres actualisés ?"          │
+  └─────────────────────────────────────┘
+  ┌─────────────────────────────────────┐
+  │ 🟢 David Cohen           00:00:28  │
+  │ "Oui, on est à 340K€ en caisse.    │
+  │ Le burn rate est de 42K par mois." │
+  └─────────────────────────────────────┘
+  
+  [Annotations → clic droit sur texte → menu contextuel:
+   ✏️ Annoter | 📌 Marquer action | ✅ Décision | 🚩 Signaler]
+  
+  Annotations affichées inline:
+  [📌 Action: Relancer David sur deck — Jeremy]
+  
+  SEARCH & REPLACE (barre):
+  [🔍 Rechercher dans ce transcript...] [Remplacer]
+
+PANEL DROIT — ONGLETS:
+  
+  TABS BAR:
+  [SOURCE] [CLEANED] [NOTE] [CHAPITRES] [TRADUCTION 🇫🇷] [+ Ajouter ▾]
+  ← SOURCE et CLEANED ne peuvent pas être supprimés
+  ← Autres onglets: ×  pour supprimer
+  
+  TAB SOURCE (transcript brut diarisé + timestamps):
+  Versions: [v1 Turbo ✓] [v2 Large v3] [+ Re-transcrire]
+  [Contenu transcript brut avec speakers et timestamps]
+  
+  TAB CLEANED (transcript nettoyé):
+  [Appliquer corrections validées] [Régénérer ↺]
+  [Contenu nettoyé, lisible]
+  
+  TAB NOTE (P4 — Note de réunion):
+  Badge: [Auto-généré · claude-sonnet-4-5 · 12 jan 2025 14:32]
+  [💾 Éditer] [↺ Régénérer] [📥 Exporter]
+  
+  --- Contenu note ---
+  # Note de réunion — 12 jan 2025
+  ## Résumé exécutif
+  Réunion de bilan financier Q3 avec discussion roadmap Q4...
+  
+  ## Décisions
+  | Décision | Décideur | Contexte |
+  [Tableau formaté]
+  
+  ## Actions
+  | Action | Responsable | Échéance |
+  [Tableau formaté]
+  ---
+  
+  TAB CHAPITRES (P3):
+  Timeline visuelle:
+  [0:00 ─── 12:30 ─── 28:45 ─── 47:12]
+  │ Bilan Q3  │ Roadmap Q4 │ Budget Q1 2025 │
+  
+  Chapitres liste:
+  ▶ 00:00 — Bilan Q3 (12 min)
+    "Discussion des résultats Q3: ARR 120K€, churn 4%..."
+  ▶ 12:30 — Roadmap Q4 (16 min)  
+    "3 priorités: feature X, refactoring auth, launch UK..."
+  ▶ 28:45 — Budget Q1 2025 (18 min)
+    "Augmentation budget marketing, recrutement 2 devs..."
+  
+  TAB TRADUCTION:
+  Langue source: FR/HE détectée  |  Traduire vers: [Français ▾]
+  Contenu: [Note de réunion ▾] [Transcript brut ▾] ← checkboxes
+  [↺ Traduire] ← bouton
+  [Contenu traduit en Markdown]
+  
+  TAB + (ajouter):
+  Sélectionner prompt:
+  ┌─────────────────────────────────────┐
+  │ 🔍 Rechercher un prompt...          │
+  ├─────────────────────────────────────┤
+  │ SYSTÈME                             │
+  │ ⚡ Power Dynamics (P8)              │
+  │ ❓ Q&A sur la réunion               │
+  ├─────────────────────────────────────┤
+  │ MES TEMPLATES                       │
+  │ 💼 BANT Call Analysis               │
+  │ 📋 Secrétaire de réunion            │
+  │ 🔑 Key Points & Actions             │
+  │ + Créer un nouveau template...      │
+  └─────────────────────────────────────┘
+  
+  Contexte fichiers (optionnel):
+  [📎 Ajouter fichier contexte (PDF, MD, DOCX)]
+  → Fichiers déjà attachés: [pitch-deck-merkasa.pdf ×]
+  
+  [Lancer le prompt →]
+
+=============================================================
+ÉCRAN 3 — PARAMÈTRES (admin)
+=============================================================
+
+LAYOUT: sidebar paramètres gauche + contenu droite
+
+SIDEBAR PARAMÈTRES:
+  Transcription Engine
+  Diarisation
+  Prompts système
+  Vocabulaire custom
+  Sources
+  Workflows
+  Utilisateurs & Quotas
+  Exports
+  Performance
+
+SECTION VOCABULAIRE CUSTOM (F06):
+  "Vocabulaire personnalisé"
+  Sous-titre: "Ces termes sont injectés dans Whisper pour améliorer la reconnaissance"
+  
+  BARRE ACTION:
+  [+ Ajouter terme] [📤 Importer CSV] [📥 Exporter]
+  
+  TABLEAU:
+  | Terme | Catégorie | Boost | Actif | Actions |
+  | INOOWI | company | 2.0 | 🟢 | ✏️ 🗑️ |
+  | Merkasa | company | 2.0 | 🟢 | ✏️ 🗑️ |
+  | Jeremy | person | 1.5 | 🟢 | ✏️ 🗑️ |
+  | BANT | acronym | 1.5 | 🟢 | ✏️ 🗑️ |
+  | tl;dv | product | 1.8 | 🟢 | ✏️ 🗑️ |
+  
+  PREVIEW initial_prompt:
+  "Transcription d'une réunion... Vocabulaire: INOOWI, Merkasa, Jeremy, BANT, tl;dv..."
+  [Preview auto-mis à jour]
+
+SECTION UTILISATEURS & QUOTAS:
+  TABLEAU USERS:
+  | User | Rôle | Quota | Utilisé | Reset | Politique | Actions |
+  | Jeremy Ortyl | Super Admin | ∞ | 34.2h | - | - | 👁️ |
+  | David Cohen | Admin | 20h/mois | 12.4h | 1er | warn | ✏️ |
+  | Sarah M. | Member | 5h/mois | 4.8h ⚠️ | 1er | block | ✏️ |
+  
+  BARRE USAGE Sarah:
+  [████████████████████████████████░░] 96% ← en rouge
+  
+  MODAL ÉDITER QUOTA:
+  User: Sarah Martin
+  Heures allouées: [___5___] h/mois  [Illimité ☐]
+  Politique dépassement: (•) Bloquer  ( ) Avertir  ( ) Autoriser
+  Alertes: [☑] 50%  [☑] 80%  [☑] 100%
+  Jour de reset: [1er du mois ▾]
+  [Enregistrer]
+
+SECTION TRANSCRIPTION ENGINE:
+  Modèle par défaut:
+  (•) whisper-large-v3-turbo  — 216x realtime · $0.001/min
+  ( ) whisper-large-v3         — Meilleur hébreu · $0.002/min
+  
+  Chunk size: [10 min ▾] (5 / 7 / 10 min)
+  Overlap: [3s ▾] (2 / 3 / 5s)
+  Langue par défaut: [Auto-détection ▾]
+  
+  Anti-hallucination:
+  repetition_penalty: [──●──────] 1.2
+  no_speech_threshold: [─────●───] 0.6
+  temperature: [●──────────] 0
+  
+  [☐] Demucs (séparation vocale) — +qualité diarisation, +RAM, +temps
+  [☐] VAD pre-filter (enlève silences >500ms)
+  
+  Initial prompt (preview):
+  [Textarea readonly — auto-généré depuis vocabulaire custom]
+
+=============================================================
+ÉCRAN 4 — PROJET (vue projet)
+=============================================================
+
+HEADER:
+  [● Merkasa] ← emoji + couleur
+  "23 réunions · 342h · depuis oct 2023"
+  [⚙️ Paramètres projet] [+ Nouvelle réunion] [📊 Digest ▾]
+
+STATS PROJET:
+  [23 réunions] [342h audio] [Dernière: il y a 2j] [Score moyen: 87/100]
+
+ONGLETS PROJET:
+  [Réunions] [Timeline] [Speakers] [Digest]
+
+TAB DIGEST:
+  Période: [Cette semaine ▾] [Ce mois ▾] [Personnalisé...]
+  [⚡ Générer le digest]
+  
+  DIGEST GÉNÉRÉ:
+  # Digest Merkasa — 6 jan → 12 jan 2025
+  6 réunions · 47h audio
+  
+  ## Synthèse de la semaine
+  [Contenu Claude Sonnet P9]
+  
+  [📥 Exporter PDF] [📧 Envoyer par email]
+
+TAB SPEAKERS (speakers du projet):
+  | Speaker | Apparitions | Temps total | Dernière réunion |
+  | 🔵 Jeremy Ortyl | 23 | 187h | il y a 2j |
+  | 🟢 David Cohen | 15 | 89h | il y a 2j |
+  | 🟡 Sarah Martin | 8 | 34h | il y a 5j |
+  | ⚪ SPEAKER_NEW | 2 | 3h | il y a 1j | ← [Nommer →] |
+
+=============================================================
+ÉCRAN 5 — DASHBOARD MONITORING (F19)
+=============================================================
+
+"Monitoring des jobs"
+Stats: [47 total] [45 ✅] [2 🔄] [0 ❌]
+
+JOBS ACTIFS (temps réel via WebSocket):
+  
+  JOB CARD EN COURS:
+  ┌──────────────────────────────────────────┐
+  │ JOB #bc4d8f1a                    🔄      │
+  │ Plaud — vocal_2025_01_12.ogg            │
+  │                                          │
+  │ [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░] Étape 7/13      │
+  │ ⚡ Diarisation pyannote en cours...       │
+  │ 00:02:34 écoulé · ETA: ~1:30            │
+  │                                          │
+  │ CPU: ████████░░ 78% · RAM: 3.2/8GB      │
+  └──────────────────────────────────────────┘
+
+JOBS HISTORIQUE (tableau):
+  | ID | Source | Fichier | Statut | Durée | Étapes | Actions |
+  | bc4d | Plaud | vocal.ogg | ✅ | 3:42 | 13/13 | 👁️ Logs |
+  | a7f3 | Email | meeting.mp4 | ❌ | 0:32 | 3/13 | ↺ Retry Logs |
+  
+LOGS DRAWER (clic sur "Logs"):
+  ▼ JOB bc4d8f1a — Logs détaillés
+  [14:32:01] ✅ INTAKE: file valid, 47:12 duration, OGG/Vorbis
+  [14:32:02] ✅ QUALITY_PRE: score 72/100, LUFS -23.4, SNR 17dB
+  [14:32:45] ✅ FFMPEG: normalized.wav created (19.2MB, 47:12)
+  [14:33:10] ✅ CHUNKS: 5 chunks created (10min overlap 3s)
+  [14:33:11] 🔄 GROQ: sending 5 chunks in parallel...
+  [14:35:22] ✅ GROQ: all chunks transcribed (6842 words, lang=fr)
+  [14:33:15] 🔄 PYANNOTE: diarizing vocals.wav...
+  [14:36:01] ✅ PYANNOTE: 3 speakers detected
+  [14:36:05] ✅ WHISPERX: alignment done (±50ms)
+  [14:36:08] ✅ SPEAKERS: Jeremy(0.94), David(0.91), Unknown(0.43)
+  [14:36:12] 🔄 CLAUDE: P1 ambiguous terms detection...
+  [14:36:14] ✅ CLAUDE: 3 terms flagged
+  [14:36:15] ✅ STORE: saved to PostgreSQL + MinIO
+  [14:36:20] ✅ AUTO: P4 note de réunion started...
+  [14:36:52] ✅ AUTO: note generated
+  [14:36:52] ✅ NOTIFY: WebSocket push sent
+  [14:36:52] ✅ COMPLETE: recording ready
+
+=============================================================
+ÉCRAN 6 — BATCH UPLOAD (F11)
+=============================================================
+
+MODAL PLEIN ÉCRAN:
+"Batch Upload"
+
+DRAG & DROP ZONE:
+  ┌──────────────────────────────────────────┐
+  │                                          │
+  │    📁 Glissez vos fichiers ici           │
+  │    ou cliquez pour sélectionner         │
+  │                                          │
+  │    Formats: MP3, OGG, M4A, WAV, MP4...  │
+  │    Max 2GB/fichier · Illimité en nombre  │
+  └──────────────────────────────────────────┘
+
+FICHIERS SÉLECTIONNÉS (390 fichiers):
+  "390 fichiers · 14.2 GB total · ~6h de traitement estimé"
+  
+  PROGRESS BAR GLOBALE: [▓▓▓░░░░░░░░░░░░░░░░░░░] 12/390 (3%)
+  
+  LISTE (virtualisée, scroll):
+  | #  | Fichier | Taille | Durée | Statut |
+  | 1  | 2023-03-12_meeting.ogg | 4.2MB | 18:34 | ✅ Prêt |
+  | 2  | vocal_plaud_0234.ogg | 2.1MB | 8:12 | 🔄 Groq... |
+  | 3  | recording_0235.ogg | 5.8MB | 24:01 | ⏳ Queue #3 |
+  | 388| ... | ... | ... | ⏳ Queue #386 |
+  
+  CONFIG BATCH:
+  Projet: [Assigner au projet... ▾]
+  Workflow: [Standard (Note auto) ▾]
+  Langue: [Auto-détection ▾]
+  
+  [⏸ Pause] [⏹ Arrêter] [Ouvrir monitoring →]
+
+=============================================================
+COMPOSANTS UI SUPPLÉMENTAIRES
+=============================================================
+
+BARRE DE PROGRESSION JOB (inline dans bibliothèque):
+  "Transcription..." [▓▓▓▓▓░░░░░░░░░] Diarisation... ETA 2min
+
+NOTIFICATION TOAST (bottom-right):
+  ✅ "Réunion Merkasa prête — 47min, 3 speakers"  [Voir →]
+
+SHARE MODAL:
+  "Partager cette réunion"
+  Lien: [transcriptai.com/share/abc123xyz     📋 Copier]
+  Expiration: ( ) 7j  (•) 30j  ( ) Illimité
+  Protection: [☐] Mot de passe: [__________]
+  Options: [☐] Inclure audio  [☑] Afficher CTA
+  [Créer le lien →]
+
+ANNOTATION MODAL (clic droit sur texte):
+  Texte sélectionné: "le budget Q1 est de 340K€"
+  Type: (•) Note  ( ) Action  ( ) Décision  ( ) Signaler
+  Contenu: [Vérifier avec David le 15/01...______]
+  [Enregistrer l'annotation]
+
+SPEAKER NAMING MODAL:
+  "Identifier ce locuteur"
+  Cluster: SPEAKER_01
+  Extraits:
+  "Les chiffres du Q3 montrent..."
+  "Je propose d'augmenter le budget..."
+  "Ma recommandation serait de..."
+  
+  Suggestions IA:
+  [🟢 David Cohen (91%)] [⚪ Autre personne (non suggéré)]
+  
+  Ou saisir un nom: [David Cohen___________]
+  [☐] Mémoriser pour les prochaines réunions
+  [Confirmer]
+
+NOTE: Tous les éléments utilisent le design system défini ci-dessus.
+Dark theme only. Font Inter. Animations légères (200ms ease).
+Mobile responsive (sidebar collapse en burger menu sur mobile).
+</div>
+
+  <script>
+  function copyPrompt() {
+    const text = document.getElementById('design-prompt').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('#tab-mockup button');
+      btn.textContent = '✅ Copié !';
+      setTimeout(() => { btn.textContent = '📋 Copier le prompt'; }, 2000);
+    });
+  }
+  </script>
+</div>
+
+
+<!-- ============================================================ TAB 12 -->
+<div id="tab-quotas" class="tab-content">
+  <h1>Quotas utilisateurs</h1>
+  <p style="color:var(--muted)">Système complet de gestion des quotas — design, implémentation, politiques.</p>
+
+  <h2>Schéma PostgreSQL</h2>
+  <pre><code>CREATE TABLE user_quotas (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id           UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  
+  <span class="cm">-- Allocation</span>
+  hours_allocated   FLOAT NULL,          <span class="cm">-- NULL = illimité (super admin Jeremy)</span>
+  
+  <span class="cm">-- Consommation</span>
+  hours_used_month  FLOAT DEFAULT 0.0,   <span class="cm">-- Cumulé depuis le dernier reset</span>
+  hours_used_total  FLOAT DEFAULT 0.0,   <span class="cm">-- Toutes périodes confondues</span>
+  
+  <span class="cm">-- Reset mensuel</span>
+  reset_day         INT DEFAULT 1,       <span class="cm">-- 1er du mois (configurable 1-28)</span>
+  last_reset_at     TIMESTAMPTZ DEFAULT NOW(),
+  
+  <span class="cm">-- Politique dépassement</span>
+  overage_policy    TEXT DEFAULT <span class="str">'warn'</span>, <span class="cm">-- 'block' | 'warn' | 'allow'</span>
+  
+  <span class="cm">-- Alertes</span>
+  alert_at_50       BOOLEAN DEFAULT true,
+  alert_at_80       BOOLEAN DEFAULT true,
+  alert_at_100      BOOLEAN DEFAULT true,
+  alert_50_sent     BOOLEAN DEFAULT false,  <span class="cm">-- Évite doublons</span>
+  alert_80_sent     BOOLEAN DEFAULT false,
+  alert_100_sent    BOOLEAN DEFAULT false,
+  
+  updated_at        TIMESTAMPTZ DEFAULT NOW()
+);
+
+<span class="cm">-- Historique mensuel (pour reporting)</span>
+CREATE TABLE quota_history (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id       UUID REFERENCES users(id),
+  period        TEXT NOT NULL,             <span class="cm">-- '2025-01' format</span>
+  hours_used    FLOAT NOT NULL,
+  hours_allocated FLOAT,                   <span class="cm">-- Snapshot à la fin du mois</span>
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+<span class="cm">-- Fonction: incrémenter quota après transcription</span>
+CREATE OR REPLACE FUNCTION increment_user_quota(
+  p_user_id UUID, 
+  p_duration_hours FLOAT
+) RETURNS VOID AS $$
+DECLARE
+  v_quota user_quotas%ROWTYPE;
+  v_pct FLOAT;
+BEGIN
+  SELECT * INTO v_quota FROM user_quotas WHERE user_id = p_user_id FOR UPDATE;
+  
+  <span class="cm">-- Incrémenter</span>
+  UPDATE user_quotas 
+  SET hours_used_month = hours_used_month + p_duration_hours,
+      hours_used_total = hours_used_total + p_duration_hours,
+      updated_at = NOW()
+  WHERE user_id = p_user_id;
+  
+  <span class="cm">-- Calculer pourcentage</span>
+  IF v_quota.hours_allocated IS NOT NULL THEN
+    v_pct := (v_quota.hours_used_month + p_duration_hours) / v_quota.hours_allocated * 100;
+    
+    <span class="cm">-- Déclencher alertes</span>
+    IF v_pct >= 50 AND NOT v_quota.alert_50_sent AND v_quota.alert_at_50 THEN
+      PERFORM pg_notify('quota_alert', json_build_object('user_id', p_user_id, 'pct', 50)::text);
+      UPDATE user_quotas SET alert_50_sent = true WHERE user_id = p_user_id;
+    END IF;
+    IF v_pct >= 80 AND NOT v_quota.alert_80_sent AND v_quota.alert_at_80 THEN
+      PERFORM pg_notify('quota_alert', json_build_object('user_id', p_user_id, 'pct', 80)::text);
+      UPDATE user_quotas SET alert_80_sent = true WHERE user_id = p_user_id;
+    END IF;
+    IF v_pct >= 100 AND NOT v_quota.alert_100_sent AND v_quota.alert_at_100 THEN
+      PERFORM pg_notify('quota_alert', json_build_object('user_id', p_user_id, 'pct', 100)::text);
+      UPDATE user_quotas SET alert_100_sent = true WHERE user_id = p_user_id;
+    END IF;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;</code></pre>
+
+  <h2>Logique de vérification pre-job</h2>
+  <pre><code><span class="kw">async def</span> <span class="fn">check_user_quota</span>(user_id: str, duration_hours: float) -> QuotaCheck:
+    quota = <span class="kw">await</span> db.get_quota(user_id)
+    
+    <span class="kw">if</span> quota.hours_allocated <span class="kw">is</span> None:
+        <span class="kw">return</span> QuotaCheck(allowed=<span class="kw">True</span>, reason=<span class="str">"unlimited"</span>)
+    
+    remaining = quota.hours_allocated - quota.hours_used_month
+    
+    <span class="kw">if</span> remaining &lt;= 0:
+        <span class="kw">if</span> quota.overage_policy == <span class="str">"block"</span>:
+            <span class="kw">return</span> QuotaCheck(allowed=<span class="kw">False</span>, reason=<span class="str">"quota_exceeded"</span>,
+                               message=<span class="str">"Quota mensuel épuisé. Contactez votre admin."</span>)
+        <span class="kw">elif</span> quota.overage_policy == <span class="str">"warn"</span>:
+            <span class="kw">return</span> QuotaCheck(allowed=<span class="kw">True</span>, reason=<span class="str">"overage_warn"</span>,
+                               warning=<span class="str">"Quota dépassé — traitement autorisé mais notifié"</span>)
+        <span class="kw">else</span>:  <span class="cm"># allow</span>
+            <span class="kw">return</span> QuotaCheck(allowed=<span class="kw">True</span>, reason=<span class="str">"overage_allowed"</span>)
+    
+    <span class="kw">return</span> QuotaCheck(allowed=<span class="kw">True</span>, remaining_hours=remaining)</code></pre>
+
+  <h2>Mockup UI Admin — Gestion des quotas</h2>
+  <pre style="font-size:0.75rem;">
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ⚙️  Paramètres / Utilisateurs & Quotas                                  │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  UTILISATEURS (3)                          [+ Inviter]  [📤 Export CSV] │
+│                                                                          │
+│ ┌──────────────────────────────────────────────────────────────────────┐│
+│ │ 👤 Jeremy Ortyl        Super Admin        Quota: ILLIMITÉ            ││
+│ │ jeremy@ortyl.fr                                                       ││
+│ │ Utilisé ce mois: 34.2h  Total: 847h   Dernière activité: maintenant ││
+│ │ [████████████████████████████████████████] ∞                         ││
+│ │                                                           [✏️ Éditer] ││
+│ └──────────────────────────────────────────────────────────────────────┘│
+│                                                                          │
+│ ┌──────────────────────────────────────────────────────────────────────┐│
+│ │ 👤 David Cohen         Admin              Quota: 20h / mois          ││
+│ │ david@merkasa.co                                                       ││
+│ │ Utilisé ce mois: 12.4h  Total: 89h    Reset: 1er du mois            ││
+│ │ [████████████████████████░░░░░░░░░░░░░░] 62%   7.6h restantes        ││
+│ │ Politique: ⚠️ Avertir                                    [✏️ Éditer] ││
+│ └──────────────────────────────────────────────────────────────────────┘│
+│                                                                          │
+│ ┌──────────────────────────────────────────────────────────────────────┐│
+│ │ 👤 Sarah Martin        Member             Quota: 5h / mois           ││
+│ │ sarah@merkasa.co                                                       ││
+│ │ Utilisé ce mois: 4.8h   Total: 34h    Reset: 1er du mois            ││
+│ │ [████████████████████████████████████████████████░] 96% ⚠️ CRITIQUE  ││
+│ │ Politique: 🚫 Bloquer                                    [✏️ Éditer] ││
+│ └──────────────────────────────────────────────────────────────────────┘│
+│                                                                          │
+│  ─────────────────────────────────────────────────────────────────────  │
+│  MODAL ÉDITION QUOTA — Sarah Martin                                      │
+│                                                                          │
+│  Heures allouées / mois:                                                 │
+│  [────────────────────────●──────────────────────] 5h                    │
+│  0h              10h              20h              50h  [☐] Illimité     │
+│                                                                          │
+│  Politique dépassement:                                                  │
+│  (•) 🚫 Bloquer     — Empêche toute nouvelle transcription               │
+│  ( ) ⚠️ Avertir      — Autorise mais notifie admin + user                │
+│  ( ) ✅ Autoriser    — Laisse passer silencieusement                     │
+│                                                                          │
+│  Alertes automatiques (email à l'utilisateur):                           │
+│  [☑] À 50% du quota (2.5h)                                              │
+│  [☑] À 80% du quota (4h)                                                │
+│  [☑] À 100% du quota (5h)                                               │
+│                                                                          │
+│  Jour de reset: [1er du mois ▾] (1 / 7 / 14 / 15 / 28 / Personnalisé) │
+│                                                                          │
+│  [Annuler]                              [💾 Enregistrer les paramètres] │
+└─────────────────────────────────────────────────────────────────────────┘</pre>
+
+  <h2>Politiques de dépassement</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Politique</th><th>Comportement</th><th>Cas d'usage</th><th>Notification</th></tr>
+      <tr>
+        <td><span class="badge badge-red">block</span></td>
+        <td>Le job est refusé avant de démarrer. Message d'erreur clair à l'utilisateur.</td>
+        <td>Utilisateurs non-payants, essai limité, équipes avec budget strict</td>
+        <td>Email user: "Quota atteint" + lien vers admin</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-amber">warn</span></td>
+        <td>Le job démarre normalement mais admin et user reçoivent une notification.</td>
+        <td>Équipes de confiance, usage légèrement variable d'un mois à l'autre</td>
+        <td>Email admin + user: "Quota dépassé — X heures en surplus"</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">allow</span></td>
+        <td>Le job démarre sans notification. Consommation trackée pour reporting.</td>
+        <td>Équipes internes, super admin, usage illimité avec suivi seul</td>
+        <td>Aucune notification immédiate — visible dans reporting mensuel</td>
+      </tr>
+    </table>
+  </div>
+
+  <h2>Stratégies de reset</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Stratégie</th><th>Description</th><th>Avantage</th><th>Inconvénient</th></tr>
+      <tr><td><strong>1er du mois</strong> (défaut)</td><td>Reset le 1er janvier, février... à minuit UTC</td><td>Prévisible, aligné facturation mensuelle</td><td>Pic d'activité en fin de mois si quota serré</td></tr>
+      <tr><td><strong>Anniversaire</strong></td><td>Reset J+30 depuis la date d'inscription</td><td>Lissé, chaque user a son cycle</td><td>Complexe à gérer côté admin</td></tr>
+      <tr><td><strong>Rolling 30j</strong></td><td>Calcul glissant: heures des 30 derniers jours</td><td>Plus juste, pas de "sprint" fin de mois</td><td>Calcul plus complexe en SQL</td></tr>
+    </table>
+  </div>
+  <p style="color:var(--muted);font-size:0.85rem;"><strong>Recommandation :</strong> Démarrer avec "1er du mois" (simple). Proposer "Rolling 30j" en Phase 6 pour le plan commercial.</p>
+
+  <h2>Reporting usage</h2>
+  <pre><code><span class="cm">-- Rapport mensuel par utilisateur</span>
+SELECT 
+  u.display_name,
+  u.email,
+  uq.hours_allocated,
+  uq.hours_used_month,
+  ROUND((uq.hours_used_month / NULLIF(uq.hours_allocated, 0) * 100)::numeric, 1) AS pct_used,
+  uq.overage_policy,
+  uq.reset_day
+FROM users u
+JOIN user_quotas uq ON uq.user_id = u.id
+WHERE u.org_id = $1
+ORDER BY pct_used DESC NULLS LAST;
+
+<span class="cm">-- Historique mensuel</span>
+SELECT period, SUM(hours_used) as total_org_hours
+FROM quota_history
+WHERE user_id IN (SELECT id FROM users WHERE org_id = $1)
+GROUP BY period
+ORDER BY period DESC
+LIMIT 12;</code></pre>
+
+  <h2>Implications commerciales</h2>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Plan</th><th>Quota</th><th>Prix</th><th>Coût réel TranscriptAI</th><th>Marge</th></tr>
+      <tr><td>Starter</td><td>10h/mois</td><td>€19/mois</td><td>~€1.50 (Groq+Claude)</td><td>~87%</td></tr>
+      <tr><td>Pro</td><td>50h/mois</td><td>€49/mois</td><td>~€7.50</td><td>~85%</td></tr>
+      <tr><td>Team (5 users)</td><td>200h/mois total</td><td>€149/mois</td><td>~€30</td><td>~80%</td></tr>
+      <tr><td>Enterprise</td><td>Illimité</td><td>€499/mois</td><td>Variable</td><td>Variable</td></tr>
+    </table>
+  </div>
+  <div class="info-box info">
+    <strong>Coût réel estimé :</strong> Groq Turbo à $0.001/min = $0.06/h audio. Claude Haiku/Sonnet ~$0.01/h. Infrastructure Hetzner fixe ~€15/mois. Le modèle par abonnement est très rentable dès 10 clients Pro.
+  </div>
+
+  <h2>Jeremy — Règles super admin</h2>
+  <div class="info-box success">
+    <strong>Jeremy = Super Admin = Quota NULL (illimité) par défaut.</strong><br>
+    Jeremy peut créer d'autres super admins. Un super admin ne peut pas se voir assigner un quota (protection UI et API). Le rôle "super_admin" bypasse toute vérification de quota à l'API level.
+  </div>
+  <pre><code><span class="cm"># API: vérification quota</span>
+<span class="kw">async def</span> <span class="fn">pre_job_quota_check</span>(user: User, duration: float):
+    <span class="kw">if</span> user.role == <span class="str">"super_admin"</span>:
+        <span class="kw">return</span>  <span class="cm"># Bypass total, pas de check</span>
+    <span class="kw">await</span> check_user_quota(user.id, duration)</code></pre>
+
+</div>
+
+
+<script>
+function switchTab(tabId) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  
+  // Show selected
+  const content = document.getElementById('tab-' + tabId);
+  if (content) content.classList.add('active');
+  
+  // Find the clicked button
+  const btns = document.querySelectorAll('.tab-btn');
+  btns.forEach(btn => {
+    if (btn.getAttribute('onclick') === "switchTab('" + tabId + "')") {
+      btn.classList.add('active');
+    }
+  });
+  
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
